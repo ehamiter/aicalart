@@ -24,8 +24,22 @@
         left: 0;
       }
     </style>
+
+    <script>
+      function updateImageTitle() {
+        fetch('./prompt.txt')
+        .then(response => response.text())
+        .then(text => {
+          document.querySelector('.bg-image').setAttribute('title', text);
+        })
+        .catch(error => {
+          console.error('Fetch no worky. ', error);
+        });
+      }
+    </script>
+
   </head>
-  <body>
+  <body onload="updateImageTitle()">
     <div class="bg-image"></div>
   </body>
   <script>
