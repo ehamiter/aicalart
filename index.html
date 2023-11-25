@@ -1,42 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>aical.art</title>
-    <style>
-      body, html {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        color: white;
-        background-color: black;
-      }
-      .bg-image {
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-color: black;
-        position: relative;
-        height: 100%;
-        width: 100%;
-        top: 0;
-        left: 0;
-      }
-    </style>
 
-    <script>
-      function updateImageTitle() {
-        fetch('./prompt.txt')
-        .then(response => response.text())
-        .then(text => {
-          document.querySelector('.bg-image').setAttribute('title', text);
-        })
-        .catch(error => {
-          console.error('Fetch no worky. ', error);
-        });
-      }
-    </script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>aical.art</title>
+  <meta name="description" content="Calendar entries turn into art via AI + DALL-E">
+  <meta name="keywords" content="web, software, ai, DALL-E, ChatGPT, art, calendar">
+  <meta name="author" content="Snake">
+  <link rel="apple-touch-icon" sizes="180x180" href="./static/images/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./static/images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./static/images/icons/favicon-16x16.png">
+  <link rel="shortcut icon" href="./static/images/icons/favicon.ico">
+  <link rel="manifest" href="./static/site.webmanifest">
+  <link rel="stylesheet" href="./static/css/style.css"/>
+  <link rel="preconnect" href="https://www.w3counter.com">
+
+  <script>
+    function updateImageTitle() {
+      fetch('./prompt.txt')
+      .then(response => response.text())
+      .then(text => {
+        document.querySelector('.bg-image').setAttribute('title', text);
+      })
+      .catch(error => {
+        console.error('Fetch no worky. ', error);
+      });
+    }
+  </script>
 
   </head>
   <body onload="updateImageTitle()">
