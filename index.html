@@ -38,9 +38,9 @@
     function updateBackground() {
       var bgElement = document.querySelector('.bg-image');
       if (window.matchMedia("(orientation: portrait)").matches) {
-        bgElement.style.backgroundImage = "url('./bg-portrait.png')";
+        bgElement.style.backgroundImage = "url('./static/images/bg-portrait.png')";
       } else {
-        bgElement.style.backgroundImage = "url('./bg-landscape.png')";
+        bgElement.style.backgroundImage = "url('./static/images/bg-landscape.png')";
       }
     }
     updateBackground();
