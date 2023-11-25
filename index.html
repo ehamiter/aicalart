@@ -14,7 +14,7 @@
         }
 
         .bg-image {
-            background-image: url('./bg.png');
+            background-image: url('./bg_landscape.png');
             background-position: center;
             background-repeat: no-repeat;
             background-size: contain;
@@ -24,6 +24,12 @@
             width: 100%;
             top: 0;
             left: 0;
+        }
+
+        @media screen and (orientation: portrait) {
+            body {
+                background-image: url('./bg_portrait.png');
+            }
         }
 
         .footer-link {
@@ -44,7 +50,7 @@
 </head>
 <body>
     <div class="bg-image">
-        <a href="./about/index.html" class="footer-link">?</a>
+        <!--<a href="./about/index.html" class="footer-link">?</a>-->
     </div>
 </body>
 </html>
