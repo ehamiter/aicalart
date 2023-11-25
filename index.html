@@ -1,63 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>aical.art</title>
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            color: white;
-            background-color: black;
-        }
-
-        .bg-image {
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-color: black;
-            position: relative;
-            height: 100%;
-            width: 100%;
-            top: 0;
-            left: 0;
-        }
-
-        .footer-link {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            text-decoration: none;
-            color: #f8f8f2;
-            transition: all 0.3s ease;
-            font-family: sans-serif;
-        }
-
-        .footer-link:hover {
-            text-decoration: underline;
-            color: #ff79c6;
-        }
+      body, html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        color: white;
+        background-color: black;
+      }
+      .bg-image {
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-color: black;
+        position: relative;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+      }
     </style>
-</head>
-<body>
-    <div class="bg-image">
-        <!--<a href="./about/index.html" class="footer-link">?</a>-->
-    </div>
-</body>
-
-<script>
+  </head>
+  <body>
+    <div class="bg-image"></div>
+  </body>
+  <script>
     function updateBackground() {
-        var bgElement = document.querySelector('.bg-image');
-        if (window.matchMedia("(orientation: portrait)").matches) {
-            bgElement.style.backgroundImage = "url('./bg-portrait.png')";
-        } else {
-            bgElement.style.backgroundImage = "url('./bg-landscape.png')";
-        }
+      var bgElement = document.querySelector('.bg-image');
+      if (window.matchMedia("(orientation: portrait)").matches) {
+        bgElement.style.backgroundImage = "url('./bg-portrait.png')";
+      } else {
+        bgElement.style.backgroundImage = "url('./bg-landscape.png')";
+      }
     }
     updateBackground();
     window.addEventListener("resize", updateBackground);
-</script>
-
+  </script>
 </html>

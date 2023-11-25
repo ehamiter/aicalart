@@ -1,3 +1,5 @@
 credentials.json
 token.json
+main.py
+requirements.txt
 .env
