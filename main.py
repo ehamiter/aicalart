@@ -63,9 +63,7 @@ def get_silly_day(date):
 def get_news(country="US", period="1h"):
     gn = GNews(language="en", country=country, period=period)
     top_news = gn.get_top_news()
-    full_title = top_news[0]["title"]
-    # `title`, e.g. "Some news: CNN" or "Some news - NY Post" => "Some news"
-    title = re.split(r":| - ", full_title)[0]  # fmt: skip
+    title = top_news[0]["title"]
     return title
 
 
@@ -153,24 +151,24 @@ def main(the_date=None, style=None, skip_calendar=False):
 
     if holiday and silly_day:
         the_day = f"{holiday} and {silly_day}"
-    if holiday and not silly_day:
-        the_day = f"{holiday}"
-    if not holiday and silly_day:
-        the_day = f"{silly_day}"
-    if not holiday and not silly_day:
+    elif holiday:
+        the_day = holiday
+    elif silly_day:
+        the_day = silly_day
+    else:
         holiday_is_happening = False
 
     if holiday_is_happening:
-        today = f"{the_date}, {the_day}"
+        today = f"{the_date}, {the_day}; ranked in order of importance"
     else:
         today = f"{the_date}; approximate the seasonal feel in the United States"
 
     prompt = f"""
     Imagine you are a master prompt maker for DALL-E. You specialize in creating
     images based on my calendar entries for the day in the style of {style}, and
-    also on the news headline of the hour, which is "{news}".
-    You’re creative, and are very clever by hiding allegories in details. You
-    always place your beloved orange tabby domestic shorthair cat, Hobbes, in every
+    centered around the breaking newsflash "{news}".
+    You are creative and very clever by hiding allegories in details. You always
+    place your beloved orange tabby domestic shorthair cat, Hobbes, in every
     piece you create. A user could view one of your creations several times and
     discover something new, insightful, or hilarious on each new viewing.
     Today is {today}. Give me a prompt based on todays calendar:
@@ -215,7 +213,7 @@ def main(the_date=None, style=None, skip_calendar=False):
     dalle_prompt = str(completion.choices[0].message.content)
     prompt_info = f"""
     News: {news}\n
-    Today: {today}\n
+    Today: {today.split(';')[0]}\n
     Style: {style}\n
     DALL-E prompt: {dalle_prompt}\n
     """
@@ -304,7 +302,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--style",
         default=None,
-        help='Style for the calendar prompt (e.g., "1970s Miami funkadelic neon color vibe, ocean pastels, stucco, party").',
+        help='Style for the calendar prompt (e.g., "1970s Miami funkadelic neon color vibe, ocean pastels, stucco mansions, seafood party").',
     )
     parser.add_argument(
         "--skip-calendar",

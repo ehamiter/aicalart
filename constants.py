@@ -56,7 +56,7 @@ STYLES = [
     "post-apocalyptic tribal futurism, fusion of primitive and futuristic elements, survivalist themes, reclaimed technology",
     "underwater steampunk kingdom, submerged Victorian cities, aquatic adaptations of steampunk technology",
     "quantum realm abstract art, visualizations of quantum physics concepts, subatomic particle designs",
-    "retro-futuristic diner on Mars, classic 50s American diner aesthetics, retro space gear, interplanetary cuisine"
+    "retro-futuristic diner on Mars, classic 50s American diner aesthetics, retro space gear, interplanetary cuisine",
     "mythical forest cyber life, digital faeries, interactive flora, augmented reality nature",
     "Victorian gothic horror revival, eerie mansions, haunting landscapes, period costumes with a twist",
     "Harlem Renaissance vibrancy, jazz age influence, cultural narratives, expressive figures",
@@ -130,6 +130,7 @@ HOLIDAYS = {
     "2023-11-24": "Native American Heritage Day",
     "2023-11-25": "International Day for the Elimination of Violence against Women",
     "2023-11-27": "Cyber Monday",
+    "2023-11-28": "National Day of Giving",
     "2023-11-29": "International Day of Solidarity with the Palestinian People",
     "2023-11-30": "Day of Remembrance for all Victims of Chemical Warfare",
     "2023-12-01": "Rosa Parks Day",
