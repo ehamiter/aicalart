@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>aical.art</title>
-  <meta name="description" content="Calendar entries turn into art via AI + DALL-E">
-  <meta name="keywords" content="web, software, ai, DALL-E, ChatGPT, art, calendar">
+  <meta name="description" content="News headlines, calendar entries, and my cat Hobbes turn into art via AI + DALL-E">
+  <meta name="keywords" content="web, software, ai, DALL-E, ChatGPT, art, calendar, cat, Hobbes, GPT-4, GPT-4-turbo">
   <meta name="author" content="Chimera Tier">
   <link rel="apple-touch-icon" sizes="180x180" href="./static/images/icons/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="./static/images/icons/favicon-32x32.png">
@@ -17,33 +17,33 @@
   <link rel="stylesheet" href="./static/css/style.css"/>
   <link rel="preconnect" href="https://www.w3counter.com">
 
-  <script>
-    function updateImageTitle() {
-      fetch('./prompt.txt')
-      .then(response => response.text())
-      .then(text => {
-        document.querySelector('.bg-image').setAttribute('title', text);
-      })
-      .catch(error => {
-        console.error('Fetch no worky. ', error);
-      });
+<script>
+function updateImageTitleAndBackground() {
+    let textFile;
+    let bgFile;
+    if (window.matchMedia("(orientation: portrait)").matches) {
+      textFile = './portrait-prompt.txt';
+      bgFile = "url('./static/images/portrait.png')";
+    } else {
+      textFile = './landscape-prompt.txt';
+      bgFile = "url('./static/images/landscape.png')";
     }
-  </script>
+    fetch(textFile)
+    .then(response => response.text())
+    .then(text => {
+      document.querySelector('.bg-image').setAttribute('title', text);
+      document.querySelector('.bg-image').style.backgroundImage = bgFile;
+    })
+    .catch(error => {
+      console.error('Fetch failed: ', error);
+    });
+  }
+  window.addEventListener("resize", updateImageTitleAndBackground);
+</script>
 
   </head>
-  <body onload="updateImageTitle()">
+  <body onload="updateImageTitleAndBackground()">
+  <p>&nbsp;</p>
     <div class="bg-image"></div>
   </body>
-  <script>
-    function updateBackground() {
-      var bgElement = document.querySelector('.bg-image');
-      if (window.matchMedia("(orientation: portrait)").matches) {
-        bgElement.style.backgroundImage = "url('./static/images/portrait.png')";
-      } else {
-        bgElement.style.backgroundImage = "url('./static/images/landscape.png')";
-      }
-    }
-    updateBackground();
-    window.addEventListener("resize", updateBackground);
-  </script>
 </html>
