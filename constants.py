@@ -3,6 +3,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# gpt-4-turbo will be coming out soon and is 3x cheaper than gpt-4.
+# in the meantime the preview model will be used.
+GPT_MODEL = 'gpt-4-1106-preview'
+IMAGE_MODEL = 'dall-e-3'
+
 AICALART_OPENAI_KEY = os.getenv("AICALART_OPENAI_KEY")
 API_NINJAS_KEY = os.getenv("API_NINJAS_KEY")
 

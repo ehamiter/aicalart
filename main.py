@@ -3,7 +3,6 @@ import datetime
 import logging
 import os.path
 import random
-import re
 from base64 import b64decode
 from io import BytesIO
 from textwrap import dedent
@@ -11,10 +10,12 @@ from textwrap import dedent
 from colorama import Fore, Style
 from constants import (
     AICALART_OPENAI_KEY,
+    GPT_MODEL,
     HOLIDAYS,
+    IMAGE_MODEL,
     SCOPES,
     SILLY_DAYS,
-    STYLES
+    STYLES,
 )
 from gnews import GNews
 from google.auth.transport.requests import Request
@@ -26,9 +27,17 @@ from openai import BadRequestError, OpenAI
 from PIL import Image, ImageDraw
 from tqdm import tqdm
 
+
 logger = logging.getLogger(__name__)
 
-now = f"{datetime.datetime.utcnow().isoformat()}Z"
+now_utc_aware = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
+
+# for holiday fetching in localtime -- "2023-11-25"
+now_cst = datetime.datetime.now().date().strftime("%Y-%m-%d")
+
+# for Google calendar event fetching -- "2023-11-25T00:43:27.521185+00:00Z"
+now_utc = now = f"{datetime.datetime.utcnow().isoformat()}Z"
+
 
 def trim_string(text, char_limit=1023):
     if len(text) <= char_limit:
@@ -77,12 +86,10 @@ def fetch_calendar_entries(creds, prompt, style):
     custom_format = "{desc}: {percentage:3.0f}%|{bar:20}| {n_fmt}/{total_fmt}"  # fmt: skip
 
     # Add event info to original prompt and re-enforce the style
-    followup = f"""
-    Keep the image close to the style I am after-- simple enough to print in an
-    old book. Keep the prompt short and focused on my near term most important
+    calendar_prompt = f"""
+    Keep the prompt short and focused on my near-term most important
     commitments. Remove any personally identifiable information and do not mention
-    dates. Use these words in the beginning of the prompt for the specific style:
-    {style}, no margins, full screen. Respond with the prompt only.
+    dates.
     """
 
     logger.info("Fetching calendar entries...\n")
@@ -110,7 +117,7 @@ def fetch_calendar_entries(creds, prompt, style):
                 service.events()
                 .list(
                     calendarId=calendar_id,
-                    timeMin=now,
+                    timeMin=now_utc,
                     maxResults=3,
                     singleEvents=True,
                     orderBy="startTime",
@@ -132,15 +139,16 @@ def fetch_calendar_entries(creds, prompt, style):
             ):
                 start = event["start"].get("dateTime", event["start"].get("date"))
                 prompt += start + " " + str(event["summary"]) + ", "
-            prompt += followup
+            prompt += calendar_prompt
         return prompt
 
     except HttpError as error:
         logger.error(f"An error occurred: {error}\n")
 
+
 def main(the_date=None, style=None, skip_calendar=False):
     # `the_date`, e.g. '2023-11-26', is used in keys for the holiday dicts
-    the_date = the_date or now.split("T")[0]  # fmt: skip
+    the_date = the_date or now_cst.split("T")[0]  # fmt: skip
     the_day = ""  # placeholder for any named days, e.g. "Cyber Monday and National Fritters Day"
     style = style or get_style()
     holiday = get_holiday(the_date)
@@ -165,13 +173,14 @@ def main(the_date=None, style=None, skip_calendar=False):
 
     prompt = f"""
     Imagine you are a master prompt maker for DALL-E. You specialize in creating
-    images based on my calendar entries for the day in the style of {style}, and
-    centered around the breaking newsflash "{news}".
+    images based on current events, holidays, and are focused on the breaking
+    newsflash "{news}". Your work has an overall theme of {style}.
+
     You are creative and very clever by hiding allegories in details. You always
     place your beloved orange tabby domestic shorthair cat, Hobbes, in every
     piece you create. A user could view one of your creations several times and
     discover something new, insightful, or hilarious on each new viewing.
-    Today is {today}. Give me a prompt based on todays calendar:
+    Today is {today}.
     """
 
     creds = None
@@ -195,12 +204,17 @@ def main(the_date=None, style=None, skip_calendar=False):
     else:
         prompt = fetch_calendar_entries(creds, prompt, style)
 
+    # Put a bow on the prompt
+    prompt += f"""
+        Use these words in the beginning of the prompt for the specific style:
+        {style}, no margins, full screen. Respond with the prompt only.
+    """
+
     client = OpenAI(api_key=AICALART_OPENAI_KEY)
 
     print(f"{Fore.YELLOW}Generating prompt...{Style.RESET_ALL}")
     completion = client.chat.completions.create(
-        # gpt-4-turbo will be coming out soon and is 3x cheaper than gpt-4
-        model="gpt-4-1106-preview",
+        model=GPT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -210,7 +224,7 @@ def main(the_date=None, style=None, skip_calendar=False):
         ],
     )
 
-    dalle_prompt = str(completion.choices[0].message.content)
+    dalle_prompt = completion.choices[0].message.content
     prompt_info = f"""
     News: {news}\n
     Today: {today.split(';')[0]}\n
@@ -225,7 +239,7 @@ def main(the_date=None, style=None, skip_calendar=False):
     try:
         logger.info(f"{Fore.YELLOW}Generating portrait image...{Style.RESET_ALL}")
         portrait_response = client.images.generate(
-            model="dall-e-3",
+            model=IMAGE_MODEL,
             prompt=f"{dalle_prompt}. Ensure this image is in a vertical orientation.",
             size="1024x1792",
             quality="standard",
@@ -234,7 +248,7 @@ def main(the_date=None, style=None, skip_calendar=False):
         )
         logger.info(f"{Fore.YELLOW}Generating landscape image...{Style.RESET_ALL}")
         landscape_response = client.images.generate(
-            model="dall-e-3",
+            model=IMAGE_MODEL,
             prompt=f"{dalle_prompt}. Ensure this image is in a horizontal orientation.",
             size="1792x1024",
             quality="standard",
@@ -251,8 +265,8 @@ def main(the_date=None, style=None, skip_calendar=False):
     # The finalized prompt is revised by GPT and slightly different for each orientation
     portrait_prompt = portrait_response.data[0].revised_prompt
     landscape_prompt = landscape_response.data[0].revised_prompt
-    print('\nPortrait prompt: ', portrait_prompt)
-    print('\nLandscape prompt: ', landscape_prompt)
+    print("\nPortrait prompt: ", portrait_prompt)
+    print("\nLandscape prompt: ", landscape_prompt)
 
     # Anything over 1,023 chars gets chopped, so if it's used in an img title, use the shortened version
     title_prompt = trim_string(dalle_prompt)
