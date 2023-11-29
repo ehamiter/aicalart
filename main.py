@@ -31,8 +31,6 @@ from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
-now_utc_aware = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
-
 # for holiday fetching in localtime -- "2023-11-25"
 now_cst = datetime.datetime.now().date().strftime("%Y-%m-%d")
 
@@ -86,7 +84,6 @@ def fetch_calendar_entries(creds, prompt, style):
     # example: '10%' [===>
     custom_format = "{desc}: {percentage:3.0f}%|{bar:20}| {n_fmt}/{total_fmt}"  # fmt: skip
 
-    # Add event info to original prompt and re-enforce the style
     calendar_prompt = f"""
     Keep the prompt short and focused on my near-term most important commitments.
     Remove any personally identifiable information and do not mention dates.
@@ -95,8 +92,6 @@ def fetch_calendar_entries(creds, prompt, style):
     logger.info("Fetching calendar entries...\n")
     try:
         service = build("calendar", "v3", credentials=creds, cache_discovery=False)
-
-        # Fetch all accessible calendars
         calendars_result = service.calendarList().list().execute()
         calendars = calendars_result.get("items", [])
 
@@ -230,7 +225,6 @@ def main(the_date=None, style=None, skip_calendar=False):
     prompt_info = f"""
     News: {news}\n
     Today: {today.split(';')[0]}\n
-    Style: {style}\n
     DALL-E prompt: {dalle_prompt}\n
     """
     print(dedent(prompt_info))
@@ -271,16 +265,15 @@ def main(the_date=None, style=None, skip_calendar=False):
     print("\nLandscape prompt: ", landscape_prompt)
 
     # Anything over 1,023 chars gets chopped, so if it's used in an img title, use the shortened version
-    title_prompt = trim_string(dalle_prompt)
     portrait_prompt = trim_string(portrait_prompt)
     landscape_prompt = trim_string(landscape_prompt)
 
-    title_prompt_file_path = f"./staging/prompt-original-{now}.txt"
+    original_prompt_file_path = f"./staging/prompt-original-{now}.txt"
     portrait_prompt_file_path = f"./staging/prompt-portrait-{now}.txt"
     landscape_prompt_file_path = f"./staging/prompt-landscape-{now}.txt"
 
-    with open(title_prompt_file_path, "w") as file:
-        file.write(title_prompt)
+    with open(original_prompt_file_path, "w") as file:
+        file.write(dalle_prompt)
 
     with open(portrait_prompt_file_path, "w") as file:
         file.write(portrait_prompt)
