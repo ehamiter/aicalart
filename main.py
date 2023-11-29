@@ -6,6 +6,7 @@ import random
 from base64 import b64decode
 from io import BytesIO
 from textwrap import dedent
+import time
 
 from colorama import Fore, Style
 from constants import (
@@ -146,6 +147,9 @@ def fetch_calendar_entries(creds, prompt, style):
 
 
 def main(the_date=None, style=None, skip_calendar=False):
+    # Time it from beginning to end
+    t1 = time.perf_counter()
+
     # `the_date`, e.g. '2023-11-26', is used in keys for the holiday dicts
     the_date = the_date or now_cst.split("T")[0]  # fmt: skip
     the_day = ""  # placeholder for any named days, e.g. "Cyber Monday and National Fritters Day"
@@ -299,7 +303,8 @@ def main(the_date=None, style=None, skip_calendar=False):
 
     # These files get dumped into the /staging folder that is ignored by git
 
-    logger.info(f"{Fore.CYAN}Done!{Style.RESET_ALL}")
+    t2 = time.perf_counter()
+    logger.info(f"{Fore.CYAN}Done!{Style.RESET_ALL} [Total time: {t2 - t1:.2f} seconds]")  # fmt: skip
 
 
 if __name__ == "__main__":
