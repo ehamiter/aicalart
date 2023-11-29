@@ -87,9 +87,8 @@ def fetch_calendar_entries(creds, prompt, style):
 
     # Add event info to original prompt and re-enforce the style
     calendar_prompt = f"""
-    Keep the prompt short and focused on my near-term most important
-    commitments. Remove any personally identifiable information and do not mention
-    dates.
+    Keep the prompt short and focused on my near-term most important commitments.
+    Remove any personally identifiable information and do not mention dates.
     """
 
     logger.info("Fetching calendar entries...\n")
@@ -173,13 +172,12 @@ def main(the_date=None, style=None, skip_calendar=False):
 
     prompt = f"""
     Imagine you are a master prompt maker for DALL-E. You specialize in creating
-    images based on current events, holidays, and are focused on the breaking
-    newsflash "{news}". Your work has an overall theme of {style}.
+    images based on current events, holidays, and focused on the news "{news}".
 
     You are creative and very clever by hiding allegories in details. You always
     place your beloved orange tabby domestic shorthair cat, Hobbes, in every
-    piece you create. A user could view one of your creations several times and
-    discover something new, insightful, or hilarious on each new viewing.
+    piece you create. A user could look at one of your creations several times
+    and discover something new, insightful, or hilarious on each repeated viewing.
     Today is {today}.
     """
 
