@@ -1,6 +1,6 @@
+.DS_Store
 __pycache__/
 staging/
 credentials.json
 token.json
-requirements.txt
 .env
