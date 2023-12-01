@@ -8,9 +8,14 @@ from base64 import b64decode
 from io import BytesIO
 from textwrap import dedent
 
+import boto3
+from botocore.exceptions import NoCredentialsError
 from colorama import Fore, Style
 from constants import (
     AICALART_OPENAI_KEY,
+    AWS_ACCESS_KEY_ID,
+    AWS_SECRET_ACCESS_KEY,
+    AWS_S3_BUCKET,
     GPT_MODEL,
     HOLIDAYS,
     IMAGE_MODEL,
@@ -179,6 +184,7 @@ def main(the_date=None, style=None, skip_calendar=False):
     Today is {today}.
     """
 
+    # Google Calendar creds
     creds = None
     if os.path.exists("./token.json"):
         creds = Credentials.from_authorized_user_file("./token.json", SCOPES)
@@ -206,6 +212,7 @@ def main(the_date=None, style=None, skip_calendar=False):
         {style}, no margins, full screen. Respond with the prompt only.
     """
 
+    # OpenAI prompts and images generation
     client = OpenAI(api_key=AICALART_OPENAI_KEY)
 
     print(f"{Fore.YELLOW}Generating prompt...{Style.RESET_ALL}")
@@ -290,10 +297,39 @@ def main(the_date=None, style=None, skip_calendar=False):
     ImageDraw.Draw(portrait_image)
     ImageDraw.Draw(landscape_image)
 
-    portrait_image.save(f"./staging/portrait-{now}.png")
-    landscape_image.save(f"./staging/landscape-{now}.png")
+    # Save them into the /staging folder that is ignored by git for convenience
+    portrait_image_path = f"./staging/portrait-{now}.png"
+    portrait_image.save(portrait_image_path)
 
-    # These files get dumped into the /staging folder that is ignored by git
+    landscape_image_path = f"./staging/landscape-{now}.png"
+    landscape_image.save(landscape_image_path)
+
+    # Upload the images to S3 for archival
+
+    aws_access_key_id = AWS_ACCESS_KEY_ID
+    aws_secret_access_key = AWS_SECRET_ACCESS_KEY
+    bucket_name = AWS_S3_BUCKET
+
+    portrait_local_file_path = './static/images/portrait.png'
+    portrait_s3_file_key = 'images/portrait.png'
+    landscape_local_file_path = './static/images/landscape.png'
+    landscape_s3_file_key = 'images/landscape.png'
+
+    def upload_file_to_s3(local_path, bucket, s3_key, access_key, secret_key):
+        try:
+            s3 = boto3.client('s3', aws_access_key_id=access_key, aws_secret_access_key=secret_key)
+            s3.upload_file(local_path, bucket, s3_key)
+            print(f"File {local_path} uploaded to {bucket}/{s3_key}")
+        except FileNotFoundError:
+            print("The file was not found")
+        except NoCredentialsError:
+            print("Credentials not available")
+
+    # logger.info(f"{Fore.YELLOW}Uploading portrait file...{Style.RESET_ALL}")
+    # upload_file_to_s3(portrait_local_file_path, AWS_S3_BUCKET, portrait_s3_file_key, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+
+    # logger.info(f"{Fore.YELLOW}Uploading landscape file...{Style.RESET_ALL}")
+    # upload_file_to_s3(landscape_local_file_path, AWS_S3_BUCKET, landscape_s3_file_key, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
 
     t2 = time.perf_counter()
     logger.info(f"{Fore.CYAN}Done!{Style.RESET_ALL} [Total time: {t2 - t1:.2f} seconds]")  # fmt: skip

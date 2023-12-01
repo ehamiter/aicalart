@@ -3,13 +3,33 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_S3_BUCKET = "aiccalart"
+
+# Also need to add this S3 bucket to view images publicly:
+#
+# {
+#   "Version": "2012-10-17",
+#   "Statement": [
+#       {
+#           "Effect": "Allow",
+#           "Principal": "*",
+#           "Action": "s3:GetObject",
+#           "Resource": "arn:aws:s3:::aicalart/*"
+#       }
+#   ]
+# }
+
+
 # gpt-4-turbo will be coming out soon and is 3x cheaper than gpt-4.
 # in the meantime the preview model will be used.
-GPT_MODEL = 'gpt-4-1106-preview'
-IMAGE_MODEL = 'dall-e-3'
+GPT_MODEL = "gpt-4-1106-preview"
+IMAGE_MODEL = "dall-e-3"
 
 AICALART_OPENAI_KEY = os.getenv("AICALART_OPENAI_KEY")
 API_NINJAS_KEY = os.getenv("API_NINJAS_KEY")
+
 
 SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 
