@@ -3,10 +3,10 @@ import datetime
 import logging
 import os.path
 import random
+import time
 from base64 import b64decode
 from io import BytesIO
 from textwrap import dedent
-import time
 
 from colorama import Fore, Style
 from constants import (
@@ -16,7 +16,7 @@ from constants import (
     IMAGE_MODEL,
     SCOPES,
     SILLY_DAYS,
-    STYLES,
+    STYLES
 )
 from gnews import GNews
 from google.auth.transport.requests import Request
@@ -27,7 +27,6 @@ from googleapiclient.errors import HttpError
 from openai import BadRequestError, OpenAI
 from PIL import Image, ImageDraw
 from tqdm import tqdm
-
 
 logger = logging.getLogger(__name__)
 
