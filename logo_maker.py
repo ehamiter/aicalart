@@ -39,6 +39,9 @@ def logo_maker(description):
     Do not include multiple images of varying sizes-- it is essential the focus
     is drawn to the singular element.
 
+    Use these words in the beginning of the prompt for the specific style:
+    "digital art, line art, Unreal engine, award-winning, illustration".
+
     Respond with the prompt only.
     """
 

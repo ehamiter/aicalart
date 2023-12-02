@@ -21,7 +21,7 @@ from constants import (
     IMAGE_MODEL,
     SCOPES,
     SILLY_DAYS,
-    STYLES
+    STYLES,
 )
 from gnews import GNews
 from google.auth.transport.requests import Request
@@ -80,17 +80,25 @@ def get_news(country="US", period="1h"):
 
 
 def get_style():
-    return random.choice(STYLES)
+    # These modifiers typically produce better results
+    style = "digital art, award-winning art, 4k/8k, "
+    style += random.choice(STYLES)
+    return style
 
 
-def fetch_calendar_entries(creds, prompt, style):
+def fetch_calendar_entries(creds, prompt, style, the_date=None):
+    if the_date:
+        now_utc = f"{the_date}T14:00:00.000000Z"
+
     # for tqdm progress bar customization
     # example: '10%' [===>
     custom_format = "{desc}: {percentage:3.0f}%|{bar:20}| {n_fmt}/{total_fmt}"  # fmt: skip
 
     calendar_prompt = f"""
     Keep the prompt short and focused on my near-term most important commitments.
-    Remove any personally identifiable information and do not mention dates.
+    Remove any personally identifiable information and do not mention dates. Each
+    event is a special one that deserves to share the spotlight with the other
+    elements of the scene we are setting.
     """
 
     logger.info("Fetching calendar entries...\n")
@@ -145,7 +153,7 @@ def fetch_calendar_entries(creds, prompt, style):
         logger.error(f"An error occurred: {error}\n")
 
 
-def main(the_date=None, style=None, skip_calendar=False):
+def main(the_date=None, style=None, skip_calendar=False, skip_news=False):
     # Time it from beginning to end
     t1 = time.perf_counter()
 
@@ -155,7 +163,7 @@ def main(the_date=None, style=None, skip_calendar=False):
     style = style or get_style()
     holiday = get_holiday(the_date)
     silly_day = get_silly_day(the_date)
-    news = get_news()
+    news = None if skip_news else get_news()
 
     holiday_is_happening = True  # I mean, the odds are high
 
@@ -173,9 +181,14 @@ def main(the_date=None, style=None, skip_calendar=False):
     else:
         today = f"{the_date}; approximate the seasonal feel in the United States"
 
+    newslist = (
+        'events, holidays-- and particularly engrossed in the breaking news story "{news}"'
+        if news
+        else "events and holidays"
+    )
     prompt = f"""
     Imagine you are a master prompt maker for DALL-E. You specialize in creating
-    images based on current events, holidays, and focused on the news "{news}".
+    images based on current {newslist}.
 
     You are creative and very clever by hiding allegories in details. You always
     place your beloved orange tabby domestic shorthair cat, Hobbes, in every
@@ -204,7 +217,7 @@ def main(the_date=None, style=None, skip_calendar=False):
     if skip_calendar:
         logger.info("Skipping calendar fetching.\n")
     else:
-        prompt = fetch_calendar_entries(creds, prompt, style)
+        prompt = fetch_calendar_entries(creds, prompt, style, the_date=the_date)
 
     # Put a bow on the prompt
     prompt += f"""
@@ -234,6 +247,16 @@ def main(the_date=None, style=None, skip_calendar=False):
     DALL-E prompt: {dalle_prompt}\n
     """
     print(dedent(prompt_info))
+
+    print(
+        "Review the days and news and make sure it's not something that will clearly be rejected. Type 'ok' to continue."
+    )
+    proceed = input()
+    if proceed.strip().lower() != "ok":
+        logger.info(
+            "Bailing. Try appending --skip-news or wait until a more appropriate day."
+        )
+        exit(1)
 
     # Let's try to make these things. It could be rejected because god only knows
     # what the hell it's going to come up with. If it rejects it, just regenerate
@@ -310,14 +333,16 @@ def main(the_date=None, style=None, skip_calendar=False):
     aws_secret_access_key = AWS_SECRET_ACCESS_KEY
     bucket_name = AWS_S3_BUCKET
 
-    portrait_local_file_path = './static/images/portrait.png'
-    portrait_s3_file_key = 'images/portrait.png'
-    landscape_local_file_path = './static/images/landscape.png'
-    landscape_s3_file_key = 'images/landscape.png'
+    portrait_local_file_path = "./static/images/portrait.png"
+    portrait_s3_file_key = "images/portrait.png"
+    landscape_local_file_path = "./static/images/landscape.png"
+    landscape_s3_file_key = "images/landscape.png"
 
     def upload_file_to_s3(local_path, bucket, s3_key, access_key, secret_key):
         try:
-            s3 = boto3.client('s3', aws_access_key_id=access_key, aws_secret_access_key=secret_key)
+            s3 = boto3.client(
+                "s3", aws_access_key_id=access_key, aws_secret_access_key=secret_key
+            )
             s3.upload_file(local_path, bucket, s3_key)
             print(f"File {local_path} uploaded to {bucket}/{s3_key}")
         except FileNotFoundError:
@@ -354,5 +379,15 @@ if __name__ == "__main__":
         action="store_true",
         help="Include this flag to skip fetching Google calendar entries. Helpful if all you have are dentist appointments and trash reminders.",
     )
+    parser.add_argument(
+        "--skip-news",
+        action="store_true",
+        help="Include this flag to skip fetching the top news headline. Sometimes there's terrible shit happening out there.",
+    )
     args = parser.parse_args()
-    main(the_date=args.date, style=args.style, skip_calendar=args.skip_calendar)
+    main(
+        the_date=args.date,
+        style=args.style,
+        skip_calendar=args.skip_calendar,
+        skip_news=args.skip_news,
+    )
