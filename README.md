@@ -57,7 +57,37 @@ python promote.py portrait-2023-12-03T05/04/58.791456Z
 ...and it will upload the images and prompts to S3, and the site will reflect the new sources immediately. On a prompt generation, this line is printed out, so if you use iTerm, you can double-click the line and it auto-selects and copies it for ease of pasting into the command line.
 
 
-## AWS S3 url patterns
+## AWS S3
+
+### Granting public viewing permissions:
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+          "Effect": "Allow",
+          "Principal": "*",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::aicalart/*"
+      }
+  ]
+}
+
+```
+
+### CORS settings so fetching the prompts will work:
+```json
+[
+    {
+        "AllowedHeaders": ["*"],
+        "AllowedMethods": ["GET"],
+        "AllowedOrigins": ["https://aical.art"],
+        "ExposeHeaders": [],
+        "MaxAgeSeconds": 3000
+    }
+]
+
+```
 
 ### webp image paths
 ```

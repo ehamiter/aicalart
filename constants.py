@@ -8,21 +8,6 @@ AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_S3_BUCKET = "aicalart"
 
-# You also need to add this to the S3 bucket policy to view images publicly:
-#
-# {
-#   "Version": "2012-10-17",
-#   "Statement": [
-#       {
-#           "Effect": "Allow",
-#           "Principal": "*",
-#           "Action": "s3:GetObject",
-#           "Resource": "arn:aws:s3:::aicalart/*"
-#       }
-#   ]
-# }
-
-
 ### OpenaAI
 # gpt-4-turbo will be coming out soon and is 3x cheaper than gpt-4.
 # in the meantime the preview model will be used.

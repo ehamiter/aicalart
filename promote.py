@@ -50,39 +50,6 @@ def extract_datetime(filename):
     datetime_with_colons = datetime_part.replace('/', ':')
     return datetime_with_colons
 
-input_filename = sys.argv[1]
-the_datetime = extract_datetime(input_filename)
-the_date = the_datetime.split('T')[0]
-
-# Local file paths using the full datetime so you can generate more than one per day
-landscape_file = f"./staging/landscape-{the_datetime}.webp"
-portrait_file = f"./staging/portrait-{the_datetime}.webp"
-prompt_original_file = f"./staging/original-{the_datetime}.txt"
-prompt_landscape_file = f"./staging/landscape-{the_datetime}.txt"
-prompt_portrait_file = f"./staging/portrait-{the_datetime}.txt"
-
-
-# Define static dir paths
-dest_images = "./static/images"
-dest_prompt = "./static/prompts"
-
-
-### Copy files into the repo for deployment
-def copy_file(src, dest):
-    try:
-        shutil.copy(src, dest)
-        logger.info(f"Copied {src} to {dest}")
-    except FileNotFoundError:
-        logger.error("The file was not found")
-
-
-copy_file(landscape_file, f"{dest_images}/landscape.webp")
-copy_file(portrait_file, f"{dest_images}/portrait.webp")
-copy_file(prompt_original_file, f"{dest_prompt}/original.txt")
-copy_file(landscape_file, f"{dest_prompt}/landscape.txt")
-copy_file(portrait_file, f"{dest_prompt}/portrait.txt")
-
-
 def upload_file_to_s3(local_path, bucket, s3_key):
     logger.info(f"Uploading file {local_path}...")
     try:
@@ -98,6 +65,16 @@ def upload_file_to_s3(local_path, bucket, s3_key):
     except NoCredentialsError:
         logger.error("Credentials not available")
 
+input_filename = sys.argv[1]
+the_datetime = extract_datetime(input_filename)
+the_date = the_datetime.split('T')[0]
+
+# Local file paths using the full datetime so you can generate more than one per day
+landscape_file = f"./staging/landscape-{the_datetime}.webp"
+portrait_file = f"./staging/portrait-{the_datetime}.webp"
+prompt_original_file = f"./staging/original-{the_datetime}.txt"
+prompt_landscape_file = f"./staging/landscape-{the_datetime}.txt"
+prompt_portrait_file = f"./staging/portrait-{the_datetime}.txt"
 
 # For immediate usage
 upload_file_to_s3(landscape_file, AWS_S3_BUCKET, f"images/landscape.webp")
