@@ -327,9 +327,9 @@ def main(
     portrait_prompt = trim_string(portrait_prompt)
     landscape_prompt = trim_string(landscape_prompt)
 
-    original_prompt_file_path = f"./staging/prompt-original-{now}.txt"
-    portrait_prompt_file_path = f"./staging/prompt-portrait-{now}.txt"
-    landscape_prompt_file_path = f"./staging/prompt-landscape-{now}.txt"
+    original_prompt_file_path = f"./staging/original-{now}.txt"
+    portrait_prompt_file_path = f"./staging/portrait-{now}.txt"
+    landscape_prompt_file_path = f"./staging/landscape-{now}.txt"
 
     with open(original_prompt_file_path, "w") as file:
         file.write(dalle_prompt)
@@ -357,49 +357,10 @@ def main(
     landscape_image_path = f"./staging/landscape-{now}.png"
     landscape_image.save(landscape_image_path)
 
-    # Save images files in static folder
-    # portrait_local_path = "./static/images/portrait.png"
-    # landscape_local_path = "./static/images/landscape.png"
-
-    # Upload the images to S3
-    # portrait_s3_file_key = f"images/portrait-{now_cst}.png"
-    # landscape_s3_file_key = f"images/landscape-{now_cst}.png"
-
-    # def upload_file_to_s3(local_path, bucket, s3_key, access_key, secret_key):
-    #     ic(local_path, bucket, s3_key, access_key, secret_key)
-    #     try:
-    #         s3 = boto3.client(
-    #             "s3",
-    #             aws_access_key_id=AWS_ACCESS_KEY_ID,
-    #             aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-    #         )
-    #         s3.upload_file(local_path, bucket, s3_key)
-    #         print(f"File {local_path} uploaded to {bucket}/{s3_key}")
-    #     except FileNotFoundError:
-    #         print("The file was not found")
-    #     except NoCredentialsError:
-    #         print("Credentials not available")
-
-    # logger.info(f"{Fore.YELLOW}Uploading portrait file...{Style.RESET_ALL}")
-    # upload_file_to_s3(
-    #     portrait_image_path,
-    #     AWS_S3_BUCKET,
-    #     portrait_s3_file_key,
-    #     AWS_ACCESS_KEY_ID,
-    #     AWS_SECRET_ACCESS_KEY,
-    # )
-
-    # logger.info(f"{Fore.YELLOW}Uploading landscape file...{Style.RESET_ALL}")
-    # upload_file_to_s3(
-    #     landscape_image_path,
-    #     AWS_S3_BUCKET,
-    #     landscape_s3_file_key,
-    #     AWS_ACCESS_KEY_ID,
-    #     AWS_SECRET_ACCESS_KEY,
-    # )
-
     t2 = time.perf_counter()
-    logger.info(f"{Fore.CYAN}Done!{Style.RESET_ALL} [Total time: {t2 - t1:.2f} seconds]")  # fmt: skip
+    logger.info(f"{Fore.CYAN}Done!{Style.RESET_ALL} [Total time: {t2 - t1:.2f} seconds]\n\n")  # fmt: skip
+    logger.info(f"{Fore.GREEN}To promote these images, run: {Style.RESET_ALL}]n")
+    print(f'python promote.py "landscape-{now}"')
 
 
 if __name__ == "__main__":
