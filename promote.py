@@ -57,21 +57,16 @@ def upload_file_to_s3(local_path, bucket, s3_key):
             aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
         )
 
-        # Determine content type based on file extension
+        # Set content-type so we're not downloading objects
         if local_path.endswith('.txt'):
-            content_type = 'text/plain'
+            extra_args = {'ContentType': 'text/plain'}
         elif local_path.endswith('.webp'):
-            content_type = 'image/webp'
+            extra_args = {'ContentType': 'image/webp'}
         else:
-            content_type = 'application/octet-stream'  # Default content type
+            extra_args = {}
 
-        # Upload the file with the specified content type
-        s3.upload_file(
-            Filename=local_path,
-            Bucket=bucket,
-            Key=s3_key,
-            ExtraArgs={'ContentType': content_type}
-        )
+        # Upload the file with specified content type
+        s3.upload_file(local_path, bucket, s3_key, ExtraArgs=extra_args)
 
         logger.info(f"File {local_path} uploaded to {bucket}/{s3_key}")
 
