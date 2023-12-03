@@ -22,11 +22,11 @@ function updateImageTitleAndBackground() {
     let textFile;
     let bgFile;
     if (window.matchMedia("(orientation: portrait)").matches) {
-      textFile = './static/prompts/portrait.txt';
-      bgFile = "url('./static/images/portrait.webp')";
+      textFile = "url('https://aicalart.s3.amazonaws.com/prompts/portrait.txt')";
+      bgFile = "url('https://aicalart.s3.amazonaws.com/images/portrait.webp')";
     } else {
-      textFile = './static/prompts/landscape.txt';
-      bgFile = "url('./static/images/landscape.webp')";
+      textFile = "url('https://aicalart.s3.amazonaws.com/prompts/landscape.txt')";
+      bgFile = "url('https://aicalart.s3.amazonaws.com/images/landscape.webp')";
     }
     fetch(textFile)
     .then(response => response.text())

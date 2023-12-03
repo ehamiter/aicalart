@@ -3,19 +3,43 @@ import shutil
 import sys
 import boto3
 from botocore.exceptions import NoCredentialsError
-from colorama import Fore, Style
+from colorama import init, Fore, Style
 from constants import (
     AWS_ACCESS_KEY_ID,
     AWS_S3_BUCKET,
     AWS_SECRET_ACCESS_KEY,
 )
 
-logging.basicConfig(level=logging.INFO)
+init()  # for colorama
+
+
+class CustomFormatter(logging.Formatter):
+    format_dict = {
+        logging.DEBUG: Fore.CYAN + "[DEBUG] %(message)s" + Style.RESET_ALL,
+        logging.INFO: Fore.GREEN + "[INFO] %(message)s" + Style.RESET_ALL,
+        logging.WARNING: Fore.YELLOW + "[WARNING] %(message)s" + Style.RESET_ALL,
+        logging.ERROR: Fore.RED + "[ERROR] %(message)s" + Style.RESET_ALL,
+        logging.CRITICAL: Fore.MAGENTA + "[CRITICAL] %(message)s" + Style.RESET_ALL
+    }
+
+    def format(self, record):
+        log_fmt = self.format_dict.get(record.levelno)
+        formatter = logging.Formatter(log_fmt, datefmt="%Y-%m-%d %H:%M:%S")
+        return formatter.format(record)
+
+
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+# console handler for logging
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+ch.setFormatter(CustomFormatter())
+logger.addHandler(ch)
 
 
 if len(sys.argv) < 2:
-    print('Example usage: python promote.py "landscape-2023-12-03T01/50/17.205070Z"')
+    print('Example usage: python promote.py landscape-2023-12-03T01/50/17.205070Z')
     sys.exit(1)
 
 
@@ -59,9 +83,8 @@ copy_file(landscape_file, f"{dest_prompt}/landscape.txt")
 copy_file(portrait_file, f"{dest_prompt}/portrait.txt")
 
 
-### Upload files to AWS S3
 def upload_file_to_s3(local_path, bucket, s3_key):
-    logger.info(f"{Fore.YELLOW}Uploading file {local_path}...{Style.RESET_ALL}")
+    logger.info(f"Uploading file {local_path}...")
     try:
         s3 = boto3.client(
             "s3",
@@ -76,6 +99,14 @@ def upload_file_to_s3(local_path, bucket, s3_key):
         logger.error("Credentials not available")
 
 
+# For immediate usage
+upload_file_to_s3(landscape_file, AWS_S3_BUCKET, f"images/landscape.webp")
+upload_file_to_s3(portrait_file, AWS_S3_BUCKET, f"images/portrait.webp")
+upload_file_to_s3(prompt_original_file, AWS_S3_BUCKET, f"prompts/original.txt")
+upload_file_to_s3(prompt_landscape_file, AWS_S3_BUCKET, f"prompts/landscape.txt")
+upload_file_to_s3(prompt_portrait_file, AWS_S3_BUCKET, f"prompts/portrait.txt")
+
+# Archival
 upload_file_to_s3(landscape_file, AWS_S3_BUCKET, f"images/{the_date}-landscape.webp")
 upload_file_to_s3(portrait_file, AWS_S3_BUCKET, f"images/{the_date}-portrait.webp")
 upload_file_to_s3(prompt_original_file, AWS_S3_BUCKET, f"prompts/{the_date}-original.txt")
