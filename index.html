@@ -23,10 +23,10 @@ function updateImageTitleAndBackground() {
     let bgFile;
     if (window.matchMedia("(orientation: portrait)").matches) {
       textFile = './static/prompts/portrait.txt';
-      bgFile = "url('./static/images/portrait.png')";
+      bgFile = "url('./static/images/portrait.webp')";
     } else {
       textFile = './static/prompts/landscape.txt';
-      bgFile = "url('./static/images/landscape.png')";
+      bgFile = "url('./static/images/landscape.webp')";
     }
     fetch(textFile)
     .then(response => response.text())
