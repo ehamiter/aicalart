@@ -352,11 +352,11 @@ def main(
     ImageDraw.Draw(landscape_image)
 
     # Save them into the /staging folder that is ignored by git for convenience
-    portrait_image_path = f"./staging/portrait-{now}.png"
-    portrait_image.save(portrait_image_path)
+    portrait_image_path = f"./staging/portrait-{now}.webp"
+    portrait_image.save(portrait_image_path, format="webp")
 
-    landscape_image_path = f"./staging/landscape-{now}.png"
-    landscape_image.save(landscape_image_path)
+    landscape_image_path = f"./staging/landscape-{now}.webp"
+    landscape_image.save(landscape_image_path, format="webp")
 
     t2 = time.perf_counter()
     logger.info(f"{Fore.CYAN}Done!{Style.RESET_ALL} [Total time: {t2 - t1:.2f} seconds]\n\n")  # fmt: skip

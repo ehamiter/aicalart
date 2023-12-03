@@ -49,8 +49,8 @@ the_datetime = extract_datetime(input_filename)  # Full datetime with colons
 the_date = extract_date(the_datetime)  # Only the date part
 
 # Local file paths using the full datetime
-landscape_file = f"./staging/landscape-{the_datetime}.png"
-portrait_file = f"./staging/portrait-{the_datetime}.png"
+landscape_file = f"./staging/landscape-{the_datetime}.webp"
+portrait_file = f"./staging/portrait-{the_datetime}.webp"
 prompt_original_file = f"./staging/original-{the_datetime}.txt"
 prompt_landscape_file = f"./staging/landscape-{the_datetime}.txt"
 prompt_portrait_file = f"./staging/portrait-{the_datetime}.txt"
@@ -60,11 +60,6 @@ prompt_portrait_file = f"./staging/portrait-{the_datetime}.txt"
 dest_images = "./static/images"
 dest_prompt = "./static/prompts"
 
-print_debug_info(landscape_file)
-print_debug_info(portrait_file)
-print_debug_info(prompt_original_file)
-print_debug_info(prompt_landscape_file)
-print_debug_info(prompt_portrait_file)
 
 ### Copy files into the repo for deployment
 def copy_file(src, dest):
@@ -74,17 +69,9 @@ def copy_file(src, dest):
     except FileNotFoundError:
         logger.error("The file was not found")
 
-print_debug_info(f"{dest_images}/landscape.png")
-print_debug_info(f"{dest_images}/portrait.png")
-print_debug_info(f"{dest_prompt}/original.txt")
-print_debug_info(f"{dest_prompt}/landscape.txt")
-print_debug_info(f"{dest_prompt}/portrait.txt")
 
-# Copy images
-copy_file(landscape_file, f"{dest_images}/landscape.png")
-copy_file(portrait_file, f"{dest_images}/portrait.png")
-
-# ...and prompts
+copy_file(landscape_file, f"{dest_images}/landscape.webp")
+copy_file(portrait_file, f"{dest_images}/portrait.webp")
 copy_file(prompt_original_file, f"{dest_prompt}/original.txt")
 copy_file(landscape_file, f"{dest_prompt}/landscape.txt")
 copy_file(portrait_file, f"{dest_prompt}/portrait.txt")
@@ -107,17 +94,8 @@ def upload_file_to_s3(local_path, bucket, s3_key):
         logger.error("Credentials not available")
 
 
-
-print_debug_info(f"{AWS_S3_BUCKET}/images/{the_date}-landscape.png")
-print_debug_info(f"{AWS_S3_BUCKET}/images/{the_date}-portrait.png")
-print_debug_info(f"{AWS_S3_BUCKET}/prompts/{the_date}-original.txt")
-print_debug_info(f"{AWS_S3_BUCKET}/prompts/{the_date}-landscape.txt")
-print_debug_info(f"{AWS_S3_BUCKET}/prompts/{the_date}-portrait.txt")
-
-
-# S3 paths using only the date part
-upload_file_to_s3(landscape_file, AWS_S3_BUCKET, f"images/{the_date}-landscape.png")
-upload_file_to_s3(portrait_file, AWS_S3_BUCKET, f"images/{the_date}-portrait.png")
+upload_file_to_s3(landscape_file, AWS_S3_BUCKET, f"images/{the_date}-landscape.webp")
+upload_file_to_s3(portrait_file, AWS_S3_BUCKET, f"images/{the_date}-portrait.webp")
 upload_file_to_s3(prompt_original_file, AWS_S3_BUCKET, f"prompts/{the_date}-original.txt")
 upload_file_to_s3(prompt_landscape_file, AWS_S3_BUCKET, f"prompts/{the_date}-landscape.txt")
 upload_file_to_s3(prompt_portrait_file, AWS_S3_BUCKET, f"prompts/{the_date}-portrait.txt")
