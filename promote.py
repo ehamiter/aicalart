@@ -1,8 +1,7 @@
-
-import datetime
 import logging
 import shutil
 import sys
+import os
 import boto3
 from botocore.exceptions import NoCredentialsError
 from colorama import Fore, Style
@@ -11,6 +10,14 @@ from constants import (
     AWS_S3_BUCKET,
     AWS_SECRET_ACCESS_KEY,
 )
+
+# Debug function to print file paths
+def print_debug_info(file_path):
+    if os.path.exists(file_path):
+        logger.info(f"File exists: {file_path}")
+    else:
+        logger.warning(f"File not found: {file_path}")
+
 
 # Configure logger
 logging.basicConfig(level=logging.INFO)
@@ -21,27 +28,43 @@ if len(sys.argv) < 2:
     print("Example usage: python promote.py landscape-2023-12-03T01/50/17.205070Z")
     sys.exit(1)
 
-def extract_date(filename):
-    hyphen_pos = filename.find('-')
-    t_pos = filename.find('T')
-    date = filename[hyphen_pos+1:t_pos]
-    return date
 
-the_date = extract_date(sys.argv[1])  # YYYY-MM-DD
+def extract_datetime(filename):
+    # Extract the part after "landscape-" or "portrait-" and keep 'Z' at the end
+    datetime_part = filename.split('-', 1)[1]
+    # Replace slashes with colons in the time part
+    datetime_with_colons = datetime_part.replace('/', ':')
+    return datetime_with_colons
 
-# Define image file paths for .gitignored /staging
-landscape_file = f"./staging/landscape-{the_date}.png"
-portrait_file = f"./staging/portrait-{the_date}.png"
 
-# ...and prompt file paths
-prompt_original_file = f"./staging/original-{the_date}.txt"
-prompt_landscape_file = f"./staging/landscape-{the_date}.txt"
-prompt_portrait_file = f"./staging/portrait-{the_date}.txt"
+def extract_date(datetime_with_colons):
+    # Extract only the date part
+    date_part = datetime_with_colons.split('T')[0]
+    return date_part
+
+
+input_filename = sys.argv[1]  # Full input filename
+
+the_datetime = extract_datetime(input_filename)  # Full datetime with colons
+the_date = extract_date(the_datetime)  # Only the date part
+
+# Local file paths using the full datetime
+landscape_file = f"./staging/landscape-{the_datetime}.png"
+portrait_file = f"./staging/portrait-{the_datetime}.png"
+prompt_original_file = f"./staging/original-{the_datetime}.txt"
+prompt_landscape_file = f"./staging/landscape-{the_datetime}.txt"
+prompt_portrait_file = f"./staging/portrait-{the_datetime}.txt"
+
 
 # Define static dir paths
 dest_images = "./static/images"
 dest_prompt = "./static/prompts"
 
+print_debug_info(landscape_file)
+print_debug_info(portrait_file)
+print_debug_info(prompt_original_file)
+print_debug_info(prompt_landscape_file)
+print_debug_info(prompt_portrait_file)
 
 ### Copy files into the repo for deployment
 def copy_file(src, dest):
@@ -51,6 +74,11 @@ def copy_file(src, dest):
     except FileNotFoundError:
         logger.error("The file was not found")
 
+print_debug_info(f"{dest_images}/landscape.png")
+print_debug_info(f"{dest_images}/portrait.png")
+print_debug_info(f"{dest_prompt}/original.txt")
+print_debug_info(f"{dest_prompt}/landscape.txt")
+print_debug_info(f"{dest_prompt}/portrait.txt")
 
 # Copy images
 copy_file(landscape_file, f"{dest_images}/landscape.png")
@@ -79,11 +107,17 @@ def upload_file_to_s3(local_path, bucket, s3_key):
         logger.error("Credentials not available")
 
 
-# Upload image files to S3
+
+print_debug_info(f"{AWS_S3_BUCKET}/images/{the_date}-landscape.png")
+print_debug_info(f"{AWS_S3_BUCKET}/images/{the_date}-portrait.png")
+print_debug_info(f"{AWS_S3_BUCKET}/prompts/{the_date}-original.txt")
+print_debug_info(f"{AWS_S3_BUCKET}/prompts/{the_date}-landscape.txt")
+print_debug_info(f"{AWS_S3_BUCKET}/prompts/{the_date}-portrait.txt")
+
+
+# S3 paths using only the date part
 upload_file_to_s3(landscape_file, AWS_S3_BUCKET, f"images/{the_date}-landscape.png")
 upload_file_to_s3(portrait_file, AWS_S3_BUCKET, f"images/{the_date}-portrait.png")
-
-# Upload prompts to S3
 upload_file_to_s3(prompt_original_file, AWS_S3_BUCKET, f"prompts/{the_date}-original.txt")
 upload_file_to_s3(prompt_landscape_file, AWS_S3_BUCKET, f"prompts/{the_date}-landscape.txt")
-upload_file_to_s3(prompt_portrait_file, AWS_S3_BUCKET, f"promtps/{the_date}-portrait.txt")
+upload_file_to_s3(prompt_portrait_file, AWS_S3_BUCKET, f"prompts/{the_date}-portrait.txt")
