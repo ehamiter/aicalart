@@ -89,7 +89,24 @@ def get_style():
     return style
 
 
-def fetch_calendar_entries(creds, prompt, style, the_date=None):
+def fetch_calendar_entries(prompt, style, the_date=None):
+    # Google Calendar creds
+    creds = None
+    if os.path.exists("./token.json"):
+        creds = Credentials.from_authorized_user_file("./token.json", SCOPES)
+
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                "./credentials.json", SCOPES
+            )
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open("./token.json", "w") as token:
+            token.write(creds.to_json())
+
     if the_date:
         now_utc = f"{the_date}T14:00:00.000000Z"
 
@@ -156,6 +173,31 @@ def fetch_calendar_entries(creds, prompt, style, the_date=None):
         logger.error(f"An error occurred: {error}\n")
 
 
+def get_today_and_newslist(the_date, holiday, silly_day, news):
+    holiday_is_happening = True  # I mean, the odds are high
+
+    if holiday and silly_day:
+        the_day = f"{holiday} and {silly_day}"
+    elif holiday:
+        the_day = holiday
+    elif silly_day:
+        the_day = silly_day
+    else:
+        holiday_is_happening = False
+
+    if holiday_is_happening:
+        today = f"{the_date}, {the_day}; ranked in order of importance"
+    else:
+        today = f"{the_date}; approximate the seasonal feel in the United States"
+
+    newslist = (
+        'events, holidays-- and particularly engrossed in the breaking news story "{news}"'
+        if news
+        else "events and holidays"
+    )
+    return today, newslist
+
+
 def main(
     the_date=None,
     style=None,
@@ -186,27 +228,8 @@ def main(
     silly_day = None if skip_silly_days else get_silly_day(the_date)
     news = None if skip_news else get_news()
 
-    holiday_is_happening = True  # I mean, the odds are high
+    today, newslist = get_today_and_newslist(the_date, holiday, silly_day, news)
 
-    if holiday and silly_day:
-        the_day = f"{holiday} and {silly_day}"
-    elif holiday:
-        the_day = holiday
-    elif silly_day:
-        the_day = silly_day
-    else:
-        holiday_is_happening = False
-
-    if holiday_is_happening:
-        today = f"{the_date}, {the_day}; ranked in order of importance"
-    else:
-        today = f"{the_date}; approximate the seasonal feel in the United States"
-
-    newslist = (
-        'events, holidays-- and particularly engrossed in the breaking news story "{news}"'
-        if news
-        else "events and holidays"
-    )
     prompt = f"""
     Imagine you are a master prompt maker for DALL-E. You specialize in creating
     images based on current {newslist}.
@@ -218,27 +241,8 @@ def main(
     Today is {today}.
     """
 
-    # Google Calendar creds
-    creds = None
-    if os.path.exists("./token.json"):
-        creds = Credentials.from_authorized_user_file("./token.json", SCOPES)
-
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                "./credentials.json", SCOPES
-            )
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open("./token.json", "w") as token:
-            token.write(creds.to_json())
-
-    if skip_calendar:
-        logger.info("Skipping calendar fetching.\n")
-    else:
-        prompt = fetch_calendar_entries(creds, prompt, style, the_date=the_date)
+    if not skip_calendar:
+        prompt = fetch_calendar_entries(prompt, style, the_date=the_date)
 
     # Put a bow on the prompt
     prompt += f"""
@@ -263,6 +267,7 @@ def main(
 
     dalle_prompt = completion.choices[0].message.content
     prompt_info = f"""
+    Style: {style}\n
     News: {news}\n
     Today: {today.split(';')[0]}\n
     DALL-E prompt: {dalle_prompt}\n
@@ -355,8 +360,8 @@ def main(
     # landscape_local_path = "./static/images/landscape.png"
 
     # Upload the images to S3
-    portrait_s3_file_key = "images/portrait.png"
-    landscape_s3_file_key = "images/landscape.png"
+    portrait_s3_file_key = "images/portrait-{now_cst}.png"
+    landscape_s3_file_key = "images/landscape-{now_cst}.png"
 
     def upload_file_to_s3(local_path, bucket, s3_key, access_key, secret_key):
         ic(local_path, bucket, s3_key, access_key, secret_key)
