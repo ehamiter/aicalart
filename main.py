@@ -281,7 +281,7 @@ def main(
     Review the days and news and make sure it's not something that will clearly be rejected.
     Type 'ok' to continue.
     """
-    print(dedent(warning))
+    print(dedent(f"{warning}\n"))
     proceed = input()
     if proceed.strip().lower() != "ok":
         logger.info(
@@ -293,7 +293,7 @@ def main(
     # what the hell it's going to come up with. If it rejects it, just regenerate
     # and see. Some keywords it will have a problem with... for example, "genocide".
     try:
-        logger.info(f"\n{Fore.YELLOW}Generating portrait image...{Style.RESET_ALL}")
+        logger.info(f"{Fore.YELLOW}Generating portrait image...{Style.RESET_ALL}")
         portrait_response = client.images.generate(
             model=IMAGE_MODEL,
             prompt=f"{dalle_prompt}. Ensure this image is in a vertical orientation.",

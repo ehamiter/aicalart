@@ -80,10 +80,10 @@ def upload_file_to_s3(local_path, bucket, s3_key):
 
 
 # Upload image files to S3
-upload_file_to_s3(landscape_file, AWS_S3_BUCKET, f"images/{date}-landscape.png")
-upload_file_to_s3(portrait_file, AWS_S3_BUCKET, f"images/{date}-portrait.png")
+upload_file_to_s3(landscape_file, AWS_S3_BUCKET, f"images/{the_date}-landscape.png")
+upload_file_to_s3(portrait_file, AWS_S3_BUCKET, f"images/{the_date}-portrait.png")
 
 # Upload prompts to S3
-upload_file_to_s3(prompt_original_file, AWS_S3_BUCKET, f"prompts/{date}-original.txt")
-upload_file_to_s3(prompt_landscape_file, AWS_S3_BUCKET, f"prompts/{date}-landscape.txt")
-upload_file_to_s3(prompt_portrait_file, AWS_S3_BUCKET, f"promtps/{date}-portrait.txt")
+upload_file_to_s3(prompt_original_file, AWS_S3_BUCKET, f"prompts/{the_date}-original.txt")
+upload_file_to_s3(prompt_landscape_file, AWS_S3_BUCKET, f"prompts/{the_date}-landscape.txt")
+upload_file_to_s3(prompt_portrait_file, AWS_S3_BUCKET, f"promtps/{the_date}-portrait.txt")
