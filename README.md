@@ -62,17 +62,17 @@ python promote.py portrait-2023-12-03T05/04/58.791456Z
 ### Granting public viewing permissions:
 ```json
 {
-  "Version": "2012-10-17",
-  "Statement": [
-      {
-          "Effect": "Allow",
-          "Principal": "*",
-          "Action": "s3:GetObject",
-          "Resource": "arn:aws:s3:::aicalart/*"
-      }
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::aicalart/*"
+        }
+    ]
 }
-
 ```
 
 ### CORS settings so fetching the prompts will work:
