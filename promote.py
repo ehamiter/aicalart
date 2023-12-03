@@ -1,16 +1,13 @@
 import logging
-import shutil
 import sys
 import boto3
 from botocore.exceptions import NoCredentialsError
-from colorama import init, Fore, Style
+from colorama import Fore, Style
 from constants import (
     AWS_ACCESS_KEY_ID,
     AWS_S3_BUCKET,
     AWS_SECRET_ACCESS_KEY,
 )
-
-init()  # for colorama
 
 
 class CustomFormatter(logging.Formatter):
