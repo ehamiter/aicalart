@@ -272,7 +272,7 @@ def main(
     Style: {style_display}\n
     News: {news}\n
     Today: {today.split(';')[0]}\n
-    DALL-E prompt: {dalle_prompt}\n
+    DALL-E prompt: {dalle_prompt}
     """
     print(dedent(prompt_info))
 
@@ -292,7 +292,7 @@ def main(
     # what the hell it's going to come up with. If it rejects it, just regenerate
     # and see. Some keywords it will have a problem with... for example, "genocide".
     try:
-        logger.info(f"{Fore.YELLOW}Generating portrait image...{Style.RESET_ALL}")
+        logger.info(f"\n{Fore.YELLOW}Generating portrait image...{Style.RESET_ALL}")
         portrait_response = client.images.generate(
             model=IMAGE_MODEL,
             prompt=f"{dalle_prompt}. Ensure this image is in a vertical orientation.",
@@ -320,8 +320,8 @@ def main(
     # The finalized prompt is revised by GPT and slightly different for each orientation
     portrait_prompt = portrait_response.data[0].revised_prompt
     landscape_prompt = landscape_response.data[0].revised_prompt
-    print("\nPortrait prompt: ", portrait_prompt)
-    print("\nLandscape prompt: ", landscape_prompt)
+    print(f"\nPortrait prompt: {portrait_prompt}")
+    print(f"\nLandscape prompt: {landscape_prompt}\n")
 
     # Anything over 1,023 chars gets chopped, so if it's used in an img title, use the shortened version
     portrait_prompt = trim_string(portrait_prompt)
