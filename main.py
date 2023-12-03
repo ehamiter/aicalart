@@ -19,6 +19,7 @@ from constants import (
     GPT_MODEL,
     HOLIDAYS,
     IMAGE_MODEL,
+    PRE_STYLE,
     SCOPES,
     SILLY_DAYS,
     STYLES,
@@ -83,8 +84,7 @@ def get_news(country="US", period="1h"):
 
 
 def get_style():
-    # These modifiers typically produce better results
-    style = "digital art, award-winning art, 4k/8k, "
+    style = PRE_STYLE
     style += random.choice(STYLES)
     return style
 
@@ -266,8 +266,10 @@ def main(
     )
 
     dalle_prompt = completion.choices[0].message.content
+    style_display = style.replace(PRE_STYLE, "")
+
     prompt_info = f"""
-    Style: {style}\n
+    Style: {style_display}\n
     News: {news}\n
     Today: {today.split(';')[0]}\n
     DALL-E prompt: {dalle_prompt}\n
@@ -360,41 +362,41 @@ def main(
     # landscape_local_path = "./static/images/landscape.png"
 
     # Upload the images to S3
-    portrait_s3_file_key = "images/portrait-{now_cst}.png"
-    landscape_s3_file_key = "images/landscape-{now_cst}.png"
+    # portrait_s3_file_key = f"images/portrait-{now_cst}.png"
+    # landscape_s3_file_key = f"images/landscape-{now_cst}.png"
 
-    def upload_file_to_s3(local_path, bucket, s3_key, access_key, secret_key):
-        ic(local_path, bucket, s3_key, access_key, secret_key)
-        try:
-            s3 = boto3.client(
-                "s3",
-                aws_access_key_id=AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-            )
-            s3.upload_file(local_path, bucket, s3_key)
-            print(f"File {local_path} uploaded to {bucket}/{s3_key}")
-        except FileNotFoundError:
-            print("The file was not found")
-        except NoCredentialsError:
-            print("Credentials not available")
+    # def upload_file_to_s3(local_path, bucket, s3_key, access_key, secret_key):
+    #     ic(local_path, bucket, s3_key, access_key, secret_key)
+    #     try:
+    #         s3 = boto3.client(
+    #             "s3",
+    #             aws_access_key_id=AWS_ACCESS_KEY_ID,
+    #             aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    #         )
+    #         s3.upload_file(local_path, bucket, s3_key)
+    #         print(f"File {local_path} uploaded to {bucket}/{s3_key}")
+    #     except FileNotFoundError:
+    #         print("The file was not found")
+    #     except NoCredentialsError:
+    #         print("Credentials not available")
 
-    logger.info(f"{Fore.YELLOW}Uploading portrait file...{Style.RESET_ALL}")
-    upload_file_to_s3(
-        portrait_image_path,
-        AWS_S3_BUCKET,
-        portrait_s3_file_key,
-        AWS_ACCESS_KEY_ID,
-        AWS_SECRET_ACCESS_KEY,
-    )
+    # logger.info(f"{Fore.YELLOW}Uploading portrait file...{Style.RESET_ALL}")
+    # upload_file_to_s3(
+    #     portrait_image_path,
+    #     AWS_S3_BUCKET,
+    #     portrait_s3_file_key,
+    #     AWS_ACCESS_KEY_ID,
+    #     AWS_SECRET_ACCESS_KEY,
+    # )
 
-    logger.info(f"{Fore.YELLOW}Uploading landscape file...{Style.RESET_ALL}")
-    upload_file_to_s3(
-        landscape_image_path,
-        AWS_S3_BUCKET,
-        landscape_s3_file_key,
-        AWS_ACCESS_KEY_ID,
-        AWS_SECRET_ACCESS_KEY,
-    )
+    # logger.info(f"{Fore.YELLOW}Uploading landscape file...{Style.RESET_ALL}")
+    # upload_file_to_s3(
+    #     landscape_image_path,
+    #     AWS_S3_BUCKET,
+    #     landscape_s3_file_key,
+    #     AWS_ACCESS_KEY_ID,
+    #     AWS_SECRET_ACCESS_KEY,
+    # )
 
     t2 = time.perf_counter()
     logger.info(f"{Fore.CYAN}Done!{Style.RESET_ALL} [Total time: {t2 - t1:.2f} seconds]")  # fmt: skip

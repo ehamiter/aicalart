@@ -38,6 +38,7 @@ API_NINJAS_KEY = os.getenv("API_NINJAS_KEY")
 SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 
 ### Prompt styles
+PRE_STYLE = "digital art, award-winning art, 4k/8k, "  # These modifiers typically produce better results
 STYLES = [
     "1910's black and white newspaper satirical comic drawings",
     "Metal lithograph, ornate carving, intricate details, gothic, neoclassicism",

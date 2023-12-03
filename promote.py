@@ -68,7 +68,7 @@ prompt_portrait_file = f"./staging/portrait-{datetime}.txt"
 
 # Define static dir paths
 dest_images = "./static/images"
-dest_prompt = "./static/prompt"
+dest_prompt = "./static/prompts"
 
 
 ### Copy files into the repo for deployment
