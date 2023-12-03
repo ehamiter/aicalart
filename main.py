@@ -14,8 +14,8 @@ from colorama import Fore, Style
 from constants import (
     AICALART_OPENAI_KEY,
     AWS_ACCESS_KEY_ID,
-    AWS_SECRET_ACCESS_KEY,
     AWS_S3_BUCKET,
+    AWS_SECRET_ACCESS_KEY,
     GPT_MODEL,
     HOLIDAYS,
     IMAGE_MODEL,
@@ -29,9 +29,12 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from icecream import install
 from openai import BadRequestError, OpenAI
 from PIL import Image, ImageDraw
 from tqdm import tqdm
+
+install()  # This makes icecream debugging available everywhere via ic()
 
 logger = logging.getLogger(__name__)
 
@@ -153,16 +156,34 @@ def fetch_calendar_entries(creds, prompt, style, the_date=None):
         logger.error(f"An error occurred: {error}\n")
 
 
-def main(the_date=None, style=None, skip_calendar=False, skip_news=False):
+def main(
+    the_date=None,
+    style=None,
+    skip_calendar=False,
+    skip_holidays=False,
+    skip_silly_days=False,
+    skip_news=False,
+):
     # Time it from beginning to end
     t1 = time.perf_counter()
+
+    # Print out any args that we're skipping so there are no surprises. No alarms, and no surprise, please
+    args = locals()
+    skipped_args = [
+        arg_name.replace("skip_", "")
+        for arg_name, arg_value in args.items()
+        if arg_name.startswith("skip_") and arg_value
+    ]
+    skipped_args_str = ", ".join(skipped_args)
+    logger.info(f"Skipping: {skipped_args_str}\n")
 
     # `the_date`, e.g. '2023-11-26', is used in keys for the holiday dicts
     the_date = the_date or now_cst.split("T")[0]  # fmt: skip
     the_day = ""  # placeholder for any named days, e.g. "Cyber Monday and National Fritters Day"
     style = style or get_style()
-    holiday = get_holiday(the_date)
-    silly_day = get_silly_day(the_date)
+
+    holiday = None if skip_holidays else get_holiday(the_date)
+    silly_day = None if skip_silly_days else get_silly_day(the_date)
     news = None if skip_news else get_news()
 
     holiday_is_happening = True  # I mean, the odds are high
@@ -248,9 +269,11 @@ def main(the_date=None, style=None, skip_calendar=False, skip_news=False):
     """
     print(dedent(prompt_info))
 
-    print(
-        "Review the days and news and make sure it's not something that will clearly be rejected. Type 'ok' to continue."
-    )
+    warning = """
+    Review the days and news and make sure it's not something that will clearly be rejected.
+    Type 'ok' to continue.
+    """
+    print(dedent(warning))
     proceed = input()
     if proceed.strip().lower() != "ok":
         logger.info(
@@ -327,21 +350,21 @@ def main(the_date=None, style=None, skip_calendar=False, skip_news=False):
     landscape_image_path = f"./staging/landscape-{now}.png"
     landscape_image.save(landscape_image_path)
 
-    # Upload the images to S3 for archival
+    # Save images files in static folder
+    # portrait_local_path = "./static/images/portrait.png"
+    # landscape_local_path = "./static/images/landscape.png"
 
-    aws_access_key_id = AWS_ACCESS_KEY_ID
-    aws_secret_access_key = AWS_SECRET_ACCESS_KEY
-    bucket_name = AWS_S3_BUCKET
-
-    portrait_local_file_path = "./static/images/portrait.png"
+    # Upload the images to S3
     portrait_s3_file_key = "images/portrait.png"
-    landscape_local_file_path = "./static/images/landscape.png"
     landscape_s3_file_key = "images/landscape.png"
 
     def upload_file_to_s3(local_path, bucket, s3_key, access_key, secret_key):
+        ic(local_path, bucket, s3_key, access_key, secret_key)
         try:
             s3 = boto3.client(
-                "s3", aws_access_key_id=access_key, aws_secret_access_key=secret_key
+                "s3",
+                aws_access_key_id=AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
             )
             s3.upload_file(local_path, bucket, s3_key)
             print(f"File {local_path} uploaded to {bucket}/{s3_key}")
@@ -350,11 +373,23 @@ def main(the_date=None, style=None, skip_calendar=False, skip_news=False):
         except NoCredentialsError:
             print("Credentials not available")
 
-    # logger.info(f"{Fore.YELLOW}Uploading portrait file...{Style.RESET_ALL}")
-    # upload_file_to_s3(portrait_local_file_path, AWS_S3_BUCKET, portrait_s3_file_key, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+    logger.info(f"{Fore.YELLOW}Uploading portrait file...{Style.RESET_ALL}")
+    upload_file_to_s3(
+        portrait_image_path,
+        AWS_S3_BUCKET,
+        portrait_s3_file_key,
+        AWS_ACCESS_KEY_ID,
+        AWS_SECRET_ACCESS_KEY,
+    )
 
-    # logger.info(f"{Fore.YELLOW}Uploading landscape file...{Style.RESET_ALL}")
-    # upload_file_to_s3(landscape_local_file_path, AWS_S3_BUCKET, landscape_s3_file_key, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+    logger.info(f"{Fore.YELLOW}Uploading landscape file...{Style.RESET_ALL}")
+    upload_file_to_s3(
+        landscape_image_path,
+        AWS_S3_BUCKET,
+        landscape_s3_file_key,
+        AWS_ACCESS_KEY_ID,
+        AWS_SECRET_ACCESS_KEY,
+    )
 
     t2 = time.perf_counter()
     logger.info(f"{Fore.CYAN}Done!{Style.RESET_ALL} [Total time: {t2 - t1:.2f} seconds]")  # fmt: skip
@@ -380,14 +415,26 @@ if __name__ == "__main__":
         help="Include this flag to skip fetching Google calendar entries. Helpful if all you have are dentist appointments and trash reminders.",
     )
     parser.add_argument(
+        "--skip-holidays",
+        action="store_true",
+        help="Skip fetching Holidays. Hard to not get something rejected when it's a day honoring past survivors of atrocities.",
+    )
+    parser.add_argument(
+        "--skip-silly-days",
+        action="store_true",
+        help="Most of the time this is fine, but sometimes you don't want 'Did You Fart? Day'...  but sometimes you do.",
+    )
+    parser.add_argument(
         "--skip-news",
         action="store_true",
-        help="Include this flag to skip fetching the top news headline. Sometimes there's terrible shit happening out there.",
+        help="Skip fetching the top news headline. Sometimes there's terrible shit happening out there.",
     )
     args = parser.parse_args()
     main(
         the_date=args.date,
         style=args.style,
         skip_calendar=args.skip_calendar,
+        skip_holidays=args.skip_holidays,
+        skip_silly_days=args.skip_silly_days,
         skip_news=args.skip_news,
     )

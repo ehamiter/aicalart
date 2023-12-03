@@ -3,11 +3,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+### AWS
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_S3_BUCKET = "aiccalart"
+AWS_S3_BUCKET = "aicalart"
 
-# Also need to add this S3 bucket to view images publicly:
+# You also need to add this to the S3 bucket policy to view images publicly:
 #
 # {
 #   "Version": "2012-10-17",
@@ -22,17 +23,21 @@ AWS_S3_BUCKET = "aiccalart"
 # }
 
 
+### OpenaAI
 # gpt-4-turbo will be coming out soon and is 3x cheaper than gpt-4.
 # in the meantime the preview model will be used.
 GPT_MODEL = "gpt-4-1106-preview"
 IMAGE_MODEL = "dall-e-3"
-
 AICALART_OPENAI_KEY = os.getenv("AICALART_OPENAI_KEY")
+
+
+### Misc APIs
 API_NINJAS_KEY = os.getenv("API_NINJAS_KEY")
 
-
+### Google Calendar
 SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 
+### Prompt styles
 STYLES = [
     "1910's black and white newspaper satirical comic drawings",
     "Metal lithograph, ornate carving, intricate details, gothic, neoclassicism",
@@ -135,24 +140,9 @@ STYLES = [
     "Urban exploration, cityscapes, modern life, architectural focus",
 ]
 
+
+### Holidays and Silly Days span from 2023-11-25 to 2024-12-31
 HOLIDAYS = {
-    "2023-11-01": "First Day of Native American Heritage Month",
-    "2023-11-02": "International Day to End Impunity for Crimes against Journalists",
-    "2023-11-05": "Daylight Saving Time ends",
-    "2023-11-06": "International Day for Preventing the Exploitation of the Environment in War and Armed Conflict",
-    "2023-11-07": "Election Day",
-    "2023-11-10": "Day off for Veterans Day",
-    "2023-11-11": "Veterans Day",
-    "2023-11-12": "World Pneumonia Day",
-    "2023-11-13": "Day off for Veterans' Day/Armistice Day",
-    "2023-11-14": "World Diabetes Day",
-    "2023-11-16": "World Philosophy Day",
-    "2023-11-17": "World Prematurity Day",
-    "2023-11-19": "International Men's Day",
-    "2023-11-20": "Africa Industrialization Day",
-    "2023-11-21": "World Television Day",
-    "2023-11-23": "Thanksgiving Day",
-    "2023-11-24": "Native American Heritage Day",
     "2023-11-25": "International Day for the Elimination of Violence against Women",
     "2023-11-27": "Cyber Monday",
     "2023-11-28": "National Day of Giving",
