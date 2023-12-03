@@ -7,15 +7,9 @@ import time
 from base64 import b64decode
 from io import BytesIO
 from textwrap import dedent
-
-import boto3
-from botocore.exceptions import NoCredentialsError
 from colorama import Fore, Style
 from constants import (
     AICALART_OPENAI_KEY,
-    AWS_ACCESS_KEY_ID,
-    AWS_S3_BUCKET,
-    AWS_SECRET_ACCESS_KEY,
     GPT_MODEL,
     HOLIDAYS,
     IMAGE_MODEL,
