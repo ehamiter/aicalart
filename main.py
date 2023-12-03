@@ -1,5 +1,7 @@
 import argparse
+import base64
 import datetime
+import json
 import logging
 import os.path
 import random
@@ -7,6 +9,7 @@ import time
 from base64 import b64decode
 from io import BytesIO
 from textwrap import dedent
+
 from colorama import Fore, Style
 from constants import (
     AICALART_OPENAI_KEY,
@@ -192,6 +195,11 @@ def get_today_and_newslist(the_date, holiday, silly_day, news):
     return today, newslist
 
 
+def decode_b64_json(b64_data):
+    json_data = base64.b64decode(b64_data).decode("utf-8")
+    return json.loads(json_data)
+
+
 def main(
     the_date=None,
     style=None,
@@ -312,9 +320,10 @@ def main(
         )
         exit(1)
 
-    # The finalized prompt is revised by GPT and slightly different for each orientation
+    # Extract revised prompts directly from the response objects
     portrait_prompt = portrait_response.data[0].revised_prompt
     landscape_prompt = landscape_response.data[0].revised_prompt
+
     print(f"\nPortrait prompt: {portrait_prompt}")
     print(f"\nLandscape prompt: {landscape_prompt}\n")
 
