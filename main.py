@@ -275,7 +275,7 @@ def main(
     Review the days and news and make sure it's not something that will clearly be rejected.
     Type 'ok' to continue.
     """
-    print(dedent(f"{warning}\n"))
+    print(dedent(warning))
     proceed = input()
     if proceed.strip().lower() != "ok":
         logger.info(

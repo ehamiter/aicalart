@@ -11,21 +11,12 @@ from constants import (
     AWS_SECRET_ACCESS_KEY,
 )
 
-# Debug function to print file paths
-def print_debug_info(file_path):
-    if os.path.exists(file_path):
-        logger.info(f"File exists: {file_path}")
-    else:
-        logger.warning(f"File not found: {file_path}")
-
-
-# Configure logger
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Assuming the first argument is the filename
+
 if len(sys.argv) < 2:
-    print("Example usage: python promote.py landscape-2023-12-03T01/50/17.205070Z")
+    print('Example usage: python promote.py "landscape-2023-12-03T01/50/17.205070Z"')
     sys.exit(1)
 
 
@@ -36,19 +27,11 @@ def extract_datetime(filename):
     datetime_with_colons = datetime_part.replace('/', ':')
     return datetime_with_colons
 
+input_filename = sys.argv[1]
+the_datetime = extract_datetime(input_filename)
+the_date = the_datetime.split('T')[0]
 
-def extract_date(datetime_with_colons):
-    # Extract only the date part
-    date_part = datetime_with_colons.split('T')[0]
-    return date_part
-
-
-input_filename = sys.argv[1]  # Full input filename
-
-the_datetime = extract_datetime(input_filename)  # Full datetime with colons
-the_date = extract_date(the_datetime)  # Only the date part
-
-# Local file paths using the full datetime
+# Local file paths using the full datetime so you can generate more than one per day
 landscape_file = f"./staging/landscape-{the_datetime}.webp"
 portrait_file = f"./staging/portrait-{the_datetime}.webp"
 prompt_original_file = f"./staging/original-{the_datetime}.txt"
