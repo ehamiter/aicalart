@@ -217,7 +217,8 @@ def main(
         if arg_name.startswith("skip_") and arg_value
     ]
     skipped_args_str = ", ".join(skipped_args)
-    logger.info(f"Skipping: {skipped_args_str}\n")
+    if skipped_args:
+        logger.info(f"Skipping: {skipped_args_str}\n")
 
     # `the_date`, e.g. '2023-11-26', is used in keys for the holiday dicts
     the_date = the_date or now_cst.split("T")[0]  # fmt: skip
