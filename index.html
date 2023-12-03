@@ -22,14 +22,19 @@ function updateImageTitleAndBackground() {
     let textFile;
     let bgFile;
     if (window.matchMedia("(orientation: portrait)").matches) {
-      textFile = "url('https://aicalart.s3.amazonaws.com/prompts/portrait.txt')";
+      textFile = "https://aicalart.s3.amazonaws.com/prompts/portrait.txt";
       bgFile = "url('https://aicalart.s3.amazonaws.com/images/portrait.webp')";
     } else {
-      textFile = "url('https://aicalart.s3.amazonaws.com/prompts/landscape.txt')";
+      textFile = "https://aicalart.s3.amazonaws.com/prompts/landscape.txt";
       bgFile = "url('https://aicalart.s3.amazonaws.com/images/landscape.webp')";
     }
     fetch(textFile)
-    .then(response => response.text())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.text();
+    })
     .then(text => {
       document.querySelector('.bg-image').setAttribute('title', text);
       document.querySelector('.bg-image').style.backgroundImage = bgFile;
