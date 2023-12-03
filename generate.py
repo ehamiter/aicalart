@@ -34,6 +34,7 @@ from tqdm import tqdm
 
 install()  # This makes icecream debugging available everywhere via ic()
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # for holiday fetching in localtime -- "2023-11-25"
@@ -364,7 +365,7 @@ def main(
     t2 = time.perf_counter()
     logger.info(f"{Fore.CYAN}Done!{Style.RESET_ALL} [Total time: {t2 - t1:.2f} seconds]\n\n")  # fmt: skip
     print("To promote these images, run:\n\n")
-    print(f'python promote.py "landscape-{now}"\n')
+    print(f"python promote.py landscape-{now}")
 
 
 if __name__ == "__main__":
@@ -403,7 +404,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     main(
-        the_date=args.date,
+        the_date=args.date,  # the_date because date contextually means an object
         style=args.style,
         skip_calendar=args.skip_calendar,
         skip_holidays=args.skip_holidays,

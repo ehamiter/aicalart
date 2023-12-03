@@ -1,7 +1,6 @@
 import logging
 import shutil
 import sys
-import os
 import boto3
 from botocore.exceptions import NoCredentialsError
 from colorama import Fore, Style
