@@ -21,19 +21,22 @@ if len(sys.argv) < 2:
     print("Example usage: python promote.py landscape-2023-12-03T01/50/17.205070Z")
     sys.exit(1)
 
-input_filename = sys.argv[1]
-datetime_with_colons = input_filename.replace("/", ":")
-_datetime = datetime_with_colons.split("-")[1]  # Extract datetime part
-date = _datetime[:10]  # Extract YYYY-MM-DD part
+def extract_date(filename):
+    hyphen_pos = filename.find('-')
+    t_pos = filename.find('T')
+    date = filename[hyphen_pos+1:t_pos]
+    return date
+
+the_date = extract_date(sys.argv[1])  # YYYY-MM-DD
 
 # Define image file paths for .gitignored /staging
-landscape_file = f"./staging/landscape-{datetime}.png"
-portrait_file = f"./staging/portrait-{datetime}.png"
+landscape_file = f"./staging/landscape-{the_date}.png"
+portrait_file = f"./staging/portrait-{the_date}.png"
 
 # ...and prompt file paths
-prompt_original_file = f"./staging/original-{datetime}.txt"
-prompt_landscape_file = f"./staging/landscape-{datetime}.txt"
-prompt_portrait_file = f"./staging/portrait-{datetime}.txt"
+prompt_original_file = f"./staging/original-{the_date}.txt"
+prompt_landscape_file = f"./staging/landscape-{the_date}.txt"
+prompt_portrait_file = f"./staging/portrait-{the_date}.txt"
 
 # Define static dir paths
 dest_images = "./static/images"

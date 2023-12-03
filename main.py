@@ -359,8 +359,8 @@ def main(
 
     t2 = time.perf_counter()
     logger.info(f"{Fore.CYAN}Done!{Style.RESET_ALL} [Total time: {t2 - t1:.2f} seconds]\n\n")  # fmt: skip
-    logger.info(f"{Fore.GREEN}To promote these images, run: {Style.RESET_ALL}]n")
-    print(f'python promote.py "landscape-{now}"')
+    print("To promote these images, run:\n\n")
+    print(f'python promote.py "landscape-{now}"\n')
 
 
 if __name__ == "__main__":
