@@ -49,14 +49,32 @@ def extract_datetime(filename):
 
 def upload_file_to_s3(local_path, bucket, s3_key):
     logger.info(f"Uploading file {local_path}...")
+
     try:
         s3 = boto3.client(
             "s3",
             aws_access_key_id=AWS_ACCESS_KEY_ID,
             aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
         )
-        s3.upload_file(local_path, bucket, s3_key)
+
+        # Determine content type based on file extension
+        if local_path.endswith('.txt'):
+            content_type = 'text/plain'
+        elif local_path.endswith('.webp'):
+            content_type = 'image/webp'
+        else:
+            content_type = 'application/octet-stream'  # Default content type
+
+        # Upload the file with the specified content type
+        s3.upload_file(
+            Filename=local_path,
+            Bucket=bucket,
+            Key=s3_key,
+            ExtraArgs={'ContentType': content_type}
+        )
+
         logger.info(f"File {local_path} uploaded to {bucket}/{s3_key}")
+
     except FileNotFoundError:
         logger.error("The file was not found")
     except NoCredentialsError:
