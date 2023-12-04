@@ -19,26 +19,26 @@
 
   <script>
   function updateImageTitleAndBackground() {
-      let textFile;
-      let bgFile;
-      if (window.matchMedia("(orientation: portrait)").matches) {
-        textFile = "url('https://aicalart.s3.amazonaws.com/prompts/portrait.txt')";
-        bgFile = "url('https://aicalart.s3.amazonaws.com/images/portrait.webp')";
-      } else {
-        textFile = "url('https://aicalart.s3.amazonaws.com/prompts/landscape.txt')";
-        bgFile = "url('https://aicalart.s3.amazonaws.com/images/landscape.webp')";
-      }
-      fetch(textFile)
-      .then(response => response.text())
-      .then(text => {
-        document.querySelector('.bg-image').setAttribute('title', text);
-        document.querySelector('.bg-image').style.backgroundImage = bgFile;
-      })
-      .catch(error => {
-        console.error('Fetch failed: ', error);
-      });
+    let textFile;
+    let bgFile;
+    if (window.matchMedia("(orientation: portrait)").matches) {
+      textFile = "https://aicalart.s3.amazonaws.com/prompts/portrait.txt";
+      bgFile = "url('https://aicalart.s3.amazonaws.com/images/portrait.webp')";
+    } else {
+      textFile = "https://aicalart.s3.amazonaws.com/prompts/landscape.txt";
+      bgFile = "url('https://aicalart.s3.amazonaws.com/images/landscape.webp')";
     }
-    window.addEventListener("resize", updateImageTitleAndBackground);
+    fetch(textFile)
+    .then(response => response.text())
+    .then(text => {
+      document.querySelector('.bg-image').setAttribute('title', text);
+      document.querySelector('.bg-image').style.backgroundImage = bgFile;
+    })
+    .catch(error => {
+      console.error('Fetch failed: ', error);
+    });
+  }
+  window.addEventListener("resize", updateImageTitleAndBackground);
   </script>
 
   </head>
