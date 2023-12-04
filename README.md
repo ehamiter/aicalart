@@ -66,7 +66,7 @@ So you can plug it in like so:
 python promote.py portrait-2023-12-03T05/04/58.791456Z
 ```
 
-...and it will upload the images and prompts to S3, and the site will reflect the new sources immediately. Ah the conclusion of a prompt generation, this line is printed out at the end by itself, so if you use iTerm and have "Copy to pasteboard on selection" enabled, you can double-click the line and it auto-selects and copies it for ease of pasting into the command line. Boy howdy!
+...and it will upload the images and prompts to S3, and the site will reflect the new sources immediately. At the conclusion of a prompt generation, this line is printed out at the end by itself, so if you use iTerm and have "Copy to pasteboard on selection" enabled, you can double-click the line and it auto-selects and copies it for ease of pasting into the command line. Boy howdy!
 
 
 ## AWS S3
