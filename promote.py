@@ -36,9 +36,9 @@ ch.setFormatter(CustomFormatter())
 logger.addHandler(ch)
 
 
-def main(file_tag, replace=False):
+def main(file_tag, archive_only=False):
     if len(sys.argv) < 2:
-        print('Example usage: python promote.py landscape-2023-12-03T01/50/17.205070Z --replace')
+        print('Example usage: python promote.py landscape-2023-12-03T01/50/17.205070Z')
         sys.exit(1)
 
 
@@ -88,7 +88,9 @@ def main(file_tag, replace=False):
     prompt_landscape_file = f"./staging/landscape-{the_datetime}.txt"
     prompt_portrait_file = f"./staging/portrait-{the_datetime}.txt"
 
-    if replace:
+    replace_current_files = not archive_only  # Double negatives read weird so let's change that
+
+    if replace_current_files:
         # For immediate usage
         upload_file_to_s3(landscape_file, AWS_S3_BUCKET, f"images/landscape.webp")
         upload_file_to_s3(portrait_file, AWS_S3_BUCKET, f"images/portrait.webp")
@@ -106,6 +108,6 @@ def main(file_tag, replace=False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Upload files to S3 with optional replacement.")
     parser.add_argument("file_tag", type=str, help="Tag of the file to upload")
-    parser.add_argument("--replace", action="store_true", help="Replace existing files if set to True")
+    parser.add_argument("--archive-only", action="store_true", help="Current images are replaced by default, so use this flag to only archive the images.")
     args = parser.parse_args()
-    main(args.file_tag, args.replace)
+    main(args.file_tag, args.archive_only)

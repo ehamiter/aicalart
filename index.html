@@ -43,8 +43,8 @@
 
     function changeDate(days) {
       currentDate.setDate(currentDate.getDate() + days);
-      let minDate = new Date('2023-11-29');
-      let maxDate = new Date(); // Today's date
+      let minDate = new Date('2023-11-25');  // aical.art's birthday
+      let maxDate = new Date();
       if (currentDate < minDate) currentDate = minDate;
       if (currentDate > maxDate) currentDate = maxDate;
       updateImageTitleAndBackground();
