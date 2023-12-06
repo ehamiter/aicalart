@@ -38,7 +38,7 @@ logger.addHandler(ch)
 
 def main(file_tag, archive_only=False):
     if len(sys.argv) < 2:
-        print('Example usage: python promote.py landscape-2023-12-03T01/50/17.205070Z')
+        print('Example usage: python3 promote.py landscape-2023-12-03T01/50/17.205070Z')
         sys.exit(1)
 
 

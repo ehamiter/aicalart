@@ -13,8 +13,7 @@ AWS_S3_BUCKET = "aicalart"
 # in the meantime the preview model will be used.
 GPT_MODEL = "gpt-4-1106-preview"
 IMAGE_MODEL = "dall-e-3"
-AICALART_OPENAI_KEY = os.getenv("AICALART_OPENAI_KEY")
-
+OPENAI_KEY = os.getenv("OPENAI_KEY")
 
 ### Misc APIs
 API_NINJAS_KEY = os.getenv("API_NINJAS_KEY")
@@ -23,6 +22,12 @@ API_NINJAS_KEY = os.getenv("API_NINJAS_KEY")
 SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 
 ### Prompt styles
+# You can change this to what you want in .env via `ALWAYS_INCLUDE_IN_PROMPT`, but you should know Hobbes would not approve of that.
+ALWAYS_INCLUDE_IN_PROMPT = os.getenv(
+    "ALWAYS_INCLUDE_IN_PROMPT",
+    "You always place your beloved orange tabby domestic shorthair cat, Hobbes, in every piece you create.",
+)
+
 PRE_STYLE = "digital art, award-winning art, 4k/8k, "  # These modifiers typically produce better results
 STYLES = [
     "1910's black and white newspaper satirical comic drawings",

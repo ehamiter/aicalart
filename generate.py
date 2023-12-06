@@ -12,10 +12,11 @@ from textwrap import dedent
 
 from colorama import Fore, Style
 from constants import (
-    AICALART_OPENAI_KEY,
+    ALWAYS_INCLUDE_IN_PROMPT,
     GPT_MODEL,
     HOLIDAYS,
     IMAGE_MODEL,
+    OPENAI_KEY,
     PRE_STYLE,
     SCOPES,
     SILLY_DAYS,
@@ -42,6 +43,9 @@ now_cst = datetime.datetime.now().date().strftime("%Y-%m-%d")
 
 # for Google calendar event fetching -- "2023-11-25T00:43:27.521185+00:00Z"
 now_utc = now = f"{datetime.datetime.utcnow().isoformat()}Z"
+
+# OpeanAI client for prompt and image generation
+client = OpenAI(api_key=OPENAI_KEY)
 
 
 def trim_string(text, char_limit=1023):
@@ -201,62 +205,7 @@ def decode_b64_json(b64_data):
     return json.loads(json_data)
 
 
-def main(
-    the_date=None,
-    style=None,
-    skip_calendar=False,
-    skip_holidays=False,
-    skip_silly_days=False,
-    skip_news=False,
-):
-    # Time it from beginning to end
-    t1 = time.perf_counter()
-
-    # Print out any args that we're skipping so there are no surprises. No alarms, and no surprise, please
-    args = locals()
-    skipped_args = [
-        arg_name.replace("skip_", "")
-        for arg_name, arg_value in args.items()
-        if arg_name.startswith("skip_") and arg_value
-    ]
-    skipped_args_str = ", ".join(skipped_args)
-    if skipped_args:
-        logger.info(f"Skipping: {skipped_args_str}\n")
-
-    # `the_date`, e.g. '2023-11-26', is used in keys for the holiday dicts
-    the_date = the_date or now_cst.split("T")[0]  # fmt: skip
-    the_day = ""  # placeholder for any named days, e.g. "Cyber Monday and National Fritters Day"
-    style = style or get_style()
-
-    holiday = None if skip_holidays else get_holiday(the_date)
-    silly_day = None if skip_silly_days else get_silly_day(the_date)
-    news = None if skip_news else get_news()
-
-    today, newslist = get_today_and_newslist(the_date, holiday, silly_day, news)
-
-    prompt = f"""
-    Imagine you are a master prompt maker for DALL-E. You specialize in creating
-    images based on current {newslist}.
-
-    You are creative and very clever by hiding allegories in details. You always
-    place your beloved orange tabby domestic shorthair cat, Hobbes, in every
-    piece you create. A user could look at one of your creations several times
-    and discover something new, insightful, or hilarious on each repeated viewing.
-    Today is {today}.
-    """
-
-    if not skip_calendar:
-        prompt = fetch_calendar_entries(prompt, style, the_date=the_date)
-
-    # Put a bow on the prompt
-    prompt += f"""
-        Use these words in the beginning of the prompt for the specific style:
-        {style}, no margins, full screen. Respond with the prompt only.
-    """
-
-    # OpenAI prompts and images generation
-    client = OpenAI(api_key=AICALART_OPENAI_KEY)
-
+def generate_prompt(prompt, style, news, today):
     print(f"{Fore.YELLOW}Generating prompt...{Style.RESET_ALL}")
     completion = client.chat.completions.create(
         model=GPT_MODEL,
@@ -292,6 +241,10 @@ def main(
         )
         exit(1)
 
+    return dalle_prompt
+
+
+def generate_images(dalle_prompt):
     # Let's try to make these things. It could be rejected because god only knows
     # what the hell it's going to come up with. If it rejects it, just regenerate
     # and see. Some keywords it will have a problem with... for example, "genocide".
@@ -361,6 +314,62 @@ def main(
 
     landscape_image_path = f"./staging/landscape-{now}.webp"
     landscape_image.save(landscape_image_path, format="webp")
+
+
+def main(
+    the_date=None,
+    style=None,
+    skip_calendar=False,
+    skip_holidays=False,
+    skip_silly_days=False,
+    skip_news=False,
+):
+    # Time it from beginning to end
+    t1 = time.perf_counter()
+
+    # Print out any args that we're skipping so there are no surprises. No alarms, and no surprise, please
+    args = locals()
+    skipped_args = [
+        arg_name.replace("skip_", "")
+        for arg_name, arg_value in args.items()
+        if arg_name.startswith("skip_") and arg_value
+    ]
+    skipped_args_str = ", ".join(skipped_args)
+    if skipped_args:
+        logger.info(f"Skipping: {skipped_args_str}\n")
+
+    # `the_date`, e.g. '2023-11-26', is used in keys for the holiday dicts
+    the_date = the_date or now_cst.split("T")[0]  # fmt: skip
+    the_day = ""  # placeholder for any named days, e.g. "Cyber Monday and National Fritters Day"
+    style = style or get_style()
+
+    holiday = None if skip_holidays else get_holiday(the_date)
+    silly_day = None if skip_silly_days else get_silly_day(the_date)
+    news = None if skip_news else get_news()
+
+    today, newslist = get_today_and_newslist(the_date, holiday, silly_day, news)
+
+    prompt = f"""
+    Imagine you are a master prompt maker for DALL-E. You specialize in creating
+    images based on current {newslist}.
+
+    You are creative and very clever by hiding allegories in details.
+    {ALWAYS_INCLUDE_IN_PROMPT} A user could look at one of your creations several times
+    and discover something new, insightful, or hilarious on each repeated viewing.
+    Today is {today}.
+    """
+
+    if not skip_calendar:
+        prompt = fetch_calendar_entries(prompt, style, the_date=the_date)
+
+    # Put a bow on the prompt
+    prompt += f"""
+        Use these words in the beginning of the prompt for the specific style:
+        {style}, no margins, full screen. Respond with the prompt only.
+    """
+
+    dalle_prompt = generate_prompt(prompt, style, news, today)
+    generate_images(dalle_prompt)
 
     t2 = time.perf_counter()
     logger.info(f"{Fore.CYAN}Done!{Style.RESET_ALL} [Total time: {t2 - t1:.2f} seconds]\n\n")  # fmt: skip
