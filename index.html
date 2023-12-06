@@ -18,27 +18,66 @@
   <link rel="preconnect" href="https://www.w3counter.com">
 
   <script>
-  function updateImageTitleAndBackground() {
-    let textFile;
-    let bgFile;
-    if (window.matchMedia("(orientation: portrait)").matches) {
-      textFile = "https://aicalart.s3.amazonaws.com/prompts/portrait.txt";
-      bgFile = "url('https://aicalart.s3.amazonaws.com/images/portrait.webp')";
-    } else {
-      textFile = "https://aicalart.s3.amazonaws.com/prompts/landscape.txt";
-      bgFile = "url('https://aicalart.s3.amazonaws.com/images/landscape.webp')";
+    let currentDate = new Date();
+
+    function formatDate(date) {
+      return date.toISOString().split('T')[0];
     }
-    fetch(textFile)
-    .then(response => response.text())
-    .then(text => {
-      document.querySelector('.bg-image').setAttribute('title', text);
-      document.querySelector('.bg-image').style.backgroundImage = bgFile;
-    })
-    .catch(error => {
-      console.error('Fetch failed: ', error);
+
+    function updateImageTitleAndBackground() {
+      let dateString = formatDate(currentDate);
+      let orientation = window.matchMedia("(orientation: portrait)").matches ? 'portrait' : 'landscape';
+      let textFile = `https://aicalart.s3.amazonaws.com/prompts/${dateString}-${orientation}.txt`;
+      let bgFile = `url('https://aicalart.s3.amazonaws.com/images/${dateString}-${orientation}.webp')`;
+
+      fetch(textFile)
+      .then(response => response.text())
+      .then(text => {
+        document.querySelector('.bg-image').setAttribute('title', text);
+        document.querySelector('.bg-image').style.backgroundImage = bgFile;
+      })
+      .catch(error => {
+        console.error('Fetch failed: ', error);
+      });
+    }
+
+    function changeDate(days) {
+      currentDate.setDate(currentDate.getDate() + days);
+      let minDate = new Date('2023-11-29');
+      let maxDate = new Date(); // Today's date
+      if (currentDate < minDate) currentDate = minDate;
+      if (currentDate > maxDate) currentDate = maxDate;
+      updateImageTitleAndBackground();
+    }
+
+    let touchstartX = 0;
+    let touchendX = 0;
+
+    function handleGesture() {
+      if (touchendX < touchstartX) changeDate(1);
+      if (touchendX > touchstartX) changeDate(-1);
+    }
+
+    document.addEventListener('touchstart', e => {
+      touchstartX = e.changedTouches[0].screenX;
     });
-  }
-  window.addEventListener("resize", updateImageTitleAndBackground);
+
+    document.addEventListener('touchend', e => {
+      touchendX = e.changedTouches[0].screenX;
+      handleGesture();
+    });
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'ArrowLeft') {
+        changeDate(-1);
+      } else if (event.key === 'ArrowRight') {
+        changeDate(1);
+      }
+    });
+
+    window.addEventListener("resize", updateImageTitleAndBackground);
+
+    window.onload = updateImageTitleAndBackground;
   </script>
 
   </head>
