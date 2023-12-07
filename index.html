@@ -21,28 +21,20 @@
     let currentDate = new Date();
 
     function formatDate(date) {
-      return date.toISOString().split('T')[0];
+      return date.getFullYear() + '-' +
+             ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
+             ('0' + date.getDate()).slice(-2);
     }
-
-    let pageJustLoaded = true; // Flag to track initial load
 
     function updateImageTitleAndBackground() {
       let dateString = formatDate(currentDate);
       let orientation = window.matchMedia("(orientation: portrait)").matches ? 'portrait' : 'landscape';
       let basePromptUrl = `https://aicalart.s3.amazonaws.com/prompts/`;
       let baseImageUrl = `https://aicalart.s3.amazonaws.com/images/`;
-      let textFile, bgFile;
 
-      if (pageJustLoaded) {
-        // For initial load, use undated files
-        textFile = `${basePromptUrl}${orientation}.txt`;
-        bgFile = `url('${baseImageUrl}${orientation}.webp')`;
-        pageJustLoaded = false; // Set to false after initial load
-      } else {
-        // For subsequent loads, use dated files
-        textFile = `${basePromptUrl}${dateString}-${orientation}.txt`;
-        bgFile = `url('${baseImageUrl}${dateString}-${orientation}.webp')`;
-      }
+      // Always use dated files
+      let textFile = `${basePromptUrl}${dateString}-${orientation}.txt`;
+      let bgFile = `url('${baseImageUrl}${dateString}-${orientation}.webp')`;
 
       fetch(textFile)
       .then(response => response.text())
@@ -56,26 +48,28 @@
     }
 
     function changeDate(days) {
-      let newDate = new Date(currentDate.valueOf()); // Create a new date based on currentDate
+      let newDate = new Date(currentDate.valueOf());
       newDate.setDate(newDate.getDate() + days);
 
       let today = new Date();
-      today.setHours(0, 0, 0, 0); // Reset hours to start of the day for comparison
+      today.setHours(0, 0, 0, 0);
 
-      // Check if newDate is in the future compared to today
-      if (newDate > today) {
-        console.log('Cannot navigate to a future date');
-        return; // Stop the function if the new date is in the future
+      let todayStripped = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      let newDateStripped = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
+
+      // Only prevent navigating to future dates
+      if (newDateStripped > todayStripped) {
+        console.log('Cannot navigate to a future date.');
+        return;
       }
 
-      // Check if newDate is before the minimum allowed date
       let minDate = new Date('2023-11-25');
-      if (newDate < minDate) {
+      if (newDateStripped < minDate) {
         console.log('Cannot navigate before November 25, 2023');
-        return; // Stop the function if the new date is before the minimum date
+        return;
       }
 
-      currentDate = newDate; // Update currentDate if it's a valid date
+      currentDate = newDate;
       updateImageTitleAndBackground();
     }
 
