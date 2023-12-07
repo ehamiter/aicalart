@@ -75,10 +75,14 @@
 
     let touchstartX = 0;
     let touchendX = 0;
+    let swipeThreshold = 50; // Set this to the desired swipe distance
 
     function handleGesture() {
-      if (touchendX < touchstartX) changeDate(1);
-      if (touchendX > touchstartX) changeDate(-1);
+      let swipeDistance = Math.abs(touchendX - touchstartX);
+      if (swipeDistance > swipeThreshold) {
+        if (touchendX < touchstartX) changeDate(1);
+        if (touchendX > touchstartX) changeDate(-1);
+      }
     }
 
     document.addEventListener('touchstart', e => {
