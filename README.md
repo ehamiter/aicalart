@@ -2,6 +2,21 @@
 
 This repo hosts the scripts and template that powers [aical.art](https://aical.art).
 
+## Setup
+
+```
+git clone https://github.com/ehamiter/aicalart.git
+
+<Enter username>
+<Enter GitHub Personal Access Token for password>
+
+mkdir staging
+cp example.env .env  # And update this file with your API keys
+python3 -m venv env
+source env/bin/activate
+pip install -r requirements
+```
+
 ## Example Usage
 
 ### Generation

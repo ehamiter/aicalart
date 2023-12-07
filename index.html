@@ -24,11 +24,25 @@
       return date.toISOString().split('T')[0];
     }
 
+    let pageJustLoaded = true; // Flag to track initial load
+
     function updateImageTitleAndBackground() {
       let dateString = formatDate(currentDate);
       let orientation = window.matchMedia("(orientation: portrait)").matches ? 'portrait' : 'landscape';
-      let textFile = `https://aicalart.s3.amazonaws.com/prompts/${dateString}-${orientation}.txt`;
-      let bgFile = `url('https://aicalart.s3.amazonaws.com/images/${dateString}-${orientation}.webp')`;
+      let basePromptUrl = `https://aicalart.s3.amazonaws.com/prompts/`;
+      let baseImageUrl = `https://aicalart.s3.amazonaws.com/images/`;
+      let textFile, bgFile;
+
+      if (pageJustLoaded) {
+        // For initial load, use undated files
+        textFile = `${basePromptUrl}${orientation}.txt`;
+        bgFile = `url('${baseImageUrl}${orientation}.webp')`;
+        pageJustLoaded = false; // Set to false after initial load
+      } else {
+        // For subsequent loads, use dated files
+        textFile = `${basePromptUrl}${dateString}-${orientation}.txt`;
+        bgFile = `url('${baseImageUrl}${dateString}-${orientation}.webp')`;
+      }
 
       fetch(textFile)
       .then(response => response.text())
@@ -42,11 +56,26 @@
     }
 
     function changeDate(days) {
-      currentDate.setDate(currentDate.getDate() + days);
-      let minDate = new Date('2023-11-25');  // aical.art's birthday
-      let maxDate = new Date();
-      if (currentDate < minDate) currentDate = minDate;
-      if (currentDate > maxDate) currentDate = maxDate;
+      let newDate = new Date(currentDate.valueOf()); // Create a new date based on currentDate
+      newDate.setDate(newDate.getDate() + days);
+
+      let today = new Date();
+      today.setHours(0, 0, 0, 0); // Reset hours to start of the day for comparison
+
+      // Check if newDate is in the future compared to today
+      if (newDate > today) {
+        console.log('Cannot navigate to a future date');
+        return; // Stop the function if the new date is in the future
+      }
+
+      // Check if newDate is before the minimum allowed date
+      let minDate = new Date('2023-11-25');
+      if (newDate < minDate) {
+        console.log('Cannot navigate before November 25, 2023');
+        return; // Stop the function if the new date is before the minimum date
+      }
+
+      currentDate = newDate; // Update currentDate if it's a valid date
       updateImageTitleAndBackground();
     }
 

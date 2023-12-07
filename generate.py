@@ -28,12 +28,12 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from icecream import install
 from openai import BadRequestError, OpenAI
 from PIL import Image, ImageDraw
 from tqdm import tqdm
 
-install()  # This makes icecream debugging available everywhere via ic()
+from promote import main as promote_file
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -229,25 +229,26 @@ def generate_prompt(prompt, style, news, today):
     """
     print(dedent(prompt_info))
 
-    warning = """
-    Review the days and news and make sure it's not something that will clearly be rejected.
-    Type 'ok' to continue.
-    """
-    print(dedent(warning))
-    proceed = input()
-    if proceed.strip().lower() != "ok":
-        logger.info(
-            "Bailing. Try appending --skip-news or wait until a more appropriate day."
-        )
-        exit(1)
+    # warning = """
+    # Review the days and news and make sure it's not something that will clearly be rejected.
+    # Type 'ok' to continue.
+    # """
+    # print(dedent(warning))
+    # proceed = input()
+    # if proceed.strip().lower() != "ok":
+    #     logger.info(
+    #         "Bailing. Try appending --skip-news or wait until a more appropriate day."
+    #     )
+    #     exit(1)
 
     return dalle_prompt
 
 
-def generate_images(dalle_prompt):
+def generate_images(dalle_prompt, failed_attempts=0):
     # Let's try to make these things. It could be rejected because god only knows
     # what the hell it's going to come up with. If it rejects it, just regenerate
     # and see. Some keywords it will have a problem with... for example, "genocide".
+
     try:
         logger.info(f"{Fore.YELLOW}Generating portrait image...{Style.RESET_ALL}")
         portrait_response = client.images.generate(
@@ -269,10 +270,74 @@ def generate_images(dalle_prompt):
         )
     except BadRequestError:
         logger.error(
-            "OpenAI's safety system rejected this due to its interpretation of the prompt. "
-            "Try re-generating or altering the text in order to process an image.          "
+            "OpenAI's safety system rejected this due to its interpretation of the prompt."
+            "Attempting to regenerate.                                                    "
         )
-        exit(1)
+        failed_attempts += 1
+
+        if failed_attempts == 1:
+            # Sometimes anamolies happen. Try it again
+            failed_attempts += 1
+            main(
+                the_date=args.date,
+                style=args.style,
+                skip_calendar=args.skip_calendar,
+                skip_holidays=args.skip_holidays,
+                skip_silly_days=args.skip_silly_days,
+                skip_news=args.skip_news,
+                failed_attempts=failed_attempts,
+            )
+        elif failed_attempts == 2:
+            # The news can be pretty dark
+            failed_attempts += 1
+            main(
+                the_date=args.date,
+                style=args.style,
+                skip_calendar=args.skip_calendar,
+                skip_holidays=args.skip_holidays,
+                skip_silly_days=args.skip_silly_days,
+                skip_news=True,
+                failed_attempts=failed_attempts,
+            )
+        elif failed_attempts == 3:
+            # Or your calendar event that sounds questionable
+            failed_attempts += 1
+            main(
+                the_date=args.date,
+                style=args.style,
+                skip_calendar=True,
+                skip_holidays=args.skip_holidays,
+                skip_silly_days=args.skip_silly_days,
+                skip_news=True,
+                failed_attempts=failed_attempts,
+            )
+        elif failed_attempts == 4:
+            # Or maybe the day combo is bad
+            failed_attempts += 1
+            main(
+                the_date=args.date,
+                style=args.style,
+                skip_calendar=args.skip_calendar,
+                skip_holidays=True,
+                skip_silly_days=True,
+                skip_news=True,
+                failed_attempts=failed_attempts,
+            )
+        elif failed_attempts == 5:
+            failed_attempts += 1
+            # Let's try skipping everything
+            main(
+                the_date=args.date,
+                style=args.style,
+                skip_calendar=True,
+                skip_holidays=True,
+                skip_silly_days=True,
+                skip_news=True,
+                failed_attempts=failed_attempts,
+            )
+        else:
+            logger.info(f"{Fore.RED}Error: could not process images.{Style.RESET_ALL}")
+            exit(1)
 
     # Extract revised prompts directly from the response objects
     portrait_prompt = portrait_response.data[0].revised_prompt
@@ -315,6 +380,10 @@ def generate_images(dalle_prompt):
     landscape_image_path = f"./staging/landscape-{now}.webp"
     landscape_image.save(landscape_image_path, format="webp")
 
+    if landscape_image and portrait_image:
+        return True
+    return False
+
 
 def main(
     the_date=None,
@@ -323,6 +392,7 @@ def main(
     skip_holidays=False,
     skip_silly_days=False,
     skip_news=False,
+    failed_attempts=0,
 ):
     # Time it from beginning to end
     t1 = time.perf_counter()
@@ -369,12 +439,18 @@ def main(
     """
 
     dalle_prompt = generate_prompt(prompt, style, news, today)
-    generate_images(dalle_prompt)
+    successful_result = generate_images(dalle_prompt, failed_attempts)
 
     t2 = time.perf_counter()
     logger.info(f"{Fore.CYAN}Done!{Style.RESET_ALL} [Total time: {t2 - t1:.2f} seconds]\n\n")  # fmt: skip
-    print("To promote these images, run:\n\n")
-    print(f"python3 promote.py landscape-{now}")
+
+    # print("To promote these images, run:\n\n")
+    # print(f"Running python3 promote.py landscape-{now}")
+
+    print(f"Promoting prompts and images for {now} to S3...")
+
+    file_tag = f"landscape-{now}"
+    promote_file(file_tag, archive_only=False)
 
 
 if __name__ == "__main__":

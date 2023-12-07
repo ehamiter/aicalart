@@ -37,11 +37,6 @@ logger.addHandler(ch)
 
 
 def main(file_tag, archive_only=False):
-    if len(sys.argv) < 2:
-        print('Example usage: python3 promote.py landscape-2023-12-03T01/50/17.205070Z')
-        sys.exit(1)
-
-
     def extract_datetime(filename):
         # Extract the part after "landscape-" or "portrait-" and keep 'Z' at the end
         datetime_part = filename.split('-', 1)[1]
@@ -77,7 +72,7 @@ def main(file_tag, archive_only=False):
         except NoCredentialsError:
             logger.error("Credentials not available")
 
-    input_filename = sys.argv[1]
+    input_filename = file_tag
     the_datetime = extract_datetime(input_filename)
     the_date = the_datetime.split('T')[0]
 
@@ -105,9 +100,9 @@ def main(file_tag, archive_only=False):
     upload_file_to_s3(prompt_landscape_file, AWS_S3_BUCKET, f"prompts/{the_date}-landscape.txt")
     upload_file_to_s3(prompt_portrait_file, AWS_S3_BUCKET, f"prompts/{the_date}-portrait.txt")
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Upload files to S3 with optional replacement.")
-    parser.add_argument("file_tag", type=str, help="Tag of the file to upload")
-    parser.add_argument("--archive-only", action="store_true", help="Current images are replaced by default, so use this flag to only archive the images.")
-    args = parser.parse_args()
-    main(args.file_tag, args.archive_only)
+# if __name__ == "__main__":
+#     parser = argparse.ArgumentParser(description="Upload files to S3 with optional replacement.")
+#     parser.add_argument("file_tag", type=str, help="Tag of the file to upload")
+#     parser.add_argument("--archive-only", action="store_true", help="Current images are replaced by default, so use this flag to only archive the images.")
+#     args = parser.parse_args()
+#     main(args.file_tag, args.archive_only)
