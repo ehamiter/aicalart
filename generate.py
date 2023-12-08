@@ -12,11 +12,11 @@ from textwrap import dedent
 
 from colorama import Fore, Style
 from constants import (
+    AICALART_OPENAI_KEY,
     ALWAYS_INCLUDE_IN_PROMPT,
     GPT_MODEL,
     HOLIDAYS,
     IMAGE_MODEL,
-    OPENAI_KEY,
     PRE_STYLE,
     SCOPES,
     SILLY_DAYS,
@@ -44,8 +44,7 @@ now_cst = datetime.datetime.now().date().strftime("%Y-%m-%d")
 # for Google calendar event fetching -- "2023-11-25T00:43:27.521185+00:00Z"
 now_utc = now = f"{datetime.datetime.utcnow().isoformat()}Z"
 
-# OpeanAI client for prompt and image generation
-client = OpenAI(api_key=OPENAI_KEY)
+openai_client = OpenAI(api_key=AICALART_OPENAI_KEY)
 
 
 def trim_string(text, char_limit=1023):
@@ -207,7 +206,7 @@ def decode_b64_json(b64_data):
 
 def generate_prompt(prompt, style, news, today):
     print(f"{Fore.YELLOW}Generating prompt...{Style.RESET_ALL}")
-    completion = client.chat.completions.create(
+    completion = openai_client.chat.completions.create(
         model=GPT_MODEL,
         messages=[
             {
@@ -228,30 +227,19 @@ def generate_prompt(prompt, style, news, today):
     DALL-E prompt: {dalle_prompt}
     """
     print(dedent(prompt_info))
-
-    # warning = """
-    # Review the days and news and make sure it's not something that will clearly be rejected.
-    # Type 'ok' to continue.
-    # """
-    # print(dedent(warning))
-    # proceed = input()
-    # if proceed.strip().lower() != "ok":
-    #     logger.info(
-    #         "Bailing. Try appending --skip-news or wait until a more appropriate day."
-    #     )
-    #     exit(1)
-
     return dalle_prompt
 
 
-def generate_images(dalle_prompt, failed_attempts=0):
+def generate_images(dalle_prompt, image_args, failed_attempts=0):
     # Let's try to make these things. It could be rejected because god only knows
     # what the hell it's going to come up with. If it rejects it, just regenerate
     # and see. Some keywords it will have a problem with... for example, "genocide".
 
+    the_date, style, skip_calendar, skip_holidays, skip_silly_days, skip_news = image_args
+
     try:
         logger.info(f"{Fore.YELLOW}Generating portrait image...{Style.RESET_ALL}")
-        portrait_response = client.images.generate(
+        portrait_response = openai_client.images.generate(
             model=IMAGE_MODEL,
             prompt=f"{dalle_prompt}. Ensure this image is in a vertical orientation.",
             size="1024x1792",
@@ -260,7 +248,7 @@ def generate_images(dalle_prompt, failed_attempts=0):
             response_format="b64_json",
         )
         logger.info(f"{Fore.YELLOW}Generating landscape image...{Style.RESET_ALL}")
-        landscape_response = client.images.generate(
+        landscape_response = openai_client.images.generate(
             model=IMAGE_MODEL,
             prompt=f"{dalle_prompt}. Ensure this image is in a horizontal orientation.",
             size="1792x1024",
@@ -279,23 +267,23 @@ def generate_images(dalle_prompt, failed_attempts=0):
             # Sometimes anamolies happen. Try it again
             failed_attempts += 1
             main(
-                the_date=args.date,
-                style=args.style,
-                skip_calendar=args.skip_calendar,
-                skip_holidays=args.skip_holidays,
-                skip_silly_days=args.skip_silly_days,
-                skip_news=args.skip_news,
+                the_date=the_date,
+                style=style,
+                skip_calendar=skip_calendar,
+                skip_holidays=skip_holidays,
+                skip_silly_days=skip_silly_days,
+                skip_news=skip_news,
                 failed_attempts=failed_attempts,
             )
         elif failed_attempts == 2:
             # The news can be pretty dark
             failed_attempts += 1
             main(
-                the_date=args.date,
-                style=args.style,
-                skip_calendar=args.skip_calendar,
-                skip_holidays=args.skip_holidays,
-                skip_silly_days=args.skip_silly_days,
+                the_date=the_date,
+                style=style,
+                skip_calendar=skip_calendar,
+                skip_holidays=skip_holidays,
+                skip_silly_days=skip_silly_days,
                 skip_news=True,
                 failed_attempts=failed_attempts,
             )
@@ -303,11 +291,11 @@ def generate_images(dalle_prompt, failed_attempts=0):
             # Or your calendar event that sounds questionable
             failed_attempts += 1
             main(
-                the_date=args.date,
-                style=args.style,
+                the_date=the_date,
+                style=style,
                 skip_calendar=True,
-                skip_holidays=args.skip_holidays,
-                skip_silly_days=args.skip_silly_days,
+                skip_holidays=skip_holidays,
+                skip_silly_days=skip_silly_days,
                 skip_news=True,
                 failed_attempts=failed_attempts,
             )
@@ -315,9 +303,9 @@ def generate_images(dalle_prompt, failed_attempts=0):
             # Or maybe the day combo is bad
             failed_attempts += 1
             main(
-                the_date=args.date,
-                style=args.style,
-                skip_calendar=args.skip_calendar,
+                the_date=the_date,
+                style=style,
+                skip_calendar=True,
                 skip_holidays=True,
                 skip_silly_days=True,
                 skip_news=True,
@@ -325,10 +313,10 @@ def generate_images(dalle_prompt, failed_attempts=0):
             )
         elif failed_attempts == 5:
             failed_attempts += 1
-            # Let's try skipping everything
+            # Let's try something radical
             main(
-                the_date=args.date,
-                style=args.style,
+                the_date=the_date,
+                style="Bob Ross, with peaceful happy little trees",
                 skip_calendar=True,
                 skip_holidays=True,
                 skip_silly_days=True,
@@ -392,6 +380,7 @@ def main(
     skip_holidays=False,
     skip_silly_days=False,
     skip_news=False,
+    skip_upload=False,
     failed_attempts=0,
 ):
     # Time it from beginning to end
@@ -439,18 +428,28 @@ def main(
     """
 
     dalle_prompt = generate_prompt(prompt, style, news, today)
-    successful_result = generate_images(dalle_prompt, failed_attempts)
+
+    image_args = (the_date, style, skip_calendar, skip_holidays, skip_silly_days, skip_news)
+
+    successful_result = generate_images(dalle_prompt, image_args, failed_attempts)
 
     t2 = time.perf_counter()
-    logger.info(f"{Fore.CYAN}Done!{Style.RESET_ALL} [Total time: {t2 - t1:.2f} seconds]\n\n")  # fmt: skip
 
-    # print("To promote these images, run:\n\n")
-    # print(f"Running python3 promote.py landscape-{now}")
+    if successful_result:
+        logger.info(f"{Fore.CYAN}Generation complete.{Style.RESET_ALL} [Total time: {t2 - t1:.2f} seconds]\n\n")  # fmt: skip
+    else:
+        logger.info(f"{Fore.RED}Generation failed.{Style.RESET_ALL} [Total time: {t2 - t1:.2f} seconds]\n\n")  # fmt: skip
+        exit(1)
 
-    print(f"Promoting prompts and images for {now} to S3...")
-
-    file_tag = f"landscape-{now}"
-    promote_file(file_tag, archive_only=False)
+    if skip_upload:
+        print("To promote these images to production, run:\n")
+        print(f"python3 promote.py landscape-{now}\n")
+        print("To archive these images (for a past date), run:\n")
+        print(f"python3 promote.py landscape-{now} --archive-only")
+    else:
+        print(f"Promoting prompts and images for {now} to production...")
+        file_tag = f"landscape-{now}"
+        promote_file(file_tag)
 
 
 if __name__ == "__main__":
@@ -487,6 +486,11 @@ if __name__ == "__main__":
         action="store_true",
         help="Skip fetching the top news headline. Sometimes there's terrible shit happening out there.",
     )
+    parser.add_argument(
+        "--skip-upload",
+        action="store_true",
+        help="Skip uploading generated images to S3. Useful for experimenting with styles or prompts. Will store generated images in the staging/ folder.",
+    )
     args = parser.parse_args()
     main(
         the_date=args.date,  # the_date because date contextually means an object
@@ -495,4 +499,5 @@ if __name__ == "__main__":
         skip_holidays=args.skip_holidays,
         skip_silly_days=args.skip_silly_days,
         skip_news=args.skip_news,
+        skip_upload=args.skip_upload,
     )

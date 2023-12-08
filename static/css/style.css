@@ -5,6 +5,7 @@ body, html {
   color: white;
   background-color: black;
 }
+
 .bg-image {
   background-position: center;
   background-repeat: no-repeat;
@@ -15,4 +16,60 @@ body, html {
   width: 100%;
   top: 0;
   left: 0;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  left: 50%;
+  bottom: 10%;
+  transform: translate(-50%, 0);
+  max-width: 600px;
+  width: auto;
+  height: auto;
+  background-color: #becaccc0;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  overflow: auto;
+  z-index: 1000;
+  padding: 20px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-content p {
+  font-family: sans-serif;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #333;
+}
+
+@media screen and (max-width: 600px) {
+  .modal {
+    max-width: 90%;
+    bottom: 5%;
+    left: 5%;
+    transform: translate(0, 0);
+  }
+
+  .modal-content p {
+    font-size: 16px;
+  }
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  color: #524f2a;
+  cursor: pointer;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }

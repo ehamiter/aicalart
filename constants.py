@@ -9,14 +9,11 @@ AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_S3_BUCKET = "aicalart"
 
 ### OpenaAI
+AICALART_OPENAI_KEY = os.getenv("AICALART_OPENAI_KEY")  # named thusly because it collided with another OPENAI_KEY
 # gpt-4-turbo will be coming out soon and is 3x cheaper than gpt-4.
 # in the meantime the preview model will be used.
 GPT_MODEL = "gpt-4-1106-preview"
 IMAGE_MODEL = "dall-e-3"
-OPENAI_KEY = os.getenv("OPENAI_KEY")
-
-### Misc APIs
-API_NINJAS_KEY = os.getenv("API_NINJAS_KEY")
 
 ### Google Calendar
 SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
@@ -299,7 +296,7 @@ HOLIDAYS = {
     "2024-07-06": "International Day of Cooperatives",
     "2024-07-08": "Muharram",
     "2024-07-11": "World Population Day",
-    "2024-07-13": "Nathan Bedford Forrest Day",
+    "2024-07-13": "National Beans ‘N’ Franks Day",
     "2024-07-14": "Bastille Day",
     "2024-07-15": "World Youth Skills Day",
     "2024-07-16": "Rural Transit Day",
