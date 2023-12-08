@@ -88,21 +88,24 @@
 
 
     let numberOfClicks = 0;
-    function secondsResetClick(seconds){
-      setTimeout(function(){
+
+    function secondsResetClick(seconds) {
+      setTimeout(function() {
         numberOfClicks = 0;
-      },seconds*1000)
+      }, seconds * 1000);
     }
 
-    window.addEventListener('click', function () {
+    function incrementClicks() {
       numberOfClicks += 1;
       if (numberOfClicks === 3) {
         numberOfClicks = 0;
         toggleModal();
-      } else if (numberOfClicks == 2){
-        secondsResetClick(0.5);
+      } else if (numberOfClicks == 2) {
+        secondsResetClick(0.75);
       }
-    });
+    }
+
+    document.addEventListener('click', incrementClicks);
 
     let touchstartX = 0;
     let touchendX = 0;
@@ -141,6 +144,7 @@
       touchendX = event.changedTouches[0].screenX;
       touchendY = event.changedTouches[0].screenY;
       handleSwipeGesture();
+      incrementClicks();
     });
 
     document.addEventListener('keydown', function(event) {
