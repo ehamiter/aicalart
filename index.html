@@ -86,10 +86,26 @@
       updateImageTitleAndBackground();
     }
 
+
+    let numberOfClicks = 0;
+    function secondsResetClick(seconds){
+      setTimeout(function(){
+        numberOfClicks = 0;
+      },seconds*1000)
+    }
+
+    window.addEventListener('click', function () {
+      numberOfClicks += 1;
+      if (numberOfClicks === 3) {
+        numberOfClicks = 0;
+        toggleModal();
+      } else if (numberOfClicks == 2){
+        secondsResetClick(0.5);
+      }
+    });
+
     let touchstartX = 0;
     let touchendX = 0;
-    let touchstartY = 0;
-    let touchendY = 0;
     let swipeThreshold = 50;
 
     function handleSwipeGesture() {
@@ -97,11 +113,6 @@
       if (swipeXDistance > swipeThreshold) {
         if (touchendX < touchstartX) changeDate(1);
         if (touchendX > touchstartX) changeDate(-1);
-      }
-      let swipeYDistance = Math.abs(touchendY - touchstartY);
-      if (swipeYDistance > swipeThreshold) {
-        if (touchendY < touchstartY) showModal();
-        if (touchendY > touchstartY) hideModal();
       }
     }
 
