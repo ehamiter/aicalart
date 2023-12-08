@@ -46,10 +46,11 @@ body, html {
 
 @media screen and (max-width: 600px) {
   .modal {
-    max-width: 90%;
+    width: 90%;
+    max-width: none;
     bottom: 5%;
-    left: 5%;
-    transform: translate(0, 0);
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .modal-content p {
