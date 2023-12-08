@@ -23,7 +23,7 @@ mkdir staging
 cp example.env .env  # And update this file with your API keys
 python3 -m venv env
 source env/bin/activate
-pip install -r requirements
+pip install -r aical-reqs.txt
 ```
 
 ## Example Usage
