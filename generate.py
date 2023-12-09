@@ -3,7 +3,7 @@ import base64
 import datetime
 import json
 import logging
-import os.path
+import os
 import random
 import time
 from base64 import b64decode
@@ -30,10 +30,8 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from openai import BadRequestError, OpenAI
 from PIL import Image, ImageDraw
-from tqdm import tqdm
-
 from promote import main as promote_file
-
+from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -91,25 +89,33 @@ def get_style():
 
 
 def fetch_calendar_entries(prompt, style, the_date=None):
-    # Google Calendar creds
+    # Load or refresh Google Calendar credentials
     creds = None
-    if os.path.exists("./token.json"):
-        creds = Credentials.from_authorized_user_file("./token.json", SCOPES)
+    token_path = "./token.json"
+    credentials_path = "./credentials.json"
 
+    if os.path.exists(token_path):
+        creds = Credentials.from_authorized_user_file(token_path, SCOPES)
+
+    # Refresh the credentials if they have expired
     if not creds or not creds.valid:
+        logger.info("Credentials not found or invalid.")
         if creds and creds.expired and creds.refresh_token:
+            logger.info("Sending request for credentials refresh.")
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                "./credentials.json", SCOPES
-            )
+            # If no valid credentials are available, let the user log in.
+            logger.info("Please log in using your web browser.")
+            flow = InstalledAppFlow.from_client_secrets_file(credentials_path, SCOPES)
             creds = flow.run_local_server(port=0)
+
         # Save the credentials for the next run
-        with open("./token.json", "w") as token:
+        logger.info("Saving credentials locally for faster execution on next run.")
+        with open(token_path, "w") as token:
             token.write(creds.to_json())
 
     if the_date:
-        now_utc = f"{the_date}T14:00:00.000000Z"
+        now_utc = f"{the_date}T14:00:00.000000Z"  # ...and they ain't leavin' 'til 6 in the mornin' central time
 
     # for tqdm progress bar customization
     # example: '10%' [===>
@@ -235,7 +241,14 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
     # what the hell it's going to come up with. If it rejects it, just regenerate
     # and see. Some keywords it will have a problem with... for example, "genocide".
 
-    the_date, style, skip_calendar, skip_holidays, skip_silly_days, skip_news = image_args
+    (
+        the_date,
+        style,
+        skip_calendar,
+        skip_holidays,
+        skip_silly_days,
+        skip_news,
+    ) = image_args
 
     try:
         logger.info(f"{Fore.YELLOW}Generating portrait image...{Style.RESET_ALL}")
@@ -429,7 +442,14 @@ def main(
 
     dalle_prompt = generate_prompt(prompt, style, news, today)
 
-    image_args = (the_date, style, skip_calendar, skip_holidays, skip_silly_days, skip_news)
+    image_args = (
+        the_date,
+        style,
+        skip_calendar,
+        skip_holidays,
+        skip_silly_days,
+        skip_news,
+    )
 
     successful_result = generate_images(dalle_prompt, image_args, failed_attempts)
 
