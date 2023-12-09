@@ -28,7 +28,7 @@ def save_deque(file_path, dq):
     with open(file_path, 'w') as file:
         json.dump(list(dq), file)
 
-def randomish(style_list, file_path='styles_deque.json'):
+def randomish(style_list, file_path='randomish_queue.json'):
     dq = load_or_initialize_deque(file_path, style_list)
     if not dq:
         dq = deque(shuffle_with_secrets(style_list))

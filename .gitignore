@@ -4,5 +4,5 @@ staging/
 .DS_Store
 .env
 credentials.json
-styles_deque.json
+randomish_queue.json
 token.json
