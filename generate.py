@@ -351,6 +351,9 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
     portrait_prompt = trim_string(portrait_prompt)
     landscape_prompt = trim_string(landscape_prompt)
 
+    if not os.path.exists("./staging"):
+        os.makedirs("./staging")
+
     original_prompt_file_path = f"./staging/original-{now}.txt"
     portrait_prompt_file_path = f"./staging/portrait-{now}.txt"
     landscape_prompt_file_path = f"./staging/landscape-{now}.txt"

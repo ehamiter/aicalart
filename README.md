@@ -8,22 +8,21 @@ Follow the directions for each respective link to set up your API keys:
 
   * [Google API / OAuth token credentials](https://developers.google.com/calendar/api/quickstart/python)
   * [OpenaAI API key](https://platform.openai.com/docs/quickstart?context=python)
-  * [GitHub Personal Access Token with full repo scope](https://docs.github.com/en/enterprise-server@3.9/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+  * [GitHub Personal Access Token with full repo scope](https://docs.github.com/en/enterprise-server@3.9/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) (you'll need this to clone this private repo)
 
 ## Setup
 
 ```
 cd <to the root of where you want this project to live>
-git clone https://github.com/ehamiter/aicalart.git
+git clone https://github.com/ehamiter/aicalart.git  # Note this is HTTPS and not SSH
 
 <Enter username>
 <Enter GitHub Personal Access Token for password>
 
-mkdir staging
 cp example.env .env  # And update this file with your API keys
 python3 -m venv env
 source env/bin/activate
-pip install -r aical-reqs.txt
+pip install -r aical-reqs.txt  # Intentionally not named `requirements.txt` to save time on auto=build deployment systems
 ```
 
 ## Example Usage
@@ -52,7 +51,7 @@ python generate.py --date="2024-02-05" --skip-calendar
 python generate.py --skip-news --skip-holidays
 ```
 
-Skip uploading to S3, so the generated will be created and saved in staging/, but not uploaded. Useful for experimentation:
+Skip uploading to S3, so the generated images will be created and saved in `staging/`, but not uploaded. Useful for experimentation:
 
 ```
 python generate.py --skip-upload
@@ -132,12 +131,23 @@ To make every object publicly available, you can edit the access control list (A
 
 ### webp image orientation paths
 ```
+# Current images
+https://aicalart.s3.amazonaws.com/images/landscape.webp
+https://aicalart.s3.amazonaws.com/images/portrait.webp
+
+# Archived images
 https://aicalart.s3.amazonaws.com/images/YYYY-MM-DD-landscape.webp
 https://aicalart.s3.amazonaws.com/images/YYYY-MM-DD-portrait.webp
 ```
 
 ### original prompt from Chat GPT; finalized orientation prompts from DALL-E
 ```
+# Current prompts
+https://aicalart.s3.amazonaws.com/prompts/original.txt
+https://aicalart.s3.amazonaws.com/prompts/landscape.txt
+https://aicalart.s3.amazonaws.com/prompts/portrait.txt
+
+# Archived prompts
 https://aicalart.s3.amazonaws.com/prompts/YYYY-MM-DD-original.txt
 https://aicalart.s3.amazonaws.com/prompts/YYYY-MM-DD-landscape.txt
 https://aicalart.s3.amazonaws.com/prompts/YYYY-MM-DD-portrait.txt
