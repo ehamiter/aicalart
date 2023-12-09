@@ -23,6 +23,7 @@ from constants import (
     STYLES,
 )
 from gnews import GNews
+from google.auth.exceptions import RefreshError
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -88,47 +89,46 @@ def get_style():
     return style
 
 
-def fetch_calendar_entries(prompt, style, the_date=None):
-    # Load or refresh Google Calendar credentials
+def refresh_credentials(token_path, credentials_path):
     creds = None
-    token_path = "./token.json"
-    credentials_path = "./credentials.json"
-
     if os.path.exists(token_path):
         creds = Credentials.from_authorized_user_file(token_path, SCOPES)
 
-    # Refresh the credentials if they have expired
     if not creds or not creds.valid:
         logger.info("Credentials not found or invalid.")
         if creds and creds.expired and creds.refresh_token:
-            logger.info("Sending request for credentials refresh.")
-            creds.refresh(Request())
+            try:
+                logger.info("Sending request for credentials refresh.")
+                creds.refresh(Request())
+            except RefreshError:
+                logger.info("Refresh token invalid, re-authenticating.")
+                os.remove(token_path)
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    credentials_path, SCOPES
+                )
+                creds = flow.run_local_server(port=0)
         else:
-            # If no valid credentials are available, let the user log in.
             logger.info("Please log in using your web browser.")
             flow = InstalledAppFlow.from_client_secrets_file(credentials_path, SCOPES)
             creds = flow.run_local_server(port=0)
 
-        # Save the credentials for the next run
-        logger.info("Saving credentials locally for faster execution on next run.")
         with open(token_path, "w") as token:
             token.write(creds.to_json())
+    return creds
 
-    if the_date:
-        now_utc = f"{the_date}T14:00:00.000000Z"  # ...and they ain't leavin' 'til 6 in the mornin' central time
 
-    # for tqdm progress bar customization
-    # example: '10%' [===>
-    custom_format = "{desc}: {percentage:3.0f}%|{bar:20}| {n_fmt}/{total_fmt}"  # fmt: skip
-
-    calendar_prompt = f"""
+def process_calendars(creds, prompt, the_date):
+    calendar_prompt = """
     Keep the prompt short and focused on my near-term most important commitments.
     Remove any personally identifiable information and do not mention dates. Each
     event is a special one that deserves to share the spotlight with the other
     elements of the scene we are setting.
     """
 
-    logger.info("Fetching calendar entries...\n")
+    if the_date:
+        # We're requesting a specific date, so we need to convert to the day's full datetime string
+        now_utc = f"{the_date}T14:00:00.000000Z"
+
     try:
         service = build("calendar", "v3", credentials=creds, cache_discovery=False)
         calendars_result = service.calendarList().list().execute()
@@ -136,17 +136,11 @@ def fetch_calendar_entries(prompt, style, the_date=None):
 
         if not calendars:
             logger.info("No calendars found.")
-            return
+            return prompt
 
         events = []
-        for calendar in tqdm(
-            calendars,
-            desc=f"{Fore.GREEN}Fetching calendars{Style.RESET_ALL}",
-            ncols=75,
-            bar_format=custom_format,
-        ):
+        for calendar in tqdm(calendars, desc="Fetching calendars", ncols=75):
             calendar_id = calendar["id"]
-
             events_result = (
                 service.events()
                 .list(
@@ -161,23 +155,27 @@ def fetch_calendar_entries(prompt, style, the_date=None):
             events += events_result.get("items", [])
 
         if not events:
-            logger.info(
-                f"No upcoming events found for calendar: {calendar['summary']}\n"
-            )
+            logger.info(f"No upcoming events found for calendar: {calendar['summary']}")
         else:
-            for event in tqdm(
-                events,
-                desc=f"{Fore.BLUE}Fetching events{Style.RESET_ALL}",
-                ncols=75,
-                bar_format=custom_format,
-            ):
+            for event in tqdm(events, desc="Fetching events", ncols=75):
                 start = event["start"].get("dateTime", event["start"].get("date"))
                 prompt += start + " " + str(event["summary"]) + ", "
             prompt += calendar_prompt
+
         return prompt
 
     except HttpError as error:
-        logger.error(f"An error occurred: {error}\n")
+        logger.error(f"An error occurred: {error}")
+        return prompt
+
+
+def fetch_calendar_entries(prompt, style, the_date):
+    token_path = "./token.json"
+    credentials_path = "./credentials.json"
+
+    creds = refresh_credentials(token_path, credentials_path)
+
+    return process_calendars(creds, prompt, the_date)
 
 
 def get_today_and_newslist(the_date, holiday, silly_day, news):
@@ -270,11 +268,11 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
             response_format="b64_json",
         )
     except BadRequestError:
-        logger.error(
-            "OpenAI's safety system rejected this due to its interpretation of the prompt."
-            "Attempting to regenerate.                                                    "
-        )
         failed_attempts += 1
+        logger.error(
+            "OpenAI's safety system rejected this due to its interpretation of the prompt. "
+            f"Attempting to regenerate... [#{failed_attempts} of 5]                        "
+        )
 
         if failed_attempts == 1:
             # Sometimes anamolies happen. Try it again
@@ -432,7 +430,7 @@ def main(
     """
 
     if not skip_calendar:
-        prompt = fetch_calendar_entries(prompt, style, the_date=the_date)
+        prompt = fetch_calendar_entries(prompt, style, the_date)
 
     # Put a bow on the prompt
     prompt += f"""
@@ -463,9 +461,9 @@ def main(
 
     if skip_upload:
         print("To promote these images to production, run:\n")
-        print(f"python3 promote.py landscape-{now}\n")
+        print(f"python3 promote.py landscape-{now}\n\n")
         print("To archive these images (for a past date), run:\n")
-        print(f"python3 promote.py landscape-{now} --archive-only")
+        print(f"python3 promote.py landscape-{now} --archive-only\n")
     else:
         print(f"Promoting prompts and images for {now} to production...")
         file_tag = f"landscape-{now}"
