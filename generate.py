@@ -4,7 +4,6 @@ import datetime
 import json
 import logging
 import os
-import random
 import time
 from base64 import b64decode
 from io import BytesIO
@@ -33,6 +32,9 @@ from openai import BadRequestError, OpenAI
 from PIL import Image, ImageDraw
 from promote import main as promote_file
 from tqdm import tqdm
+
+from randomish import randomish
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -85,7 +87,7 @@ def get_news(country="US", period="1h"):
 
 def get_style():
     style = PRE_STYLE
-    style += random.choice(STYLES)
+    style += randomish(STYLES)
     return style
 
 

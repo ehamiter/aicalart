@@ -1,7 +1,8 @@
-.DS_Store
 __pycache__/
 env/
 staging/
-credentials.json
-token.json
+.DS_Store
 .env
+credentials.json
+styles_deque.json
+token.json
