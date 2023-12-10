@@ -42,22 +42,19 @@ def main(file_tag, archive_only=False):
         datetime_part = filename.split("-", 1)[1]
         # Replace slashes with colons in the time part
         datetime_with_colons = datetime_part.replace("/", ":")
+        return datetime_with_colons
 
-        # Parse the string into a datetime object
-        datetime_obj = datetime.strptime(datetime_with_colons, "%Y-%m-%dT%H:%M:%S.%fZ")
+    def adjust_to_cst(the_datetime):
+        # Convert the UTC datetime string to a datetime object
+        datetime_obj = datetime.strptime(the_datetime, "%Y-%m-%dT%H:%M:%S.%fZ")
 
-        # Adjust to CST (UTC-6)
+        # Adjust to CST by subtracting 6 hours
         cst_datetime_obj = datetime_obj - timedelta(hours=6)
 
-        # Extract the date part in CST
-        cst_date = cst_datetime_obj.strftime("%Y-%m-%d")
+        # Convert back to string to extract the date
+        cst_datetime_str = cst_datetime_obj.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
-        # Keep the time part in UTC
-        utc_time = datetime_obj.strftime("T%H:%M:%S.%f")[:-3] + "Z"
-
-        # Combine CST date with UTC time
-        return cst_date + utc_time
-
+        return cst_datetime_str
 
     def upload_file_to_s3(local_path, bucket, s3_key):
         logger.info(f"Uploading file {local_path}...")
@@ -89,7 +86,8 @@ def main(file_tag, archive_only=False):
 
     input_filename = file_tag
     the_datetime = extract_datetime(input_filename)
-    the_date = the_datetime.split("T")[0]
+    cst_datetime = adjust_to_cst(the_datetime)
+    the_date = cst_datetime.split("T")[0]
 
     # Local file paths using the full datetime so you can generate several per day
     landscape_file = f"./staging/landscape-{the_datetime}.webp"
