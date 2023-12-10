@@ -248,6 +248,7 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
         skip_holidays,
         skip_silly_days,
         skip_news,
+        skip_upload,
     ) = image_args
 
     try:
@@ -286,6 +287,7 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
                 skip_holidays=skip_holidays,
                 skip_silly_days=skip_silly_days,
                 skip_news=skip_news,
+                skip_upload=skip_upload,
                 failed_attempts=failed_attempts,
             )
         elif failed_attempts == 2:
@@ -298,6 +300,7 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
                 skip_holidays=skip_holidays,
                 skip_silly_days=skip_silly_days,
                 skip_news=True,
+                skip_upload=skip_upload,
                 failed_attempts=failed_attempts,
             )
         elif failed_attempts == 3:
@@ -310,6 +313,7 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
                 skip_holidays=skip_holidays,
                 skip_silly_days=skip_silly_days,
                 skip_news=True,
+                skip_upload=skip_upload,
                 failed_attempts=failed_attempts,
             )
         elif failed_attempts == 4:
@@ -322,6 +326,7 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
                 skip_holidays=True,
                 skip_silly_days=True,
                 skip_news=True,
+                skip_upload=skip_upload,
                 failed_attempts=failed_attempts,
             )
         elif failed_attempts == 5:
@@ -334,6 +339,7 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
                 skip_holidays=True,
                 skip_silly_days=True,
                 skip_news=True,
+                skip_upload=skip_upload,
                 failed_attempts=failed_attempts,
             )
         else:
@@ -452,6 +458,7 @@ def main(
         skip_holidays,
         skip_silly_days,
         skip_news,
+        skip_upload,
     )
 
     successful_result = generate_images(dalle_prompt, image_args, failed_attempts)
@@ -466,9 +473,9 @@ def main(
 
     if skip_upload:
         print("To promote these images to production, run:\n")
-        print(f"python3 promote.py landscape-{now}\n\n")
+        print(f"python promote.py landscape-{now}\n\n")
         print("To archive these images (for a past date), run:\n")
-        print(f"python3 promote.py landscape-{now} --archive-only\n")
+        print(f"python promote.py landscape-{now} --archive-only\n")
     else:
         print(f"Promoting prompts and images for {now} to production...")
         file_tag = f"landscape-{now}"
