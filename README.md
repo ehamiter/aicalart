@@ -2,6 +2,37 @@
 
 This repo hosts the scripts and template that powers [aical.art](https://aical.art). This project is heavily inspired by "Kuvastin - An E Ink art piece that displays daily AI art inspired by your calendar" ([Blog post here](https://turunen.dev/2023/11/20/Kuvastin-Unhinged-AI-eink-display/); [GitHub repo here](https://github.com/Iletee/kuvastin)).
 
+<figure>
+  <img src="./static/images/examples/2023-12-09-landscape.webp" alt="An AI-generated image showcasing a vibrant sports stadium scene with emotional distortion in Neo-Expressionism style.">
+  <figcaption>
+    <h4>Example image: Landscape oriented image shown with revised landscape prompt</h4>
+    <p>One every successful script run, the following happens:</p>
+    <ul>
+      <li>Two images are created; one in a landscape orientation, one in a portrait orientation. On a mobile phone, you can see the other image when you flip your phone. On a desktop, you can shrink your screen size width-wise to see the portrait version.</li>
+      <li>Three prompts are created: the original one fed to DALL-E, and its respective image orientation outputs revised</li>
+    </ul>
+    <p>Sources</p>
+    <ul>
+      <li>Breaking News Headlines</li>
+      <li>Personal Google Calendars</li>
+      <li>National Holidays</li>
+      <li>Silly Days According To Some Website</li>
+      <li>Custom Prompt Influencers (in this case, Hobbes, my cat)</li>
+    </ul>
+    <p>Mobile Phone Navigation</p>
+    <ul>
+      <li><strong>(double tap image)</strong> Toggle prompt display</li>
+      <li><strong>(swipe) ← →</strong> Go back / forward in time</li>
+    </ul>
+    <p>Desktop / Laptop Navigation</p>
+    <ul>
+      <li><strong>?</strong> Toggle prompt display</li>
+      <li><strong>(keys) ← →</strong> Go back / forward in time</li>
+    </ul>
+  </figcaption>
+</figure>
+
+
 ### Prerequisites
 
 Follow the directions for each respective link:
@@ -136,7 +167,7 @@ That's Hobbes, [and he instructed me to do so](https://github.com/ehamiter/aical
 
 ### File Structure
 
-Each successful run will generate two images and three prompts and save them in the .gitignored `staging/` directory. They are stored as `webp` files, which are significantly smaller in size compared to `png` files. The only browser that doesn't support it is Internet Explorer, so `webp` it is.
+Each successful run will generate two images and three prompts and save them in the .gitignored `staging/` directory. They are stored as `webp` files, [which are significantly smaller in size](https://developers.google.com/speed/webp) compared to `png` files. The only browser that doesn't support it is Internet Explorer, so `webp` it is.
 
 The file structure looks like this:
 
