@@ -67,12 +67,12 @@ Additionally, I have some items on my personal calendar that involve my youngest
 <figure>
   <img src="./static/images/examples/2024-02-11-landscape.webp" alt="An AI-generated image showcasing a vibrant sports stadium scene with emotional distortion in Neo-Expressionism style.">
   <figcaption>
-    <h3>February 11, 2024: The Super Bowl, Don't Cry Over Spilled Milk Day, and Make A Friend Day</h3>
-    <p>Style: Neo-Expressionism, raw imagery, intense colors, emotional distortion</p>
-    <p>News: University of Pennsylvania president steps down amid criticism of antisemitism testimony - NBC News</p>
-    <p>Today: 2024-02-11, Super Bowl and Make a Friend Day and Dont Cry Over Spilled Milk Day</p>
-    <p>DALL-E prompt: Digital art, full screen, intense colors, Neo-Expressionism, emotional distortion, picturing a vibrant sports stadium filled with fans during the pinnacle of a championship game. Hobbes, the orange tabby, is seen amongst the crowd, wearing a miniature football jersey, sitting beside a new unlikely friend, a mouse with a tiny friendship bracelet. Behind them, an overturned milk glass, its contents ignored for the thrill of the game. All around, elements of celebration, teamwork, and camaraderie blend together in a dynamic expression of festive chaos, hinting at upcoming athletic practices and the joyous spirit of special personal celebrations without revealing specifics.</p>
-    <p>Landscape prompt: Full screen digital art embodying the Neo-Expressionism movement featuring emotional distortion and intense colors. The focal point is a bustling sports stadium filled to the brim with fans totally engrossed in the climax of a championship game. In the crowd, an identifiable orange-striped tabby character dressed in a tiny football jersey is found, sitting next to an unusual buddy, a mouse sporting a minuscule friendship bracelet. A further element behind them is a tipped over glass of milk, ignored in favor of the exciting sporting event. The atmosphere exhibits aspects of celebration, teamwork, and camaraderie in a vibrant display of joyful disorder, subtly indicating future athletic practices and the heartening ambiance of meaningful personal festivities without giving away detailed information. The image is crafted in a landscape format.</p>
+    <h4>February 11, 2024: The Super Bowl, Don't Cry Over Spilled Milk Day, and Make A Friend Day</h4>
+    <p><strong>Style:</strong> Neo-Expressionism, raw imagery, intense colors, emotional distortion</p>
+    <p><strong>News:</strong> University of Pennsylvania president steps down amid criticism of antisemitism testimony - NBC News</p>
+    <p><strong>Today:</strong> 2024-02-11, Super Bowl and Make a Friend Day and Dont Cry Over Spilled Milk Day</p>
+    <p><strong>DALL-E prompt:</strong> Digital art, full screen, intense colors, Neo-Expressionism, emotional distortion, picturing a vibrant sports stadium filled with fans during the pinnacle of a championship game. Hobbes, the orange tabby, is seen amongst the crowd, wearing a miniature football jersey, sitting beside a new unlikely friend, a mouse with a tiny friendship bracelet. Behind them, an overturned milk glass, its contents ignored for the thrill of the game. All around, elements of celebration, teamwork, and camaraderie blend together in a dynamic expression of festive chaos, hinting at upcoming athletic practices and the joyous spirit of special personal celebrations without revealing specifics.</p>
+    <p><strong>Landscape prompt:</strong> Full screen digital art embodying the Neo-Expressionism movement featuring emotional distortion and intense colors. The focal point is a bustling sports stadium filled to the brim with fans totally engrossed in the climax of a championship game. In the crowd, an identifiable orange-striped tabby character dressed in a tiny football jersey is found, sitting next to an unusual buddy, a mouse sporting a minuscule friendship bracelet. A further element behind them is a tipped over glass of milk, ignored in favor of the exciting sporting event. The atmosphere exhibits aspects of celebration, teamwork, and camaraderie in a vibrant display of joyful disorder, subtly indicating future athletic practices and the heartening ambiance of meaningful personal festivities without giving away detailed information. The image is crafted in a landscape format.</p>
   </figcaption>
 </figure>
 </details>
@@ -82,12 +82,12 @@ Additionally, I have some items on my personal calendar that involve my youngest
 <figure>
   <img src="./static/images/examples/2024-05-04-landscape.webp" alt="An AI-generated image showing a tabby cat frolicking in a space-age-inspired retro kitchen, where an egg fries nearby, and fireworks explode in the background night sky.">
   <figcaption>
-    <h3>May 4th 2024: May The Fourth Be With You; Also EOD Day, I'm Surprised This Was Generated</h3>
-    <p>Style: Renaissance portrait, realistic details, chiaroscuro lighting, classical beauty</p>
-    <p>News: None</p>
-    <p>Today: 2024-05-04, National Explosive Ordnance Disposal (EOD) Day and Star Wars Day, Herb Day and Free Comic Book Day</p>
-    <p>DALL-E prompt: Digital art, award-winning art in 4k/8k resolution with realistic details and chiaroscuro lighting capturing classical beauty, no margins, full screen: Envision a tapestry that honors National Explosive Ordnance Disposal (EOD) Day through an allegorical scene where EOD technicians are depicted as Jedi from Star Wars, expertly disarming a variety of devices with lightsabers in hand. Amongst the high-tech gear and defused ordinance, intertwine herbs indigenous to the galaxy, symbolizing Herb Day. Woven into the backdrop are iconic comic book pages, representing Free Comic Book Day, each frame capturing a heroic moment of defusal. In the midst of this intricate ensemble, hide Hobbes the orange tabby cat playfully pawing at a deactivated thermal detonator, while donning a tiny EOD bomb suit, his whiskers twitching in the thrill of the disarmament, subtly blending into the narrative as both an observer and a silent hero.</p>
-    <p>Landscape prompt: Create a 4k/8k resolution digital art with meticulous details and chiaroscuro lighting highlighting classical beauty in full screen. Picture a tapestry commemorating National Explosive Ordnance Disposal (EOD) Day symbolically. The scene depicts EOD technicians of differing descents and genders, proficiently nullifying various devices, holding advanced tech tools in their hands. Enrich the backdrop with high-tech gear and neutralized ordnance. Intersperse species-specific flora from a faraway galaxy, giving a nod to Herb day. Embed the background with iconic scenes from an imaginary graphic novel, each frame displaying a gallant moment of disarming, this alludes to Free Comic Book Day. Central to this complex montage, incorporate a disguised generic orange tabby cat playfully batting a deactivated futuristic explosive device, adorning a miniature EOD explosive armor. The cat, merging smoothly into the narrative, serves as a silent observer and a subdued protagonist. This image should have a landscape orientation.</p>
+    <h4>May 4th 2024: May The Fourth Be With You; Also EOD Day, I'm Surprised This Was Generated</h4>
+    <p><strong>Style:</strong> Renaissance portrait, realistic details, chiaroscuro lighting, classical beauty</p>
+    <p><strong>News:</strong> None</p>
+    <p><strong>Today:</strong> 2024-05-04, National Explosive Ordnance Disposal (EOD) Day and Star Wars Day, Herb Day and Free Comic Book Day</p>
+    <p><strong>DALL-E prompt:</strong> Digital art, award-winning art in 4k/8k resolution with realistic details and chiaroscuro lighting capturing classical beauty, no margins, full screen: Envision a tapestry that honors National Explosive Ordnance Disposal (EOD) Day through an allegorical scene where EOD technicians are depicted as Jedi from Star Wars, expertly disarming a variety of devices with lightsabers in hand. Amongst the high-tech gear and defused ordinance, intertwine herbs indigenous to the galaxy, symbolizing Herb Day. Woven into the backdrop are iconic comic book pages, representing Free Comic Book Day, each frame capturing a heroic moment of defusal. In the midst of this intricate ensemble, hide Hobbes the orange tabby cat playfully pawing at a deactivated thermal detonator, while donning a tiny EOD bomb suit, his whiskers twitching in the thrill of the disarmament, subtly blending into the narrative as both an observer and a silent hero.</p>
+    <p><strong>Landscape prompt:</strong> Create a 4k/8k resolution digital art with meticulous details and chiaroscuro lighting highlighting classical beauty in full screen. Picture a tapestry commemorating National Explosive Ordnance Disposal (EOD) Day symbolically. The scene depicts EOD technicians of differing descents and genders, proficiently nullifying various devices, holding advanced tech tools in their hands. Enrich the backdrop with high-tech gear and neutralized ordnance. Intersperse species-specific flora from a faraway galaxy, giving a nod to Herb day. Embed the background with iconic scenes from an imaginary graphic novel, each frame displaying a gallant moment of disarming, this alludes to Free Comic Book Day. Central to this complex montage, incorporate a disguised generic orange tabby cat playfully batting a deactivated futuristic explosive device, adorning a miniature EOD explosive armor. The cat, merging smoothly into the narrative, serves as a silent observer and a subdued protagonist. This image should have a landscape orientation.</p>
   </figcaption>
 </figure>
 </details>
@@ -98,12 +98,12 @@ Additionally, I have some items on my personal calendar that involve my youngest
 <figure>
   <img src="./static/images/examples/2024-07-04-portrait.webp" alt="An AI-generated image showing a tabby cat frolicking in a space-age-inspired retro kitchen, where an egg fries nearby, and fireworks explode in the background night sky.">
   <figcaption>
-    <h3>July 4th 2024: Sure, it's Independence Day; Did You Know It's Also Sidewalk Egg Frying Day?</h3>
-    <p>Style: space age retro futurism, optimistic future visions, sleek designs, technological themes, cosmic exploration</p>
-    <p>News: Penn President Liz Magill resigns days after antisemitism hearing - NPR</p>
-    <p>Today: 2024-07-04, Independence Day and Sidewalk Egg Frying Day</p>
-    <p>DALL-E prompt: "Space age retro futurism meets a patriotic celebration and whimsical summer shenanigans as Hobbes, the cunning orange tabby, tiptoes across a sleek, high-tech kitchen where an egg fries on the sidewalk-themed countertop, amidst a display of red, white, and blue cosmic explorations, with hidden symbols of familial affection and festive cheer, encapsulated in a full screen, no-margins tableau of optimistic future visions."</p>
-    <p>Portrait prompt: Envision a scene rendered in retro futurism, blended with a whimsical summer vibe and patriotic symbols. Picture a clever orange-striped cat, reminiscent of a carefree, playful character, steadily walking across a shiny, innovative kitchen that features a countertop designed to mimic a heated sidewalk where an egg is frying. The whole surrounding bursts with hues of red, white, and blue - a celebration of cosmic exploration. Concealed within this tableau are symbols expressing familial love and holiday cheer, all enclosed within a full screen, margin-free composition that displays a hopeful vision of the future- captured in a vertical orientation.</p>
+    <h4>July 4th 2024: Sure, it's Independence Day; Did You Know It's Also Sidewalk Egg Frying Day?</h4>
+    <p><strong>Style:</strong> space age retro futurism, optimistic future visions, sleek designs, technological themes, cosmic exploration</p>
+    <p><strong>News:</strong> Penn President Liz Magill resigns days after antisemitism hearing - NPR</p>
+    <p><strong>Today:</strong> 2024-07-04, Independence Day and Sidewalk Egg Frying Day</p>
+    <p><strong>DALL-E prompt:</strong> "Space age retro futurism meets a patriotic celebration and whimsical summer shenanigans as Hobbes, the cunning orange tabby, tiptoes across a sleek, high-tech kitchen where an egg fries on the sidewalk-themed countertop, amidst a display of red, white, and blue cosmic explorations, with hidden symbols of familial affection and festive cheer, encapsulated in a full screen, no-margins tableau of optimistic future visions."</p>
+    <p><strong>Portrait prompt:</strong> Envision a scene rendered in retro futurism, blended with a whimsical summer vibe and patriotic symbols. Picture a clever orange-striped cat, reminiscent of a carefree, playful character, steadily walking across a shiny, innovative kitchen that features a countertop designed to mimic a heated sidewalk where an egg is frying. The whole surrounding bursts with hues of red, white, and blue - a celebration of cosmic exploration. Concealed within this tableau are symbols expressing familial love and holiday cheer, all enclosed within a full screen, margin-free composition that displays a hopeful vision of the future- captured in a vertical orientation.</p>
   </figcaption>
 </figure>
 </details>
@@ -113,12 +113,12 @@ Additionally, I have some items on my personal calendar that involve my youngest
 <figure>
   <img src="./static/images/examples/2024-08-19-landscape.webp" alt="An AI-generated image showing a tabby cat wearing a camera for a collar, perched on top of a passenger airplane in Transavantgarde style showcasing a bustling international airport scene.">
   <figcaption>
-    <h3>August 19th 2024: Aviation, Photos, And Giant Cats Perched On Top Of Planes</h3>
-    <p>Style: Transavantgarde, return to figurative painting, eclectic styles, emotive expression</p>
-    <p>News: Penn President Liz Magill resigns after facing intense controversy; chair of school's board of trustees also steps down - The Philadelphia Inquirer</p>
-    <p>Today: 2024-08-19, National Aviation Day and World Photo Day</p>
-    <p>DALL-E prompt: Digital art, award-winning art in 4k/8k resolution, showcasing a Transavantgarde style with a return to figurative painting and eclectic styles paired with emotive expression, no margins, and full-screen composition: Create an image that celebrates National Aviation Day by featuring a bustling international airport scene where vintage and modern aircraft are adorned with motifs that pay tribute to the evolution of photography in honor of World Photo Day. Incorporated into this dynamic tableau is Hobbes, the orange tabby cat, perched nonchalantly on top of a classic propeller plane, with a camera strap casually draped around his neck, symbolizing the observer's role in both aviation and photography. In the cloud formations above, discernible upon close inspection, is the subtle silhouette of famous aviators and photographers, hinting at their impact on their respective fields, while the overall scene encapsulates the joyous spirit of human achievement in flight and art.</p>
-    <p>Landscape prompt: Create an image in Transavantgarde style showcasing a bustling international airport scene in celebration of National Aviation Day. The scene incorporates vintage and modern aircraft adorned with motifs paying homage to the evolution of photography, in honor of World Photo Day. Position an orange tabby cat perched nonchalantly on top of a classic propeller airplane, with a camera strap around his neck, symbolizing the observer's role in aviation and photography. In the cloud formations, subtly incorporate silhouettes of notable contributors to aviation and photography. This busy scene denotes the joyful spirit of human achievement in the realms of flight and art. Maintain a high-quality resolution and horizontal orientation.</p>
+    <h4>August 19th 2024: Aviation, Photos, And Giant Cats Perched On Top Of Planes</h4>
+    <p><strong>Style:</strong> Transavantgarde, return to figurative painting, eclectic styles, emotive expression</p>
+    <p><strong>News:</strong> Penn President Liz Magill resigns after facing intense controversy; chair of school's board of trustees also steps down - The Philadelphia Inquirer</p>
+    <p><strong>Today:</strong> 2024-08-19, National Aviation Day and World Photo Day</p>
+    <p><strong>DALL-E prompt:</strong> Digital art, award-winning art in 4k/8k resolution, showcasing a Transavantgarde style with a return to figurative painting and eclectic styles paired with emotive expression, no margins, and full-screen composition: Create an image that celebrates National Aviation Day by featuring a bustling international airport scene where vintage and modern aircraft are adorned with motifs that pay tribute to the evolution of photography in honor of World Photo Day. Incorporated into this dynamic tableau is Hobbes, the orange tabby cat, perched nonchalantly on top of a classic propeller plane, with a camera strap casually draped around his neck, symbolizing the observer's role in both aviation and photography. In the cloud formations above, discernible upon close inspection, is the subtle silhouette of famous aviators and photographers, hinting at their impact on their respective fields, while the overall scene encapsulates the joyous spirit of human achievement in flight and art.</p>
+    <p><strong>Landscape prompt:</strong> Create an image in Transavantgarde style showcasing a bustling international airport scene in celebration of National Aviation Day. The scene incorporates vintage and modern aircraft adorned with motifs paying homage to the evolution of photography, in honor of World Photo Day. Position an orange tabby cat perched nonchalantly on top of a classic propeller airplane, with a camera strap around his neck, symbolizing the observer's role in aviation and photography. In the cloud formations, subtly incorporate silhouettes of notable contributors to aviation and photography. This busy scene denotes the joyful spirit of human achievement in the realms of flight and art. Maintain a high-quality resolution and horizontal orientation.</p>
   </figcaption>
 </figure>
 </details>
@@ -126,7 +126,7 @@ Additionally, I have some items on my personal calendar that involve my youngest
 
 ### Why Is There A Cat In Every Image?
 
-That's Hobbes, and he instructed me to do so.
+That's Hobbes, [and he instructed me to do so](https://github.com/ehamiter/aicalart/blob/main/example.env#L10).
 
 
 ### File Structure
@@ -225,3 +225,13 @@ https://aicalart.s3.amazonaws.com/prompts/YYYY-MM-DD-original.txt
 https://aicalart.s3.amazonaws.com/prompts/YYYY-MM-DD-landscape.txt
 https://aicalart.s3.amazonaws.com/prompts/YYYY-MM-DD-portrait.txt
 ```
+
+### Cron
+
+I have this set up on an Ubuntu home server with a cron schedule of:
+
+```
+00 06 * * * cd /home/eric/projects/aicalart && ./env/bin/python3 ./generate.py >> ../logs/aicalart.log 2>&1
+```
+
+So if there's an error I can ssh into the machine and read the error log file it generated. Otherwise it should be ready to generate a pair of images and submit them to S3 at 6am every CST morning.
