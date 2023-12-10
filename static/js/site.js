@@ -19,7 +19,6 @@ function updateImageTitleAndBackground() {
   fetch(textFile)
   .then(response => response.text())
   .then(text => {
-    document.querySelector('.bg-image').setAttribute('title', text);
     document.querySelector('.bg-image').style.backgroundImage = bgFile;
     document.getElementById('modalText').textContent = text;
   })
