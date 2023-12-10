@@ -36,54 +36,54 @@ ch.setFormatter(CustomFormatter())
 logger.addHandler(ch)
 
 
+def extract_datetime(filename):
+    # Extract the part after "landscape-" or "portrait-" and keep 'Z' at the end
+    datetime_part = filename.split("-", 1)[1]
+    # Replace slashes with colons in the time part
+    datetime_with_colons = datetime_part.replace("/", ":")
+    return datetime_with_colons
+
+def adjust_to_cst(the_datetime):
+    # Convert the UTC datetime string to a datetime object
+    datetime_obj = datetime.strptime(the_datetime, "%Y-%m-%dT%H:%M:%S.%fZ")
+
+    # Adjust to CST by subtracting 6 hours
+    cst_datetime_obj = datetime_obj - timedelta(hours=6)
+
+    # Convert back to string to extract the date
+    cst_datetime_str = cst_datetime_obj.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+
+    return cst_datetime_str
+
+def upload_file_to_s3(local_path, bucket, s3_key):
+    logger.info(f"Uploading file {local_path}...")
+
+    try:
+        s3 = boto3.client(
+            "s3",
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+        )
+
+        # Set content-type so we're not downloading objects
+        if local_path.endswith(".txt"):
+            extra_args = {"ContentType": "text/plain"}
+        elif local_path.endswith(".webp"):
+            extra_args = {"ContentType": "image/webp"}
+        else:
+            extra_args = {}
+
+        # Upload the file with specified content type
+        s3.upload_file(local_path, bucket, s3_key, ExtraArgs=extra_args)
+
+        logger.info(f"File {local_path} uploaded to {bucket}/{s3_key}")
+
+    except FileNotFoundError:
+        logger.error("The file was not found")
+    except NoCredentialsError:
+        logger.error("Credentials not available")
+
 def main(file_tag, archive_only=False):
-    def extract_datetime(filename):
-        # Extract the part after "landscape-" or "portrait-" and keep 'Z' at the end
-        datetime_part = filename.split("-", 1)[1]
-        # Replace slashes with colons in the time part
-        datetime_with_colons = datetime_part.replace("/", ":")
-        return datetime_with_colons
-
-    def adjust_to_cst(the_datetime):
-        # Convert the UTC datetime string to a datetime object
-        datetime_obj = datetime.strptime(the_datetime, "%Y-%m-%dT%H:%M:%S.%fZ")
-
-        # Adjust to CST by subtracting 6 hours
-        cst_datetime_obj = datetime_obj - timedelta(hours=6)
-
-        # Convert back to string to extract the date
-        cst_datetime_str = cst_datetime_obj.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-
-        return cst_datetime_str
-
-    def upload_file_to_s3(local_path, bucket, s3_key):
-        logger.info(f"Uploading file {local_path}...")
-
-        try:
-            s3 = boto3.client(
-                "s3",
-                aws_access_key_id=AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-            )
-
-            # Set content-type so we're not downloading objects
-            if local_path.endswith(".txt"):
-                extra_args = {"ContentType": "text/plain"}
-            elif local_path.endswith(".webp"):
-                extra_args = {"ContentType": "image/webp"}
-            else:
-                extra_args = {}
-
-            # Upload the file with specified content type
-            s3.upload_file(local_path, bucket, s3_key, ExtraArgs=extra_args)
-
-            logger.info(f"File {local_path} uploaded to {bucket}/{s3_key}")
-
-        except FileNotFoundError:
-            logger.error("The file was not found")
-        except NoCredentialsError:
-            logger.error("Credentials not available")
-
     input_filename = file_tag
     the_datetime = extract_datetime(input_filename)
     cst_datetime = adjust_to_cst(the_datetime)
