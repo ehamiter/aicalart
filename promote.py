@@ -1,4 +1,5 @@
 import argparse
+from datetime import datetime, timedelta
 import logging
 import boto3
 from botocore.exceptions import NoCredentialsError
@@ -39,9 +40,14 @@ def main(file_tag, archive_only=False):
     def extract_datetime(filename):
         # Extract the part after "landscape-" or "portrait-" and keep 'Z' at the end
         datetime_part = filename.split("-", 1)[1]
-        # Replace slashes with colons in the time part
         datetime_with_colons = datetime_part.replace("/", ":")
-        return datetime_with_colons
+        datetime_obj = datetime.strptime(datetime_with_colons, "%Y-%m-%dT%H:%M:%S.%fZ")
+
+        # Making this CST so if something is promoted at 10pm CST, it still counts for that day
+        cst_datetime_obj = datetime_obj - timedelta(hours=6)
+        cst_date = cst_datetime_obj.strftime("%Y-%m-%d")
+
+        return cst_date
 
     def upload_file_to_s3(local_path, bucket, s3_key):
         logger.info(f"Uploading file {local_path}...")
