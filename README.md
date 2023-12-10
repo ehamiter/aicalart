@@ -1,8 +1,8 @@
-# AI Calendar Art
+## AI Calendar Art
 
-This repo hosts the scripts and template that powers [aical.art](https://aical.art).
+This repo hosts the scripts and template that powers [aical.art](https://aical.art). This project is heavily inspired by "Kuvastin - An E Ink art piece that displays daily AI art inspired by your calendar" ([Blog post here](https://turunen.dev/2023/11/20/Kuvastin-Unhinged-AI-eink-display/); [GitHub repo here](https://github.com/Iletee/kuvastin)).
 
-## Prerequisites
+### Prerequisites
 
 Follow the directions for each respective link to set up your API keys:
 
@@ -10,7 +10,7 @@ Follow the directions for each respective link to set up your API keys:
   * [OpenaAI API key](https://platform.openai.com/docs/quickstart?context=python)
   * [GitHub Personal Access Token with full repo scope](https://docs.github.com/en/enterprise-server@3.9/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) (you'll need this to clone this private repo)
 
-## Setup
+### Setup
 
 ```
 cd <to the root of where you want this project to live>
@@ -20,12 +20,10 @@ git clone https://github.com/ehamiter/aicalart.git  # Note this is HTTPS and not
 <Enter GitHub Personal Access Token for password>
 
 cp example.env .env  # And update this file with your API keys
-python3 -m venv env
+python -m venv env
 source env/bin/activate
-pip install -r aical-reqs.txt  # Intentionally not named `requirements.txt` to save time on auto=build deployment systems
+pip install -r aical-reqs.txt  # Intentionally not named `requirements.txt` to save time on auto-build deployment systems
 ```
-
-## Example Usage
 
 ### Generation
 
@@ -57,6 +55,66 @@ Skip uploading to S3, so the generated images will be created and saved in `stag
 python generate.py --skip-upload
 ```
 
+
+### Examples
+
+All of the examples below additionally have `--skip-upload` passed in so the current production image files aren't replaced. Basically whenever you want to experiment, or, say, make screenshots while generating examples, it's a nice option to have. New images are generated and stored in a `staging/` folder.
+
+Additionally, I have some items on my personal calendar that involve my youngest son attending soccer practices. They are titled things like "Practice: B07 Academy" so there are interesting interpretations of what that means exactly. These aren't echoed in the description print outs, but are still a part of the prompt that DALL-E receives, so there will be elements revolving around calendar events unless specifically skipped.
+
+<details>
+<summary><code>python generate.py --date="2024-02-11" --skip-upload</code></summary>
+<figure>
+  <img src="./static/images/examples/2024-02-11-landscape.webp" alt="An AI-generated image showcasing a vibrant sports stadium scene with emotional distortion in Neo-Expressionism style.">
+  <figcaption>
+    <h3>February 11, 2024: The Super Bowl, Don't Cry Over Spilled Milk Day, and Make A Friend Day</h3>
+    <p>Style: Neo-Expressionism, raw imagery, intense colors, emotional distortion</p>
+    <p>News: University of Pennsylvania president steps down amid criticism of antisemitism testimony - NBC News</p>
+    <p>Today: 2024-02-11, Super Bowl and Make a Friend Day and Dont Cry Over Spilled Milk Day</p>
+    <p>DALL-E prompt: Digital art, full screen, intense colors, Neo-Expressionism, emotional distortion, picturing a vibrant sports stadium filled with fans during the pinnacle of a championship game. Hobbes, the orange tabby, is seen amongst the crowd, wearing a miniature football jersey, sitting beside a new unlikely friend, a mouse with a tiny friendship bracelet. Behind them, an overturned milk glass, its contents ignored for the thrill of the game. All around, elements of celebration, teamwork, and camaraderie blend together in a dynamic expression of festive chaos, hinting at upcoming athletic practices and the joyous spirit of special personal celebrations without revealing specifics.</p>
+    <p>Landscape prompt: Full screen digital art embodying the Neo-Expressionism movement featuring emotional distortion and intense colors. The focal point is a bustling sports stadium filled to the brim with fans totally engrossed in the climax of a championship game. In the crowd, an identifiable orange-striped tabby character dressed in a tiny football jersey is found, sitting next to an unusual buddy, a mouse sporting a minuscule friendship bracelet. A further element behind them is a tipped over glass of milk, ignored in favor of the exciting sporting event. The atmosphere exhibits aspects of celebration, teamwork, and camaraderie in a vibrant display of joyful disorder, subtly indicating future athletic practices and the heartening ambiance of meaningful personal festivities without giving away detailed information. The image is crafted in a landscape format.</p>
+  </figcaption>
+</figure>
+</details>
+
+<details>
+<summary><code>python generate.py --date="2024-05-04" --skip-calendar --skip-news --skip-upload</code></summary>
+<figure>
+  <img src="./static/images/examples/2024-05-04-landscape.webp" alt="An AI-generated image showing a tabby cat frolicking in a space-age-inspired retro kitchen, where an egg fries nearby, and fireworks explode in the background night sky.">
+  <figcaption>
+    <h3>May 4th 2024: May The Fourth Be With You; Also EOD Day, I'm Surprised This Was Generated</h3>
+    <p>Style: Renaissance portrait, realistic details, chiaroscuro lighting, classical beauty</p>
+    <p>News: None</p>
+    <p>Today: 2024-05-04, National Explosive Ordnance Disposal (EOD) Day and Star Wars Day, Herb Day and Free Comic Book Day</p>
+    <p>DALL-E prompt: Digital art, award-winning art in 4k/8k resolution with realistic details and chiaroscuro lighting capturing classical beauty, no margins, full screen: Envision a tapestry that honors National Explosive Ordnance Disposal (EOD) Day through an allegorical scene where EOD technicians are depicted as Jedi from Star Wars, expertly disarming a variety of devices with lightsabers in hand. Amongst the high-tech gear and defused ordinance, intertwine herbs indigenous to the galaxy, symbolizing Herb Day. Woven into the backdrop are iconic comic book pages, representing Free Comic Book Day, each frame capturing a heroic moment of defusal. In the midst of this intricate ensemble, hide Hobbes the orange tabby cat playfully pawing at a deactivated thermal detonator, while donning a tiny EOD bomb suit, his whiskers twitching in the thrill of the disarmament, subtly blending into the narrative as both an observer and a silent hero.</p>
+    <p>Landscape prompt: Create a 4k/8k resolution digital art with meticulous details and chiaroscuro lighting highlighting classical beauty in full screen. Picture a tapestry commemorating National Explosive Ordnance Disposal (EOD) Day symbolically. The scene depicts EOD technicians of differing descents and genders, proficiently nullifying various devices, holding advanced tech tools in their hands. Enrich the backdrop with high-tech gear and neutralized ordnance. Intersperse species-specific flora from a faraway galaxy, giving a nod to Herb day. Embed the background with iconic scenes from an imaginary graphic novel, each frame displaying a gallant moment of disarming, this alludes to Free Comic Book Day. Central to this complex montage, incorporate a disguised generic orange tabby cat playfully batting a deactivated futuristic explosive device, adorning a miniature EOD explosive armor. The cat, merging smoothly into the narrative, serves as a silent observer and a subdued protagonist. This image should have a landscape orientation.</p>
+  </figcaption>
+</figure>
+</details>
+
+
+<details>
+<summary><code>python generate.py --date="2024-07-04" --style="space age retro futurism, optimistic future visions, sleek designs, technological themes, cosmic exploration" --skip-upload</code></summary>
+<figure>
+  <img src="./static/images/examples/2024-07-04-portrait.webp" alt="An AI-generated image showing a tabby cat frolicking in a space-age-inspired retro kitchen, where an egg fries nearby, and fireworks explode in the background night sky.">
+  <figcaption>
+    <h3>July 4th 2024: Sure, it's Independence Day; Did You Know It's Also Sidewalk Egg Frying Day?</h3>
+    <p>Style: space age retro futurism, optimistic future visions, sleek designs, technological themes, cosmic exploration</p>
+    <p>News: Penn President Liz Magill resigns days after antisemitism hearing - NPR</p>
+    <p>Today: 2024-07-04, Independence Day and Sidewalk Egg Frying Day</p>
+    <p>DALL-E prompt: "Space age retro futurism meets a patriotic celebration and whimsical summer shenanigans as Hobbes, the cunning orange tabby, tiptoes across a sleek, high-tech kitchen where an egg fries on the sidewalk-themed countertop, amidst a display of red, white, and blue cosmic explorations, with hidden symbols of familial affection and festive cheer, encapsulated in a full screen, no-margins tableau of optimistic future visions."</p>
+    <p>Portrait prompt: Envision a scene rendered in retro futurism, blended with a whimsical summer vibe and patriotic symbols. Picture a clever orange-striped cat, reminiscent of a carefree, playful character, steadily walking across a shiny, innovative kitchen that features a countertop designed to mimic a heated sidewalk where an egg is frying. The whole surrounding bursts with hues of red, white, and blue - a celebration of cosmic exploration. Concealed within this tableau are symbols expressing familial love and holiday cheer, all enclosed within a full screen, margin-free composition that displays a hopeful vision of the future- captured in a vertical orientation.</p>
+  </figcaption>
+</figure>
+</details>
+
+
+### Why Is There A Cat In Every Image?
+
+That's Hobbes, and he instructed me to do so.
+
+
+### File Structure
 
 Each successful run will generate two images and three prompts and save them in the .gitignored `staging/` directory. They are stored as `webp` files, which are significantly smaller in size compared to `png` files. The only browser that doesn't support it is Internet Explorer, so `webp` it is.
 
@@ -96,9 +154,9 @@ python promote.py portrait-2023-12-03T05/04/58.791456Z
 After entering this line, it will upload the images and prompts to S3, and the site will reflect the new sources immediately. Whatever YYYY-MM-DD format is in that string will be applied for that day for both images and all three prompts.
 
 
-## AWS S3
+### AWS S3
 
-### Granting public viewing permissions:
+#### Granting public viewing permissions:
 ```json
 {
     "Version": "2012-10-17",
@@ -114,7 +172,7 @@ After entering this line, it will upload the images and prompts to S3, and the s
 }
 ```
 
-### CORS settings so fetching the prompts will work:
+#### CORS settings so fetching the prompts will work:
 ```json
 [
     {
