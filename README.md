@@ -108,6 +108,21 @@ Additionally, I have some items on my personal calendar that involve my youngest
 </figure>
 </details>
 
+<details>
+<summary><code>python generate.py --date="2024-08-19" --skip-calendar --skip-upload</code></summary>
+<figure>
+  <img src="./static/images/examples/2024-08-19-landscape.webp" alt="An AI-generated image showing a tabby cat wearing a camera for a collar, perched on top of a passenger airplane in Transavantgarde style showcasing a bustling international airport scene.">
+  <figcaption>
+    <h3>August 19th 2024: Aviation, Photos, And Giant Cats Perched On Top Of Planes</h3>
+    <p>Style: Transavantgarde, return to figurative painting, eclectic styles, emotive expression</p>
+    <p>News: Penn President Liz Magill resigns after facing intense controversy; chair of school's board of trustees also steps down - The Philadelphia Inquirer</p>
+    <p>Today: 2024-08-19, National Aviation Day and World Photo Day</p>
+    <p>DALL-E prompt: Digital art, award-winning art in 4k/8k resolution, showcasing a Transavantgarde style with a return to figurative painting and eclectic styles paired with emotive expression, no margins, and full-screen composition: Create an image that celebrates National Aviation Day by featuring a bustling international airport scene where vintage and modern aircraft are adorned with motifs that pay tribute to the evolution of photography in honor of World Photo Day. Incorporated into this dynamic tableau is Hobbes, the orange tabby cat, perched nonchalantly on top of a classic propeller plane, with a camera strap casually draped around his neck, symbolizing the observer's role in both aviation and photography. In the cloud formations above, discernible upon close inspection, is the subtle silhouette of famous aviators and photographers, hinting at their impact on their respective fields, while the overall scene encapsulates the joyous spirit of human achievement in flight and art.</p>
+    <p>Landscape prompt: Create an image in Transavantgarde style showcasing a bustling international airport scene in celebration of National Aviation Day. The scene incorporates vintage and modern aircraft adorned with motifs paying homage to the evolution of photography, in honor of World Photo Day. Position an orange tabby cat perched nonchalantly on top of a classic propeller airplane, with a camera strap around his neck, symbolizing the observer's role in aviation and photography. In the cloud formations, subtly incorporate silhouettes of notable contributors to aviation and photography. This busy scene denotes the joyful spirit of human achievement in the realms of flight and art. Maintain a high-quality resolution and horizontal orientation.</p>
+  </figcaption>
+</figure>
+</details>
+
 
 ### Why Is There A Cat In Every Image?
 
