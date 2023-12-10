@@ -4,21 +4,26 @@ This repo hosts the scripts and template that powers [aical.art](https://aical.a
 
 ### Prerequisites
 
-Follow the directions for each respective link to set up your API keys:
+Follow the directions for each respective link:
 
   * [Google API / OAuth token credentials](https://developers.google.com/calendar/api/quickstart/python)
   * [OpenaAI API key](https://platform.openai.com/docs/quickstart?context=python)
-  * [GitHub Personal Access Token with full repo scope](https://docs.github.com/en/enterprise-server@3.9/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) (you'll need this to clone this private repo)
+  * [An AWS S3 bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html), `AWS_ACCESS_KEY_ID`, and `AWS_SECRET_ACCESS_KEY`<sup>1</sup>
+
+    * <sup>1</sup> If you have access to the AWS CLI, you can use the following command to check the access key and secret access key set for a user:
+
+      ```
+      aws configure get aws_access_key_id
+      aws configure get aws_secret_access_key
+      ```
+
+      Otherwise search AWS for `IAM` and access your user's information; this is where this information is kept.
 
 ### Setup
 
 ```
 cd <to the root of where you want this project to live>
-git clone https://github.com/ehamiter/aicalart.git  # Note this is HTTPS and not SSH
-
-<Enter username>
-<Enter GitHub Personal Access Token for password>
-
+git clone git@github.com:ehamiter/aicalart.git
 cp example.env .env  # And update this file with your API keys
 python -m venv env
 source env/bin/activate
@@ -31,7 +36,7 @@ pip install -r aical-reqs.txt  # Intentionally not named `requirements.txt` to s
 python generate.py [--date --style --skip-news --skip-calendar --skip-holidays --skip-silly-days --skip-upload]
 ```
 
-All paramaters are optional-- `generate.py` run by itself will randomize elements and pull data from all available sources.
+All paramaters are optional-- `generate.py` run by itself will randomize elements and pull data from all available sources, then upload two images and three text prompts to AWS S3.
 
 You can pass in a string value for `date` ("YYYY-MM-DD") or `style`.
 
