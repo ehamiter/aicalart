@@ -40,14 +40,24 @@ def main(file_tag, archive_only=False):
     def extract_datetime(filename):
         # Extract the part after "landscape-" or "portrait-" and keep 'Z' at the end
         datetime_part = filename.split("-", 1)[1]
+        # Replace slashes with colons in the time part
         datetime_with_colons = datetime_part.replace("/", ":")
+
+        # Parse the string into a datetime object
         datetime_obj = datetime.strptime(datetime_with_colons, "%Y-%m-%dT%H:%M:%S.%fZ")
 
-        # Making this CST so if something is promoted at 10pm CST, it still counts for that day
+        # Adjust to CST (UTC-6)
         cst_datetime_obj = datetime_obj - timedelta(hours=6)
+
+        # Extract the date part in CST
         cst_date = cst_datetime_obj.strftime("%Y-%m-%d")
 
-        return cst_date
+        # Keep the time part in UTC
+        utc_time = datetime_obj.strftime("T%H:%M:%S.%f")[:-3] + "Z"
+
+        # Combine CST date with UTC time
+        return cst_date + utc_time
+
 
     def upload_file_to_s3(local_path, bucket, s3_key):
         logger.info(f"Uploading file {local_path}...")
