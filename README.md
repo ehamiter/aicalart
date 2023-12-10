@@ -36,7 +36,7 @@ pip install -r aical-reqs.txt  # Intentionally not named `requirements.txt` to s
 python generate.py [--date --style --skip-news --skip-calendar --skip-holidays --skip-silly-days --skip-upload]
 ```
 
-All paramaters are optional-- `generate.py` run by itself will randomize elements and pull data from all available sources, then upload two images and three text prompts to AWS S3.
+All parameters are optional-- `generate.py` run by itself will randomize elements and pull data from all available sources, then upload two images and three text prompts to AWS S3.
 
 You can pass in a string value for `date` ("YYYY-MM-DD") or `style`.
 
@@ -75,7 +75,7 @@ Additionally, I have some items on my personal calendar that involve my youngest
     <h4>February 11, 2024: The Super Bowl, Don't Cry Over Spilled Milk Day, and Make A Friend Day</h4>
     <p><strong>Style:</strong> Neo-Expressionism, raw imagery, intense colors, emotional distortion</p>
     <p><strong>News:</strong> University of Pennsylvania president steps down amid criticism of antisemitism testimony - NBC News</p>
-    <p><strong>Today:</strong> 2024-02-11, Super Bowl and Make a Friend Day and Dont Cry Over Spilled Milk Day</p>
+    <p><strong>Today:</strong> 2024-02-11, Super Bowl and Make a Friend Day and Don't Cry Over Spilled Milk Day</p>
     <p><strong>DALL-E prompt:</strong> Digital art, full screen, intense colors, Neo-Expressionism, emotional distortion, picturing a vibrant sports stadium filled with fans during the pinnacle of a championship game. Hobbes, the orange tabby, is seen amongst the crowd, wearing a miniature football jersey, sitting beside a new unlikely friend, a mouse with a tiny friendship bracelet. Behind them, an overturned milk glass, its contents ignored for the thrill of the game. All around, elements of celebration, teamwork, and camaraderie blend together in a dynamic expression of festive chaos, hinting at upcoming athletic practices and the joyous spirit of special personal celebrations without revealing specifics.</p>
     <p><strong>Landscape prompt:</strong> Full screen digital art embodying the Neo-Expressionism movement featuring emotional distortion and intense colors. The focal point is a bustling sports stadium filled to the brim with fans totally engrossed in the climax of a championship game. In the crowd, an identifiable orange-striped tabby character dressed in a tiny football jersey is found, sitting next to an unusual buddy, a mouse sporting a minuscule friendship bracelet. A further element behind them is a tipped over glass of milk, ignored in favor of the exciting sporting event. The atmosphere exhibits aspects of celebration, teamwork, and camaraderie in a vibrant display of joyful disorder, subtly indicating future athletic practices and the heartening ambiance of meaningful personal festivities without giving away detailed information. The image is crafted in a landscape format.</p>
   </figcaption>
@@ -239,4 +239,4 @@ I have this set up on an Ubuntu home server with a cron schedule of:
 00 06 * * * cd /home/eric/projects/aicalart && ./env/bin/python3 ./generate.py >> ../logs/aicalart.log 2>&1
 ```
 
-So if there's an error I can ssh into the machine and read the error log file it generated. Otherwise it should be ready to generate a pair of images and submit them to S3 at 6am every CST morning.
+So if there's an error I can ssh into the machine and read the error log file it generated. Otherwise it should be ready to generate a pair of images and submit them to S3 at 6am every CST morning. Since this updates the image asset that the website is already pointing to, this pseudo-deployment during promotion is near-instantaneous.
