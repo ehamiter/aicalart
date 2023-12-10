@@ -240,3 +240,8 @@ I have this set up on an Ubuntu home server with a cron schedule of:
 ```
 
 So if there's an error I can ssh into the machine and read the error log file it generated. Otherwise it should be ready to generate a pair of images and submit them to S3 at 6am every CST morning. Since this updates the image asset that the website is already pointing to, this pseudo-deployment during promotion is near-instantaneous.
+
+
+### Stability / Pull Requests
+
+This is a highly experimental, subject-to-change-at-any-moment project that could explode in a glorious fireball for any or no reason. I probably won't accept pull requests unless they are coincidentally specific to my needs at the time. No hard feelings.
