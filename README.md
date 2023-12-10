@@ -6,10 +6,11 @@ This repo hosts the scripts and template that powers [aical.art](https://aical.a
   <img src="./static/images/examples/2023-12-09-landscape.webp" alt="An AI-generated image showcasing a vibrant sports stadium scene with emotional distortion in Neo-Expressionism style.">
   <figcaption>
     <h4>Example image: Landscape oriented image shown with revised landscape prompt</h4>
-    <p>One every successful script run, the following happens:</p>
+    <p>On every successful script run, the following happens:</p>
     <ul>
       <li>Two images are created; one in a landscape orientation, one in a portrait orientation. On a mobile phone, you can see the other image when you flip your phone. On a desktop, you can shrink your screen size width-wise to see the portrait version.</li>
-      <li>Three prompts are created: the original one fed to DALL-E, and its respective image orientation outputs revised</li>
+      <li>Three prompts are created: an original and its respective image orientation generated outputs. The original prompt is the one that is reciprocated from feeding Chat-GPT the initial prompt. The other respective orientation prompts are from revisions generated from DALL-E and are much closer aligned with what the final appearances seem to be.
+</li>
     </ul>
     <p>Sources</p>
     <ul>
@@ -94,9 +95,7 @@ python generate.py --skip-upload
 
 ### Examples
 
-All of the examples below additionally have `--skip-upload` passed in so the current production image files aren't replaced. Basically whenever you want to experiment, or, say, make screenshots while generating examples, it's a nice option to have. New images are generated and stored in a `staging/` folder.
-
-Additionally, I have some items on my personal calendar that involve my youngest son attending soccer practices. They are titled things like "Practice: B07 Academy" so there are interesting interpretations of what that means exactly. These aren't echoed in the description print outs, but are still a part of the prompt that DALL-E receives, so there will be elements revolving around calendar events unless specifically skipped.
+All of the examples below additionally have `--skip-upload` passed in, as explained above. Additionally, I have some items on my personal calendar that involve my youngest son attending soccer practices. They are titled things like "Practice: B07 Academy" so there are interesting interpretations of what that means exactly. These aren't echoed in the description printouts, but are still a part of the prompt that DALL-E receives, so there will be elements revolving around calendar events unless specifically skipped.
 
 <details>
 <summary><code>python generate.py --date="2024-02-11" --skip-upload</code></summary>
@@ -181,9 +180,6 @@ original-<YYYY-MM-DDTHH:M:SS:MS>Z.txt
 ```
 
 **This will also cost you ~$0.16 for every run.** [Keep an eye on your usage](https://platform.openai.com/usage), and set notifications and credit limits. It adds up quick.
-
-You might have noticed there are three prompts. The original is the one that is reciprocated from feeding Chat-GPT the initial prompt. The other respective orientation prompts are from revisions generated from DALL-E and are much closer aligned with what the final appearances seem to be.
-
 
 ### A Word On Generation Failures
 Sometimes it happens to be a bad news day, or questionable events might be happening on your personal calendar. No judgment here. However, DALL-E might balk at a particularly grievous description that would violate its content policies. Try to re-word the initial prompt, or skip the news or calendar if that's the culprit. There's an automatic gradual removal of potentially negatively-influential prompts (e.g., war atrocities in the news, a particularly questionable personal event in your calendar, etc.) until it's just a prompt to make a day about a cat. If that fails, then it bails.
@@ -270,7 +266,7 @@ I have this set up on an Ubuntu home server with a cron schedule of:
 00 06 * * * cd /home/eric/projects/aicalart && ./env/bin/python3 ./generate.py >> ../logs/aicalart.log 2>&1
 ```
 
-So if there's an error I can ssh into the machine and read the error log file it generated. Otherwise it should be ready to generate a pair of images and submit them to S3 at 6am every CST morning. Since this updates the image asset that the website is already pointing to, this pseudo-deployment during promotion is near-instantaneous.
+So if there's an error I can ssh into the machine and read the error log file it generated. Otherwise it should be ready to generate a pair of images and submit them to S3 at 6am CST every morning. Since this updates the image asset that the website is already pointing to, this pseudo-deployment during promotion is near-instantaneous.
 
 
 ### Stability / Pull Requests
