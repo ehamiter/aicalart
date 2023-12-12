@@ -40,6 +40,15 @@ body, html {
   position: relative;
 }
 
+.modal-title {
+  text-align: center;
+  font-family: sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.6;
+  color: #424242;
+}
+
 .modal-content p {
   font-family: sans-serif;
   font-size: 16px;

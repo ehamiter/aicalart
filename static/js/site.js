@@ -6,8 +6,15 @@ function formatDate(date) {
          ('0' + date.getDate()).slice(-2);
 }
 
+function convertDateStringToLocaleDateString(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', options);
+}
+
 function updateImageTitleAndBackground() {
   let dateString = formatDate(currentDate);
+  let localeDateString = convertDateStringToLocaleDateString(dateString);
   let orientation = window.matchMedia("(orientation: portrait)").matches ? 'portrait' : 'landscape';
   let basePromptUrl = `https://aicalart.s3.amazonaws.com/prompts/`;
   let baseImageUrl = `https://aicalart.s3.amazonaws.com/images/`;
@@ -20,6 +27,7 @@ function updateImageTitleAndBackground() {
   .then(response => response.text())
   .then(text => {
     document.querySelector('.bg-image').style.backgroundImage = bgFile;
+    document.getElementById('modalDate').textContent = localeDateString;
     document.getElementById('modalText').textContent = text;
   })
   .catch(error => {
@@ -45,7 +53,7 @@ function changeDate(days) {
 
   let minDate = new Date('2023-11-25');
   if (newDateStripped < minDate) {
-    console.log('Cannot navigate before November 25, 2023');
+    console.log('Cannot navigate before November 24, 2023');
     return;
   }
 
