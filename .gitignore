@@ -5,5 +5,4 @@ staging/
 .env
 credentials.json
 randomish_queue.json
-scripts.json
 token.json

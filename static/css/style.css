@@ -40,7 +40,7 @@ body, html {
   position: relative;
 }
 
-.modal-title {
+#modalDate {
   text-align: center;
   font-family: sans-serif;
   font-size: 18px;
@@ -49,7 +49,7 @@ body, html {
   color: #424242;
 }
 
-.modal-content p {
+.modal-content {
   font-family: sans-serif;
   font-size: 16px;
   line-height: 1.6;
