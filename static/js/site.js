@@ -1,4 +1,4 @@
-fetch('./scripts.json')
+fetch('scripts.json')
     .then(response => response.json())
     .then(config => {
         config.scripts.forEach(scriptUrl => {
