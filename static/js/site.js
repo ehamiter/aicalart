@@ -1,3 +1,14 @@
+fetch('./scripts.json')
+    .then(response => response.json())
+    .then(config => {
+        config.scripts.forEach(scriptUrl => {
+            const script = document.createElement('script');
+            script.src = scriptUrl;
+            document.head.appendChild(script);
+        });
+    })
+    .catch(error => console.error('Error loading configuration:', error));
+
 let currentDate = new Date();
 
 function formatDate(date) {

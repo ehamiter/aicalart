@@ -1,0 +1,8 @@
+// If you want to include additional scripts, edit and rename this file to scripts.json
+{
+    "scripts": [
+        "https://some-place.com/some-script.js",
+        "https://example.com/something.js?foo=value&bar=42"
+        // Add more URLs as needed
+    ]
+}
