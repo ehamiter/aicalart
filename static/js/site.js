@@ -1,19 +1,3 @@
-fetch('../../config.json')
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then(config => {
-    config.trackers.forEach(trackerUrl => {
-      const script = document.createElement('script');
-      script.src = trackerUrl;
-      document.head.appendChild(script);
-    });
-  })
-  .catch(error => console.error('Error loading configuration:', error));
-
 let currentDate = new Date();
 
 function formatDate(date) {
