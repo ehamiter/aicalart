@@ -8,7 +8,7 @@ function formatDate(date) {
 
 function convertDateStringToLocaleDateString(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const date = new Date(dateString);
+    const date = new Date(dateString + 'T00:00');
     return date.toLocaleDateString('en-US', options);
 }
 
