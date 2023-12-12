@@ -53,7 +53,7 @@ function changeDate(days) {
 
   let minDate = new Date('2023-11-25');
   if (newDateStripped < minDate) {
-    console.log('Cannot navigate before November 24, 2023');
+    console.log('Cannot navigate before November 25, 2023.');
     return;
   }
 
