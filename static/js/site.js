@@ -72,8 +72,6 @@ function incrementClicks() {
   }
 }
 
-document.addEventListener('click', incrementClicks);
-
 let touchstartX = 0;
 let touchendX = 0;
 let swipeThreshold = 50;
@@ -102,40 +100,52 @@ function hideModal() {
   modal.style.display = 'none';
 }
 
-document.addEventListener('touchstart', function(event) {
-  touchstartX = event.changedTouches[0].screenX;
-  touchstartY = event.changedTouches[0].screenY;
-});
+// Once content has loaded, start listening for events
+document.addEventListener('DOMContentLoaded', function() {
+  updateImageTitleAndBackground();
 
-document.addEventListener('touchend', function(event) {
-  touchendX = event.changedTouches[0].screenX;
-  touchendY = event.changedTouches[0].screenY;
-  handleSwipeGesture();
-  incrementClicks();
-});
+  document.addEventListener('click', incrementClicks);
 
-document.addEventListener('keydown', function(event) {
-  if (event.key === 'ArrowLeft') {
-    changeDate(-1);
-  } else if (event.key === 'ArrowRight') {
-    changeDate(1);
-  } else if (event.key === '?') {
-    toggleModal();
+  document.addEventListener('touchstart', function(event) {
+    touchstartX = event.changedTouches[0].screenX;
+    touchstartY = event.changedTouches[0].screenY;
+  });
+
+  document.addEventListener('touchend', function(event) {
+    touchendX = event.changedTouches[0].screenX;
+    touchendY = event.changedTouches[0].screenY;
+    handleSwipeGesture();
+    incrementClicks();
+  });
+
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'ArrowLeft') {
+      changeDate(-1);
+    } else if (event.key === 'ArrowRight') {
+      changeDate(1);
+    } else if (event.key === '?') {
+      toggleModal();
+    }
+  });
+
+  window.addEventListener("resize", updateImageTitleAndBackground);
+  window.onload = updateImageTitleAndBackground;
+
+  var closeButton = document.querySelector(".close");
+  if (closeButton) {
+    closeButton.onclick = function() {
+      var modal = document.getElementById("promptModal");
+      modal.style.display = "none";
+    }
+  } else {
+    console.error("Close button not found.")
   }
-});
 
-window.addEventListener("resize", updateImageTitleAndBackground);
-window.onload = updateImageTitleAndBackground;
-
-var closeButton = document.querySelector(".close");
-closeButton.onclick = function() {
-  var modal = document.getElementById("promptModal");
-  modal.style.display = "none";
-}
-
-window.onclick = function(event) {
-  var modal = document.getElementById("promptModal");
-  if (event.target === modal) {
-    modal.style.display = "none";
+  window.onclick = function(event) {
+    var modal = document.getElementById("promptModal");
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
   }
-}
+
+});

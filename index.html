@@ -16,19 +16,18 @@
   <link rel="manifest" href="./static/site.webmanifest">
   <link rel="stylesheet" href="./static/css/style.css"/>
   <link rel="preconnect" href="https://www.w3counter.com">
-  <script src="./static/js/site.js"></script>
+  <script src="./static/js/site.js" defer></script>
 </head>
 
-<body onload="updateImageTitleAndBackground()">
-
-  <div id="promptModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <p id="modalText">The prompt for this image will appear here.</p>
+<body>
+  <div class="modal-container">
+    <div id="promptModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p id="modalText">The prompt for this image will appear here.</p>
+      </div>
     </div>
   </div>
-
   <div class="bg-image"></div>
   <script src="https://www.w3counter.com/tracker.js?id=150909"></script>
-</body>
-</html>
+</body></html>
