@@ -3,7 +3,7 @@
 This repo hosts the scripts and template that powers [aical.art](https://aical.art). This project is heavily inspired by "Kuvastin - An E Ink art piece that displays daily AI art inspired by your calendar" ([Blog post here](https://turunen.dev/2023/11/20/Kuvastin-Unhinged-AI-eink-display/); [GitHub repo here](https://github.com/Iletee/kuvastin)).
 
 <figure>
-  <img src="./static/images/examples/2023-12-09-landscape.webp" alt="An AI-generated image showcasing a vibrant sports stadium scene with emotional distortion in Neo-Expressionism style.">
+  <img src="./static/images/examples/2023-11-26-landscape.webp" alt="An AI-generated image showing a cyberpunk alleyway bristling with high-tech activites in a dystopian landscape.">
   <figcaption>
     <h4>Example image: Landscape oriented image shown with revised landscape prompt</h4>
     <p>On every successful script run, the following happens:</p>
