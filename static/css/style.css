@@ -48,7 +48,8 @@ body, html {
 }
 
 .modal {
-  display: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
   max-width: 600px;
   width: auto;
   height: auto;
@@ -59,6 +60,11 @@ body, html {
   overflow: auto;
   max-height: 80vh;
   position: relative;
+}
+
+.modal-show {
+  display: block;
+  opacity: 1;
 }
 
 .modal-content {

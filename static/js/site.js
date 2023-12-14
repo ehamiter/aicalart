@@ -94,18 +94,17 @@ function handleSwipeGesture() {
 
 function toggleModal() {
   var modal = document.getElementById("promptModal");
-  var isModalDisplayed = window.getComputedStyle(modal).display !== 'none';
-  modal.style.display = isModalDisplayed ? 'none' : 'block';
+  modal.classList.toggle('modal-show');
 }
 
 function showModal() {
   var modal = document.getElementById("promptModal");
-  modal.style.display = 'block';
+  modal.classList.add('modal-show');
 }
 
 function hideModal() {
   var modal = document.getElementById("promptModal");
-  modal.style.display = 'none';
+  modal.classList.remove('modal-show');
 }
 
 // Once content has loaded, start listening for events
