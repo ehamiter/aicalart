@@ -443,6 +443,7 @@ SILLY_DAYS_LIST = [
     ("2023-12-12", "Poinsettia Day"),
     ("2023-12-13", "Ice Cream Day"),
     ("2023-12-13", "Violin Day"),
+    ("2023-12-14", "Free Shipping Day"),
     ("2023-12-14", "Monkey Day"),
     ("2023-12-15", "Esperanto Day"),
     ("2023-12-15", "National Lemon Cupcake Day"),
