@@ -20,19 +20,27 @@ function updateImageTitleAndBackground() {
   let baseImageUrl = `https://aicalart.s3.amazonaws.com/images/`;
 
   // Always use dated files
-  let textFile = `${basePromptUrl}${dateString}-${orientation}.txt`;
   let bgFile = `url('${baseImageUrl}${dateString}-${orientation}.webp')`;
+  let textFile = `${basePromptUrl}${dateString}-${orientation}.txt`;
+  let holidayFile = `${basePromptUrl}${dateString}-holidays.txt`;
 
   fetch(textFile)
-  .then(response => response.text())
-  .then(text => {
-    document.querySelector('.bg-image').style.backgroundImage = bgFile;
-    document.getElementById('modalDate').textContent = localeDateString;
-    document.getElementById('modalText').textContent = text;
-  })
-  .catch(error => {
-    console.error('Fetch failed: ', error);
-  });
+    .then(response => response.text())
+    .then(text => {
+      document.querySelector('.bg-image').style.backgroundImage = bgFile;
+      document.getElementById('modalDate').textContent = localeDateString;
+      document.getElementById('modalText').textContent = text;
+
+      // Fetch the holiday data
+      return fetch(holidayFile);
+    })
+    .then(response => response.text())
+    .then(holidays => {
+      document.getElementById('modalHolidays').textContent = holidays;
+    })
+    .catch(error => {
+      console.error('Fetch failed: ', error);
+    });
 }
 
 function changeDate(days) {

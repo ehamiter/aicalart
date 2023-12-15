@@ -95,6 +95,7 @@ def main(file_tag, archive_only=False):
     prompt_original_file = f"./staging/original-{the_datetime}.txt"
     prompt_landscape_file = f"./staging/landscape-{the_datetime}.txt"
     prompt_portrait_file = f"./staging/portrait-{the_datetime}.txt"
+    todays_holidays_file = f"./staging/holidays-{the_datetime}.txt"
 
     replace_current_files = not archive_only  # Making a double negative not unclear
     if replace_current_files:
@@ -104,6 +105,7 @@ def main(file_tag, archive_only=False):
         upload_file_to_s3(prompt_original_file, AWS_S3_BUCKET, "prompts/original.txt")
         upload_file_to_s3(prompt_landscape_file, AWS_S3_BUCKET, "prompts/landscape.txt")
         upload_file_to_s3(prompt_portrait_file, AWS_S3_BUCKET, "prompts/portrait.txt")
+        upload_file_to_s3(todays_holidays_file, AWS_S3_BUCKET, "prompts/holidays.txt")
 
     # Archival
     # fmt: off
@@ -112,6 +114,7 @@ def main(file_tag, archive_only=False):
     upload_file_to_s3(prompt_original_file, AWS_S3_BUCKET, f"prompts/{the_date}-original.txt")
     upload_file_to_s3(prompt_landscape_file, AWS_S3_BUCKET, f"prompts/{the_date}-landscape.txt")
     upload_file_to_s3(prompt_portrait_file, AWS_S3_BUCKET, f"prompts/{the_date}-portrait.txt")
+    upload_file_to_s3(todays_holidays_file, AWS_S3_BUCKET, f"prompts/{the_date}-holidays.txt")
     # fmt: on
 
 

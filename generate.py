@@ -72,10 +72,23 @@ def get_silly_day(date):
     if not events:
         return ""
 
-    if len(events) == 1:
-        return events[0]
+    # Use Oxford comma when joining multiple events
+    if len(events) > 1:
+        return ", ".join(events[:-1]) + ", and " + events[-1]
     else:
-        return ", ".join(events[:-1]) + " and " + events[-1]
+        return events[0]
+
+
+def get_todays_holidays_display(the_date):
+    holiday = get_holiday(the_date)
+    silly_day = get_silly_day(the_date)
+
+    # Concatenate holiday and silly day, if both exist
+    if holiday and silly_day:
+        return f"{holiday}, {silly_day}"
+    else:
+        # Return either holiday or silly day, or an empty string if neither exists
+        return holiday or silly_day
 
 
 def get_news(country="US", period="1h"):
@@ -89,6 +102,31 @@ def get_style():
     style = PRE_STYLE
     style += randomish(STYLES)
     return style
+
+
+def get_today_and_newslist(the_date, holiday, silly_day, news):
+    holiday_is_happening = True  # I mean, the odds are high
+
+    if holiday and silly_day:
+        the_day = f"{holiday} and {silly_day}"
+    elif holiday:
+        the_day = holiday
+    elif silly_day:
+        the_day = silly_day
+    else:
+        holiday_is_happening = False
+
+    if holiday_is_happening:
+        today = f"{the_date}, {the_day}; ranked in order of importance"
+    else:
+        today = f"{the_date}; approximate the seasonal feel in the United States"
+
+    newslist = (
+        'events, holidays-- and particularly engrossed in the breaking news story "{news}"'
+        if news
+        else "events and holidays"
+    )
+    return today, newslist
 
 
 def refresh_credentials(token_path, credentials_path):
@@ -180,31 +218,6 @@ def fetch_calendar_entries(prompt, style, the_date):
     return process_calendars(creds, prompt, the_date)
 
 
-def get_today_and_newslist(the_date, holiday, silly_day, news):
-    holiday_is_happening = True  # I mean, the odds are high
-
-    if holiday and silly_day:
-        the_day = f"{holiday} and {silly_day}"
-    elif holiday:
-        the_day = holiday
-    elif silly_day:
-        the_day = silly_day
-    else:
-        holiday_is_happening = False
-
-    if holiday_is_happening:
-        today = f"{the_date}, {the_day}; ranked in order of importance"
-    else:
-        today = f"{the_date}; approximate the seasonal feel in the United States"
-
-    newslist = (
-        'events, holidays-- and particularly engrossed in the breaking news story "{news}"'
-        if news
-        else "events and holidays"
-    )
-    return today, newslist
-
-
 def decode_b64_json(b64_data):
     json_data = base64.b64decode(b64_data).decode("utf-8")
     return json.loads(json_data)
@@ -274,71 +287,41 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
         failed_attempts += 1
         logger.error(
             "OpenAI's safety system rejected this due to its interpretation of the prompt. "
-            f"Attempting to regenerate... [#{failed_attempts} of 5]                        "
+            f"Attempting to regenerate... [#{failed_attempts} of 5]"
         )
 
-        if failed_attempts == 1:
-            # Sometimes anamolies happen. Try it again
-            failed_attempts += 1
+        if failed_attempts <= 5:
+            # Define a dictionary mapping the attempt number to the changes
+            attempt_changes = {
+                1: {},
+                2: {"skip_news": True},
+                3: {"skip_calendar": True, "skip_news": True},
+                4: {
+                    "skip_calendar": True,
+                    "skip_holidays": True,
+                    "skip_silly_days": True,
+                    "skip_news": True,
+                },
+                5: {
+                    "style": "Bob Ross, with peaceful happy little trees",
+                    "skip_calendar": True,
+                    "skip_holidays": True,
+                    "skip_silly_days": True,
+                    "skip_news": True,
+                },
+            }
+
+            # Get the changes for the current attempt
+            changes = attempt_changes[failed_attempts]
+
+            # Call main with updated arguments
             main(
                 the_date=the_date,
-                style=style,
-                skip_calendar=skip_calendar,
-                skip_holidays=skip_holidays,
-                skip_silly_days=skip_silly_days,
-                skip_news=skip_news,
-                skip_upload=skip_upload,
-                failed_attempts=failed_attempts,
-            )
-        elif failed_attempts == 2:
-            # The news can be pretty dark
-            failed_attempts += 1
-            main(
-                the_date=the_date,
-                style=style,
-                skip_calendar=skip_calendar,
-                skip_holidays=skip_holidays,
-                skip_silly_days=skip_silly_days,
-                skip_news=True,
-                skip_upload=skip_upload,
-                failed_attempts=failed_attempts,
-            )
-        elif failed_attempts == 3:
-            # Or your calendar event that sounds questionable
-            failed_attempts += 1
-            main(
-                the_date=the_date,
-                style=style,
-                skip_calendar=True,
-                skip_holidays=skip_holidays,
-                skip_silly_days=skip_silly_days,
-                skip_news=True,
-                skip_upload=skip_upload,
-                failed_attempts=failed_attempts,
-            )
-        elif failed_attempts == 4:
-            # Or maybe the day combo is bad
-            failed_attempts += 1
-            main(
-                the_date=the_date,
-                style=style,
-                skip_calendar=True,
-                skip_holidays=True,
-                skip_silly_days=True,
-                skip_news=True,
-                skip_upload=skip_upload,
-                failed_attempts=failed_attempts,
-            )
-        elif failed_attempts == 5:
-            failed_attempts += 1
-            # Let's try something radical
-            main(
-                the_date=the_date,
-                style="Bob Ross, with peaceful happy little trees",
-                skip_calendar=True,
-                skip_holidays=True,
-                skip_silly_days=True,
-                skip_news=True,
+                style=changes.get("style", style),
+                skip_calendar=changes.get("skip_calendar", skip_calendar),
+                skip_holidays=changes.get("skip_holidays", skip_holidays),
+                skip_silly_days=changes.get("skip_silly_days", skip_silly_days),
+                skip_news=changes.get("skip_news", skip_news),
                 skip_upload=skip_upload,
                 failed_attempts=failed_attempts,
             )
@@ -357,12 +340,15 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
     portrait_prompt = trim_string(portrait_prompt)
     landscape_prompt = trim_string(landscape_prompt)
 
+    todays_holidays = get_todays_holidays_display(the_date)
+    print("TODAYS HOLIDAYS\n\n", todays_holidays)
     if not os.path.exists("./staging"):
         os.makedirs("./staging")
 
     original_prompt_file_path = f"./staging/original-{now}.txt"
     portrait_prompt_file_path = f"./staging/portrait-{now}.txt"
     landscape_prompt_file_path = f"./staging/landscape-{now}.txt"
+    todays_holidays_file_path = f"./staging/holidays-{now}.txt"
 
     with open(original_prompt_file_path, "w") as file:
         file.write(dalle_prompt)
@@ -372,6 +358,9 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
 
     with open(landscape_prompt_file_path, "w") as file:
         file.write(landscape_prompt)
+
+    with open(todays_holidays_file_path, "w") as file:
+        file.write(todays_holidays)
 
     # Image processing
     portrait_data = portrait_response.data[0].model_dump()["b64_json"]
