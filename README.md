@@ -263,10 +263,10 @@ https://aicalart.s3.amazonaws.com/prompts/YYYY-MM-DD-portrait.txt
 I have this set up on an Ubuntu home server with a cron schedule of:
 
 ```
-00 06 * * * cd /home/eric/projects/aicalart && ./env/bin/python3 ./generate.py >> ../logs/aicalart.log 2>&1
+00 00 * * * cd /home/eric/projects/aicalart && ./env/bin/python3 ./generate.py >> ../logs/aicalart.log 2>&1
 ```
 
-So if there's an error I can ssh into the machine and read the error log file it generated. Otherwise it should be ready to generate a pair of images and submit them to S3 at 6am CST every morning. Since this updates the image asset that the website is already pointing to, this pseudo-deployment during promotion is near-instantaneous.
+So if there's an error I can ssh into the machine and read the error log file it generated. Otherwise it should be ready to generate a pair of images and submit them to S3 at midnight CST every day. Since this updates the image asset that the website is already pointing to, this pseudo-deployment during promotion is near-instantaneous.
 
 
 ### Stability / Pull Requests
