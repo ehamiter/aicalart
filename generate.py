@@ -72,11 +72,12 @@ def get_silly_day(date):
     if not events:
         return ""
 
-    # Use Oxford comma when joining multiple events
-    if len(events) > 1:
+    # Use Oxford comma when there are more than two events, otherwise just join with ", "
+    if len(events) > 2:
         return ", ".join(events[:-1]) + ", and " + events[-1]
     else:
-        return events[0]
+        # Join with " and " if there are exactly two events, else return single event
+        return " and ".join(events)
 
 
 def get_todays_holidays_display(the_date):
