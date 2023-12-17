@@ -7,6 +7,7 @@ import os
 import time
 from base64 import b64decode
 from io import BytesIO
+from pathlib import Path
 from textwrap import dedent
 
 from colorama import Fore, Style
@@ -31,10 +32,8 @@ from googleapiclient.errors import HttpError
 from openai import BadRequestError, OpenAI
 from PIL import Image, ImageDraw
 from promote import main as promote_file
-from tqdm import tqdm
-
 from randomish import randomish
-
+from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -150,7 +149,14 @@ def refresh_credentials(token_path, credentials_path):
                 creds = flow.run_local_server(port=0)
         else:
             logger.info("Please log in using your web browser.")
-            flow = InstalledAppFlow.from_client_secrets_file(credentials_path, SCOPES)
+
+            credentials_path = Path("./credentials.json")
+            if not os.path.exists(credentials_path):
+                credentials_path.touch(exist_ok=True)
+
+            flow = InstalledAppFlow.from_client_secrets_file(
+                str(credentials_path), SCOPES
+            )
             creds = flow.run_local_server(port=0)
 
         with open(token_path, "w") as token:
