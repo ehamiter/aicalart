@@ -495,7 +495,6 @@ SILLY_DAYS_LIST = [
     ("2024-01-12", "Marzipan Day"),
     ("2024-01-12", "Feast of Fabulous Wild Men Day"),
     ("2024-01-12", "National Pharmacist Day"),
-    ("2024-01-13", "Make Your Dreams Come True Day"),
     ("2024-01-13", "Make Your Dream Come True Day"),
     ("2024-01-14", "Organize Your Home Day"),
     ("2024-01-14", "National Dress Up Your Pet Day"),
