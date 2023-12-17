@@ -149,13 +149,10 @@ def refresh_credentials(token_path, credentials_path):
                 creds = flow.run_local_server(port=0)
         else:
             logger.info("Please log in using your web browser.")
-
-            credentials_path = Path("./credentials.json")
-            if not os.path.exists(credentials_path):
-                credentials_path.touch(exist_ok=True)
-
+            if os.path.exists(token_path):
+                os.remove(token_path)
             flow = InstalledAppFlow.from_client_secrets_file(
-                str(credentials_path), SCOPES
+                credentials_path, SCOPES
             )
             creds = flow.run_local_server(port=0)
 
