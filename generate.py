@@ -92,9 +92,12 @@ def get_todays_holidays_display(the_date):
 
 
 def get_news(country="US", period="1h"):
+    title = ''
     gn = GNews(language="en", country=country, period=period)
     top_news = gn.get_top_news()
-    title = top_news[0]["title"]
+    if top_news:
+        news = top_news[0]
+        title = news.get("title", '')
     return title
 
 
