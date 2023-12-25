@@ -156,7 +156,7 @@ HOLIDAYS = {
     "2023-12-21": "December Solstice",
     "2023-12-23": "Festivus",
     "2023-12-24": "Christmas Eve",
-    "2023-12-25": "Christmas Eve observed",
+    "2023-12-25": "Christmas Day",
     "2023-12-26": "Day After Christmas Day",
     "2023-12-27": "International Day of Epidemic Preparedness",
     "2023-12-31": "New Year's Eve",
