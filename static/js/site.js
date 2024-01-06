@@ -69,22 +69,29 @@ function changeDate(days) {
   updateImageTitleAndBackground();
 }
 
-
 let numberOfClicks = 0;
+const doubleTapThreshold = 300;
+let lastTapTime = 0;
 
-function secondsResetClick(seconds) {
-  setTimeout(function() {
-    numberOfClicks = 0;
-  }, seconds * 1000);
+function resetClickCount() {
+  numberOfClicks = 0;
 }
 
 function incrementClicks() {
-  numberOfClicks += 1;
-  if (numberOfClicks === 3) {
-    numberOfClicks = 0;
+  const currentTime = new Date().getTime();
+  if (currentTime - lastTapTime <= doubleTapThreshold) {
+    numberOfClicks += 1;
+  } else {
+    numberOfClicks = 1;
+  }
+
+  lastTapTime = currentTime;
+
+  if (numberOfClicks === 2) {
     toggleModal();
-  } else if (numberOfClicks == 2) {
-    secondsResetClick(0.75);
+    resetClickCount();
+  } else {
+    setTimeout(resetClickCount, doubleTapThreshold);
   }
 }
 
@@ -105,21 +112,8 @@ function toggleModal() {
   modal.classList.toggle('modal-show');
 }
 
-function showModal() {
-  var modal = document.getElementById("promptModal");
-  modal.classList.add('modal-show');
-}
-
-function hideModal() {
-  var modal = document.getElementById("promptModal");
-  modal.classList.remove('modal-show');
-}
-
-// Once content has loaded, start listening for events
 document.addEventListener('DOMContentLoaded', function() {
   updateImageTitleAndBackground();
-
-  document.addEventListener('click', incrementClicks);
 
   document.addEventListener('touchstart', function(event) {
     touchstartX = event.changedTouches[0].screenX;
