@@ -69,6 +69,31 @@ function changeDate(days) {
   updateImageTitleAndBackground();
 }
 
+function extractDateFromUrl() {
+    const hash = window.location.hash;
+    const datePattern = /^#(\d{4}-\d{2}-\d{2})$/;
+    const match = hash.match(datePattern);
+    if (match) {
+        const dateParts = match[1].split('-');
+        const year = parseInt(dateParts[0], 10);
+        const month = parseInt(dateParts[1], 10);
+        const day = parseInt(dateParts[2], 10);
+
+        let date = new Date(year, month - 1, day);
+        let formattedDate = date.getFullYear() + '-' +
+                            ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
+                            ('0' + date.getDate()).slice(-2);
+
+        console.log('Traveling in time to ' + formattedDate);
+        currentDate = new Date(date.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+
+        return currentDate;
+    } else {
+        console.log('Sorry, couldn\'t figure out that date.');
+        return currentDate;
+    }
+}
+
 let numberOfClicks = 0;
 const doubleTapThreshold = 300;
 let lastTapTime = 0;
@@ -113,6 +138,7 @@ function toggleModal() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  currentDate = extractDateFromUrl();
   updateImageTitleAndBackground();
 
   document.addEventListener('touchstart', function(event) {
