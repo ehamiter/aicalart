@@ -7,13 +7,14 @@ import os
 import time
 from base64 import b64decode
 from io import BytesIO
-from pathlib import Path
 from textwrap import dedent
+# from tqdm import tqdm
 
 from colorama import Fore, Style
 from constants import (
     AICALART_OPENAI_KEY,
     ALWAYS_INCLUDE_IN_PROMPT,
+    GOOGLE_CALENDAR_ID,
     GPT_MODEL,
     HOLIDAYS,
     IMAGE_MODEL,
@@ -33,7 +34,6 @@ from openai import BadRequestError, OpenAI
 from PIL import Image, ImageDraw
 from promote import main as promote_file
 from randomish import randomish
-from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -166,7 +166,6 @@ def refresh_credentials(token_path, credentials_path):
 
 def process_calendars(creds, prompt, the_date):
     calendar_prompt = """
-    Keep the prompt short and focused on my near-term most important commitments.
     Remove any personally identifiable information and do not mention dates. Each
     event is a special one that deserves to share the spotlight with the other
     elements of the scene we are setting.
@@ -175,6 +174,9 @@ def process_calendars(creds, prompt, the_date):
     if the_date:
         # We're requesting a specific date, so we need to convert to the day's full datetime string
         now_utc = f"{the_date}T14:00:00.000000Z"
+        today = now_utc.split('T')[0]
+        end_of_day_utc = today + 'T23:59:59.999999Z'
+
 
     try:
         service = build("calendar", "v3", credentials=creds, cache_discovery=False)
@@ -186,27 +188,47 @@ def process_calendars(creds, prompt, the_date):
             return prompt
 
         events = []
-        for calendar in tqdm(calendars, desc="Fetching calendars", ncols=75):
-            calendar_id = calendar["id"]
-            events_result = (
-                service.events()
-                .list(
-                    calendarId=calendar_id,
-                    timeMin=now_utc,
-                    maxResults=3,
-                    singleEvents=True,
-                    orderBy="startTime",
-                )
-                .execute()
+
+        # Uncomment for using all calendars
+        # for calendar in tqdm(calendars, desc="Fetching calendars", ncols=75):
+        #     calendar_id = calendar["id"]
+        #     events_result = (
+        #         service.events()
+        #         .list(
+        #             calendarId=calendar_id,
+        #             timeMin=now_utc,
+        #             maxResults=3,
+        #             singleEvents=True,
+        #             orderBy="startTime",
+        #         )
+        #         .execute()
+        #     )
+        #     events += events_result.get("items", [])
+
+        calendar_id = GOOGLE_CALENDAR_ID
+        events_result = (
+            service.events()
+            .list(
+                calendarId=calendar_id,
+                timeMin=now_utc,
+                timeMax=end_of_day_utc,
+                maxResults=3,
+                singleEvents=True,
+                orderBy="startTime",
             )
-            events += events_result.get("items", [])
+            .execute()
+        )
+        events += events_result.get("items", [])
+
 
         if not events:
-            logger.info(f"No upcoming events found for calendar: {calendar['summary']}")
+            logger.info(f"No upcoming events found for calendar.")
         else:
-            for event in tqdm(events, desc="Fetching events", ncols=75):
-                start = event["start"].get("dateTime", event["start"].get("date"))
-                prompt += start + " " + str(event["summary"]) + ", "
+            prompt += "Today also has some key events: "
+            logger.info(f"Upcoming events found for calendar:")
+            for event in events:
+                prompt += str(event["summary"]) + "; "
+                print(f"\n→ {event['summary']}\n")
             prompt += calendar_prompt
 
         return prompt

@@ -16,6 +16,7 @@ GPT_MODEL = "gpt-4-1106-preview"
 IMAGE_MODEL = "dall-e-3"
 
 ### Google Calendar
+GOOGLE_CALENDAR_ID = os.getenv("GOOGLE_CALENDAR_ID")
 SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 
 ### Prompt styles

@@ -17,7 +17,7 @@ def shuffle_with_secrets(lst):
         shuffled.append(element)
     return shuffled
 
-def load_or_initialize_deque(file_path, style_list):
+def load_or_initialize_deque(style_list, file_path):
     if os.path.exists(file_path):
         with open(file_path, 'r') as file:
             return deque(json.load(file))
@@ -28,11 +28,15 @@ def save_deque(file_path, dq):
     with open(file_path, 'w') as file:
         json.dump(list(dq), file)
 
-def randomish(style_list, file_path='randomish_queue.json'):
-    dq = load_or_initialize_deque(file_path, style_list)
+def randomish(style_list, file_path='randomish_queue.json', consume=True):
+    dq = load_or_initialize_deque(style_list, file_path)
     if not dq:
         dq = deque(shuffle_with_secrets(style_list))
 
-    style_for_today = dq.popleft()
+    if consume:
+        style_for_today = dq.popleft()
+    else:
+        style_for_today = dq[0]
+
     save_deque(file_path, dq)
     return style_for_today
