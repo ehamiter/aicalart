@@ -166,8 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var closeButton = document.querySelector(".close");
   if (closeButton) {
     closeButton.onclick = function() {
-      var modal = document.getElementById("promptModal");
-      modal.style.display = "none";
+      toggleModal();
     }
   } else {
     console.error("Close button not found.")
@@ -176,8 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
   window.onclick = function(event) {
     var modal = document.getElementById("promptModal");
     if (event.target === modal) {
-      modal.style.display = "none";
+      toggleModal();
     }
   }
-
 });
