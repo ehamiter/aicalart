@@ -125,7 +125,7 @@ def get_today_and_newslist(the_date, holiday, silly_day, news):
         today = f"{the_date}; approximate the seasonal feel in the United States"
 
     newslist = (
-        'events, holidays-- and particularly engrossed in the breaking news story "{news}"'
+        f'events, holidays-- and particularly engrossed in the breaking news story "{news}"'
         if news
         else "events and holidays"
     )
