@@ -366,8 +366,8 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
     print(f"\nLandscape prompt: {landscape_prompt}\n")
 
     # Anything over 1,023 chars gets chopped, so if it's used in an img title, use the shortened version
-    portrait_prompt = trim_string(portrait_prompt)
-    landscape_prompt = trim_string(landscape_prompt)
+    # portrait_prompt = trim_string(portrait_prompt)
+    # landscape_prompt = trim_string(landscape_prompt)
 
     todays_holidays = get_todays_holidays_display(the_date)
     print("TODAYS HOLIDAYS\n\n", todays_holidays)
