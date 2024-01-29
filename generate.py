@@ -299,7 +299,7 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
             model=IMAGE_MODEL,
             prompt=f"{dalle_prompt}. Ensure this image is in a vertical orientation.",
             size="1024x1792",
-            quality="standard",
+            quality="hd",
             n=1,
             response_format="b64_json",
         )
@@ -308,7 +308,7 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
             model=IMAGE_MODEL,
             prompt=f"{dalle_prompt}. Ensure this image is in a horizontal orientation.",
             size="1792x1024",
-            quality="standard",
+            quality="hd",
             n=1,
             response_format="b64_json",
         )
