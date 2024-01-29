@@ -26,7 +26,6 @@ ALWAYS_INCLUDE_IN_PROMPT = os.getenv(
     "You always place your beloved orange tabby domestic shorthair cat, Hobbes, in every piece you create.",
 )
 
-PRE_STYLE = "digital art, award-winning art, 4k/8k, "  # These modifiers typically produce better results
 STYLES = [
     "1910's black and white newspaper satirical comic drawings",
     "Metal lithograph, ornate carving, intricate details, gothic, neoclassicism",

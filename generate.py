@@ -18,7 +18,6 @@ from constants import (
     GPT_MODEL,
     HOLIDAYS,
     IMAGE_MODEL,
-    PRE_STYLE,
     SCOPES,
     SILLY_DAYS,
     STYLES,
@@ -102,8 +101,7 @@ def get_news(country="US", period="1h"):
 
 
 def get_style():
-    style = PRE_STYLE
-    style += randomish(STYLES)
+    style = randomish(STYLES)
     return style
 
 
@@ -266,10 +264,9 @@ def generate_prompt(prompt, style, news, today):
     )
 
     dalle_prompt = completion.choices[0].message.content
-    style_display = style.replace(PRE_STYLE, "")
 
     prompt_info = f"""
-    Style: {style_display}\n
+    Style: {style}\n
     News: {news}\n
     Today: {today.split(';')[0]}\n
     DALL-E prompt: {dalle_prompt}
