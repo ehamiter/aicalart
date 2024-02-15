@@ -560,6 +560,6 @@ if __name__ == "__main__":
         skip_calendar=args.skip_calendar,
         skip_holidays=args.skip_holidays,
         skip_silly_days=args.skip_silly_days,
-        skip_news=args.skip_news,
+        skip_news=True,  #args.skip_news,
         skip_upload=args.skip_upload,
     )
