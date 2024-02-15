@@ -65,7 +65,7 @@ body, html {
     transform: scale(1.7) translate(10%, -10%);
   }
   40% {
-    transform: scale(1.8) translate(10%, 0%);
+    transform: scale(1.8) translate(10%, 10%);
   }
   45% {
     transform: scale(1.9) translate(10%, 10%);
@@ -95,7 +95,7 @@ body, html {
     transform: scale(1.1) translate(0%, 0%);
   }
   90% {
-    transform: scale(1.05) translate(-5%, -5%);
+    transform: scale(1.05) translate(0%, 0%);
   }
   95% {
     transform: scale(1.02) translate(0%, 0%);
