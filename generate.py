@@ -97,7 +97,10 @@ def get_news(country="US", period="1h"):
     if top_news:
         news = top_news[0]
         title = news.get("title", '')
-    return title
+    # news is typically not great. I wish that weren't the case. :|
+    news_is_okay = prompt_passes_moderation(title)
+
+    return title if news_is_okay else ''
 
 
 def get_style():
