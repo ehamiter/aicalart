@@ -122,11 +122,13 @@ body, html {
   overflow: auto;
   max-height: 80vh;
   position: relative;
+  user-select: none;
 }
 
 .modal-show {
   display: block;
   opacity: 1;
+  user-select: text;
 }
 
 .modal-content {

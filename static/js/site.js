@@ -180,14 +180,13 @@ document.addEventListener('DOMContentLoaded', function() {
         image.style.animationPlayState = 'running';
         kenBurnsActive = true;
       } else {
-        // Pause the Ken Burns effect
-        image.style.animation = 'none';
-        image.offsetHeight; // Trigger a reflow to apply the change
+        // Stop the Ken Burns effect and reset back to 100%
+        image.style.animationPlayState = 'paused';
         image.style.transform = 'scale(1)';
         image.style.backgroundPosition = '50% 50%';
-        image.style.animationPlayState = 'paused';
-        image.style.animation = 'kenburns 20s linear infinite'; // Reapply the animation
-        kenBurnsActive = false; // Ensure the Ken Burns effect is marked as inactive
+        image.offsetHeight;
+        image.style.animation = 'none';
+        kenBurnsActive = false;
 
       }
     }, 2000); // 2 seconds for long press
