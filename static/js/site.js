@@ -177,28 +177,36 @@ document.addEventListener('DOMContentLoaded', function() {
       const image = document.querySelector('.bg-image');
       if (!kenBurnsActive) {
         // Start the Ken Burns effect
-        image.offsetHeight;
-        image.style.animation = 'kenburns 20s linear infinite';
+        if (image.style.animationPlayState === 'paused') {
+          image.style.animationPlayState = 'running';
+          console.log('Secret Ken Burns mode!')
+        } else {
+          image.style.animationPlayState = 'paused';
+        }
+
         image.style.animationPlayState = 'running';
         kenBurnsActive = true;
       } else {
         // Stop the Ken Burns effect and reset back to 100%
-        image.offsetHeight;
         image.style.animation = 'none';
-        image.style.animationPlayState = 'paused';
+        image.offsetHeight;
         image.style.transform = 'scale(1)';
         image.style.backgroundPosition = '50% 50%';
+        image.style.animation = 'kenburns 20s linear infinite';
+        image.style.animationPlayState = 'paused';
+        console.log('Ken Burns has left the building.')
         kenBurnsActive = false;
       }
-    }, 2000); // 2 seconds for long press
+    }, 3000); // 3 seconds for long press
+
   });
 
   document.addEventListener('touchend', function(event) {
+    clearTimeout(longPressTimer);
     touchendX = event.changedTouches[0].screenX;
     touchendY = event.changedTouches[0].screenY;
     handleSwipeGesture();
     incrementClicks();
-    clearTimeout(longPressTimer);
   });
 
 
