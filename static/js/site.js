@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
   /* Shake the phone to reset the view */
-  let shakeThreshold = 25;
+  let shakeThreshold = 15;
 
   window.addEventListener('devicemotion', function(event) {
     let acceleration = event.accelerationIncludingGravity;
