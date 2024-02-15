@@ -177,17 +177,18 @@ document.addEventListener('DOMContentLoaded', function() {
       const image = document.querySelector('.bg-image');
       if (!kenBurnsActive) {
         // Start the Ken Burns effect
+        image.offsetHeight;
+        image.style.animation = 'kenburns 20s linear infinite';
         image.style.animationPlayState = 'running';
         kenBurnsActive = true;
       } else {
         // Stop the Ken Burns effect and reset back to 100%
+        image.offsetHeight;
+        image.style.animation = 'none';
         image.style.animationPlayState = 'paused';
         image.style.transform = 'scale(1)';
         image.style.backgroundPosition = '50% 50%';
-        image.offsetHeight;
-        image.style.animation = 'none';
         kenBurnsActive = false;
-
       }
     }, 2000); // 2 seconds for long press
   });
