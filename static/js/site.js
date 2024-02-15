@@ -181,8 +181,14 @@ document.addEventListener('DOMContentLoaded', function() {
         kenBurnsActive = true;
       } else {
         // Pause the Ken Burns effect
+        image.style.animation = 'none';
+        image.offsetHeight; // Trigger a reflow to apply the change
+        image.style.transform = 'scale(1)';
+        image.style.backgroundPosition = '50% 50%';
         image.style.animationPlayState = 'paused';
-        kenBurnsActive = false;
+        image.style.animation = 'kenburns 20s linear infinite'; // Reapply the animation
+        kenBurnsActive = false; // Ensure the Ken Burns effect is marked as inactive
+
       }
     }, 2000); // 2 seconds for long press
   });
@@ -195,25 +201,6 @@ document.addEventListener('DOMContentLoaded', function() {
     clearTimeout(longPressTimer);
   });
 
-
-  /* Shake the phone to reset the view */
-  let shakeThreshold = 15;
-
-  window.addEventListener('devicemotion', function(event) {
-    let acceleration = event.accelerationIncludingGravity;
-    let shake = Math.abs(acceleration.x) + Math.abs(acceleration.y) + Math.abs(acceleration.z) - 9.81 * 3;
-
-    if (shake > shakeThreshold) {
-      const image = document.querySelector('.bg-image');
-      image.style.animation = 'none';
-      image.offsetHeight; // Trigger a reflow to apply the change
-      image.style.transform = 'scale(1)';
-      image.style.backgroundPosition = '50% 50%';
-      image.style.animationPlayState = 'paused';
-      image.style.animation = 'kenburns 20s linear infinite'; // Reapply the animation
-      kenBurnsActive = false; // Ensure the Ken Burns effect is marked as inactive
-    }
-  });
 
   window.addEventListener("resize", updateImageTitleAndBackground);
   window.onload = updateImageTitleAndBackground;
