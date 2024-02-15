@@ -137,6 +137,34 @@ function toggleModal() {
 document.addEventListener('DOMContentLoaded', function() {
   currentDate = extractDateFromUrl();
   updateImageTitleAndBackground();
+  const image = document.querySelector('.bg-image');
+  image.style.animationPlayState = 'paused';
+
+  document.addEventListener('keydown', function(event) {
+    const image = document.querySelector('.bg-image');
+    if (event.key === 'k') {
+      if (image.style.animationPlayState === 'paused') {
+        image.style.animationPlayState = 'running';
+        console.log('Secret Ken Burns mode!')
+      } else {
+        image.style.animationPlayState = 'paused';
+      }
+    } else if (event.key === 'q') {
+      image.style.animation = 'none';
+      image.offsetHeight;
+      image.style.transform = 'scale(1)';
+      image.style.backgroundPosition = '50% 50%';
+      image.style.animation = 'kenburns 20s linear infinite';
+      image.style.animationPlayState = 'paused';
+      console.log('Ken Burns has left the building.')
+    } else if (event.key === 'ArrowLeft') {
+      changeDate(-1);
+    } else if (event.key === 'ArrowRight') {
+      changeDate(1);
+    } else if (event.key === '?') {
+      toggleModal();
+    }
+  });
 
   document.addEventListener('touchstart', function(event) {
     touchstartX = event.changedTouches[0].screenX;
@@ -148,16 +176,6 @@ document.addEventListener('DOMContentLoaded', function() {
     touchendY = event.changedTouches[0].screenY;
     handleSwipeGesture();
     incrementClicks();
-  });
-
-  document.addEventListener('keydown', function(event) {
-    if (event.key === 'ArrowLeft') {
-      changeDate(-1);
-    } else if (event.key === 'ArrowRight') {
-      changeDate(1);
-    } else if (event.key === '?') {
-      toggleModal();
-    }
   });
 
   window.addEventListener("resize", updateImageTitleAndBackground);

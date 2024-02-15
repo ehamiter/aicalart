@@ -250,30 +250,44 @@ def decode_b64_json(b64_data):
     return json.loads(json_data)
 
 
+def prompt_passes_moderation(prompt):
+    print(f"{Fore.YELLOW}Moderating prompt...{Style.RESET_ALL}")
+    mod_obj = openai_client.moderations.create(input=prompt)
+    results = mod_obj.results[0]
+    if results.flagged == True:
+        print(f"{Fore.RED}Prompt failed moderation.{Style.RESET_ALL}")
+        return False
+    print(f"{Fore.GREEN}Prompt passed moderation.{Style.RESET_ALL}")
+    return True
+
+
 def generate_prompt(prompt, style, news, today):
-    print(f"{Fore.YELLOW}Generating prompt...{Style.RESET_ALL}")
-    completion = openai_client.chat.completions.create(
-        model=GPT_MODEL,
-        messages=[
-            {
-                "role": "system",
-                "content": prompt,
-            },
-            {"role": "user", "content": prompt},
-        ],
-    )
+    if prompt_passes_moderation(prompt):
+        print(f"{Fore.YELLOW}Generating prompt...{Style.RESET_ALL}")
+        completion = openai_client.chat.completions.create(
+            model=GPT_MODEL,
+            messages=[
+                {
+                    "role": "system",
+                    "content": prompt,
+                },
+                {"role": "user", "content": prompt},
+            ],
+        )
 
-    dalle_prompt = completion.choices[0].message.content
+        dalle_prompt = completion.choices[0].message.content
 
-    prompt_info = f"""
-    Style: {style}\n
-    News: {news}\n
-    Today: {today.split(';')[0]}\n
-    DALL-E prompt: {dalle_prompt}
-    """
-    print(dedent(prompt_info))
-    return dalle_prompt
+        prompt_info = f"""
+        Style: {style}\n
+        News: {news}\n
+        Today: {today.split(';')[0]}\n
+        DALL-E prompt: {dalle_prompt}
+        """
+        print(dedent(prompt_info))
+        return dalle_prompt
 
+    print(f"Prompt '{prompt}' failed moderation. Try with another prompt.")
+    exit()
 
 def generate_images(dalle_prompt, image_args, failed_attempts=0):
     # Let's try to make these things. It could be rejected because god only knows
