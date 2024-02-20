@@ -8,7 +8,7 @@ AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_S3_BUCKET = "aicalart"
 
-### OpenaAI
+### OpenAI
 AICALART_OPENAI_KEY = os.getenv("AICALART_OPENAI_KEY")  # named thusly because it collided with another OPENAI_KEY
 # gpt-4-turbo will be coming out soon and is 3x cheaper than gpt-4.
 # in the meantime the preview model will be used.

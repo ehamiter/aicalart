@@ -1,4 +1,10 @@
 let currentDate = new Date();
+let touchstartX = 0;
+let touchendX = 0;
+let touchstartY = 0;
+let touchendY = 0;
+let swipeXThreshold = 100;
+let swipeYThreshold = 150;
 
 function formatDate(date) {
   return date.getFullYear() + '-' +
@@ -91,47 +97,36 @@ function extractDateFromUrl() {
     return currentDate;
 }
 
-let numberOfClicks = 0;
-const doubleTapThreshold = 300;
-let lastTapTime = 0;
-
-function resetClickCount() {
-  numberOfClicks = 0;
-}
-
-function incrementClicks() {
-  const currentTime = new Date().getTime();
-  if (currentTime - lastTapTime <= doubleTapThreshold) {
-    numberOfClicks += 1;
-  } else {
-    numberOfClicks = 1;
-  }
-
-  lastTapTime = currentTime;
-
-  if (numberOfClicks === 2) {
-    toggleModal();
-    resetClickCount();
-  } else {
-    setTimeout(resetClickCount, doubleTapThreshold);
-  }
-}
-
-let touchstartX = 0;
-let touchendX = 0;
-let swipeThreshold = 50;
-
 function handleSwipeGesture() {
   let swipeXDistance = Math.abs(touchendX - touchstartX);
-  if (swipeXDistance > swipeThreshold) {
+  if (swipeXDistance > swipeXThreshold) {
     if (touchendX < touchstartX) changeDate(1);
     if (touchendX > touchstartX) changeDate(-1);
   }
+  let swipeYDistance = Math.abs(touchendY - touchstartY);
+  if (swipeYDistance > swipeYThreshold) {
+    if (touchendY < touchstartY) toggleModal(true);
+    if (touchendY > touchstartY) toggleModal(false);
+  }
 }
 
-function toggleModal() {
+function toggleModal(forceShow) {
   var modal = document.getElementById("promptModal");
-  modal.classList.toggle('modal-show');
+  if (forceShow === undefined) {
+    if (modal.classList.contains('modal-show')) {
+      modal.classList.remove('modal-show');
+      modal.classList.add('modal-hide');
+    } else {
+      modal.classList.add('modal-show');
+      modal.classList.remove('modal-hide');
+    }
+  } else if (forceShow) {
+    modal.classList.add('modal-show');
+    modal.classList.remove('modal-hide');
+  } else {
+    modal.classList.remove('modal-show');
+    modal.classList.add('modal-hide');
+  }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -166,50 +161,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // let longPressTimer;
-  // let kenBurnsActive = false;
-
   document.addEventListener('touchstart', function(event) {
     touchstartX = event.changedTouches[0].screenX;
     touchstartY = event.changedTouches[0].screenY;
-
-    // Disabling mobile ken burns for now until I can figure
-    // out why it randomly starts up on mobile home page apps
-    //
-    // longPressTimer = setTimeout(function() {
-    //   const image = document.querySelector('.bg-image');
-    //   if (!kenBurnsActive) {
-    //     // Start the Ken Burns effect
-    //     if (image.style.animationPlayState === 'paused') {
-    //       image.style.animationPlayState = 'running';
-    //       console.log('Secret Ken Burns mode!');
-    //     } else {
-    //       image.style.animationPlayState = 'paused';
-    //     }
-    //     kenBurnsActive = true;
-    //   } else {
-    //     // Stop the Ken Burns effect and reset back to 100%
-    //     image.style.animation = 'none';
-    //     image.offsetHeight;
-    //     image.style.transform = 'scale(1)';
-    //     image.style.backgroundPosition = '50% 50%';
-    //     image.style.animation = 'kenburns 66s linear infinite';
-    //     image.style.animationPlayState = 'paused';
-    //     console.log('Ken Burns has left the building.')
-    //     kenBurnsActive = false;
-    //   }
-    // }, 3000); // 3 seconds for long press
-
   });
 
   document.addEventListener('touchend', function(event) {
-    // clearTimeout(longPressTimer);
     touchendX = event.changedTouches[0].screenX;
     touchendY = event.changedTouches[0].screenY;
     handleSwipeGesture();
-    incrementClicks();
   });
-
 
   window.addEventListener("resize", updateImageTitleAndBackground);
   window.onload = updateImageTitleAndBackground;
