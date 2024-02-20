@@ -179,12 +179,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Start the Ken Burns effect
         if (image.style.animationPlayState === 'paused') {
           image.style.animationPlayState = 'running';
-          console.log('Secret Ken Burns mode!')
+          console.log('Secret Ken Burns mode!');
         } else {
           image.style.animationPlayState = 'paused';
         }
-
-        image.style.animationPlayState = 'running';
         kenBurnsActive = true;
       } else {
         // Stop the Ken Burns effect and reset back to 100%
