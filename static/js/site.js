@@ -97,20 +97,9 @@ function extractDateFromUrl() {
     return currentDate;
 }
 
-function handleSwipeGesture() {
-  let swipeXDistance = Math.abs(touchendX - touchstartX);
-  if (swipeXDistance > swipeXThreshold) {
-    if (touchendX < touchstartX) changeDate(1);
-    if (touchendX > touchstartX) changeDate(-1);
-  }
-  let swipeYDistance = Math.abs(touchendY - touchstartY);
-  if (swipeYDistance > swipeYThreshold) {
-    if (touchendY < touchstartY) toggleModal(true);
-  }
-}
-
 function toggleModal(forceShow) {
   var modal = document.getElementById("promptModal");
+  var modalContainer = document.querySelector('.modal-container');
   if (forceShow === undefined) {
     if (modal.classList.contains('modal-show')) {
       modal.classList.remove('modal-show');
@@ -118,10 +107,12 @@ function toggleModal(forceShow) {
     } else {
       modal.classList.add('modal-show');
       modal.classList.remove('modal-hide');
+      modal.scrollTop = 0;
     }
   } else if (forceShow) {
     modal.classList.add('modal-show');
     modal.classList.remove('modal-hide');
+    modal.scrollTop = 0;
   } else {
     modal.classList.remove('modal-show');
     modal.classList.add('modal-hide');
@@ -160,16 +151,112 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
+  // function handleSwipeGesture() {
+  //   if (event.touches.length > 1) {
+  //     // Ignore pinch/zoom gestures
+  //     return;
+  //   }
+
+  //   let swipeXDistance = Math.abs(touchendX - touchstartX);
+  //   if (swipeXDistance > swipeXThreshold) {
+  //     if (touchendX < touchstartX) {
+  //       changeDate(1);
+  //     } else if (touchendX > touchstartX) {
+  //       changeDate(-1);
+  //     }
+  //   }
+  //   let swipeYDistance = Math.abs(touchendY - touchstartY);
+  //   if (swipeYDistance > swipeYThreshold) {
+  //     if (touchendY < touchstartY) {
+  //       toggleModal(true);
+  //     } else if (touchendY > touchstartY) {
+  //       toggleModal(false);
+  //     }
+  //   }
+  // }
+
+  // document.addEventListener('touchstart', function(event) {
+  //   if (event.touches.length === 1) {
+  //     touchstartX = event.touches[0].screenX;
+  //     touchstartY = event.touches[0].screenY;
+  //   }
+  // });
+
+  // document.addEventListener('touchend', function(event) {
+  //   if (event.changedTouches.length === 1) {
+  //     touchendX = event.changedTouches[0].screenX;
+  //     touchendY = event.changedTouches[0].screenY;
+  //     handleSwipeGesture();
+  //   }
+  // });
+
+  let touchStartX1 = 0;
+  let touchStartY1 = 0;
+  let touchStartX2 = 0;
+  let touchStartY2 = 0;
+  let touchEndX1 = 0;
+  let touchEndY1 = 0;
+  let touchEndX2 = 0;
+  let touchEndY2 = 0;
+
+  function handleSwipeGesture() {
+    if (event.touches.length === 2) {
+      let swipeYDistance1 = Math.abs(touchEndY1 - touchStartY1);
+      let swipeYDistance2 = Math.abs(touchEndY2 - touchStartY2);
+
+      if (swipeYDistance1 > swipeYThreshold && swipeYDistance2 > swipeYThreshold) {
+        if (touchEndY1 < touchStartY1 && touchEndY2 < touchStartY2) {
+          toggleModal(true); // Two-finger swipe up
+        } else if (touchEndY1 > touchStartY1 && touchEndY2 > touchStartY2) {
+          toggleModal(false); // Two-finger swipe down
+        }
+      }
+      return; // Skip one-finger swipe logic for two-finger touches
+    }
+
+    let swipeXDistance = Math.abs(touchEndX1 - touchStartX1);
+    if (swipeXDistance > swipeXThreshold) {
+      if (touchEndX1 < touchStartX1) {
+        changeDate(1); // One-finger swipe left
+      } else if (touchEndX1 > touchStartX1) {
+        changeDate(-1); // One-finger swipe right
+      }
+    }
+
+    let swipeYDistance = Math.abs(touchEndY1 - touchStartY1);
+    if (swipeYDistance > swipeYThreshold) {
+      if (touchEndY1 < touchStartY1) {
+        toggleModal(true); // One-finger swipe up
+      }
+    }
+  }
+
   document.addEventListener('touchstart', function(event) {
-    touchstartX = event.changedTouches[0].screenX;
-    touchstartY = event.changedTouches[0].screenY;
+    if (event.touches.length === 2) {
+      touchStartX1 = event.touches[0].screenX;
+      touchStartY1 = event.touches[0].screenY;
+      touchStartX2 = event.touches[1].screenX;
+      touchStartY2 = event.touches[1].screenY;
+    } else if (event.touches.length === 1) {
+      touchStartX1 = event.touches[0].screenX;
+      touchStartY1 = event.touches[0].screenY;
+    }
   });
 
   document.addEventListener('touchend', function(event) {
-    touchendX = event.changedTouches[0].screenX;
-    touchendY = event.changedTouches[0].screenY;
-    handleSwipeGesture();
+    if (event.changedTouches.length === 2) {
+      touchEndX1 = event.changedTouches[0].screenX;
+      touchEndY1 = event.changedTouches[0].screenY;
+      touchEndX2 = event.changedTouches[1].screenX;
+      touchEndY2 = event.changedTouches[1].screenY;
+      handleSwipeGesture();
+    } else if (event.changedTouches.length === 1) {
+      touchEndX1 = event.changedTouches[0].screenX;
+      touchEndY1 = event.changedTouches[0].screenY;
+      handleSwipeGesture();
+    }
   });
+
 
   window.addEventListener("resize", updateImageTitleAndBackground);
   window.onload = updateImageTitleAndBackground;
