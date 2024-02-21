@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
       image.offsetHeight;
       image.style.transform = 'scale(1)';
       image.style.backgroundPosition = '50% 50%';
-      image.style.animation = 'kenburns 66s linear infinite';
+      image.style.animation = 'kenburns 88s linear infinite';
       image.style.animationPlayState = 'paused';
       console.log('Ken Burns has left the building.')
     } else if (event.key === 'ArrowLeft') {
