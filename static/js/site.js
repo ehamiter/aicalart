@@ -4,7 +4,7 @@ let touchendX = 0;
 let touchstartY = 0;
 let touchendY = 0;
 let swipeXThreshold = 100;
-let swipeYThreshold = 150;
+let swipeYThreshold = 100;
 
 function formatDate(date) {
   return date.getFullYear() + '-' +
@@ -106,7 +106,6 @@ function handleSwipeGesture() {
   let swipeYDistance = Math.abs(touchendY - touchstartY);
   if (swipeYDistance > swipeYThreshold) {
     if (touchendY < touchstartY) toggleModal(true);
-    if (touchendY > touchstartY) toggleModal(false);
   }
 }
 
