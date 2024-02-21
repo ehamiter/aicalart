@@ -4,7 +4,7 @@ let touchendX = 0;
 let touchstartY = 0;
 let touchendY = 0;
 let swipeXThreshold = 100;
-let swipeYThreshold = 125;
+let swipeYThreshold = 110;
 
 function formatDate(date) {
   return date.getFullYear() + '-' +
