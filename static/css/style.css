@@ -119,6 +119,7 @@ body, html {
   opacity: 0;
   transition: opacity 0.5s ease;
   max-width: 600px;
+  min-width: 300px;
   width: auto;
   height: auto;
   background-color: #ffffccdf;
@@ -153,9 +154,34 @@ body, html {
   color: #424242;
 }
 
+.keyboard-shortcuts {
+  font-family: 'Alegreya Sans SC';
+  font-size: 18px;
+}
+
+.keyboard-shortcuts td {
+  font-weight: 800;
+}
+
 #modalDate {font-size: 24px; font-family: 'Alegreya Sans SC', sans-serif;}
 #modalHolidays {font-size: 20px; font-family: 'Alegreya Sans SC', sans-serif;}
 #modalText {font-size: 18px; font-family: 'Alegreya Sans', sans-serif;}
+#modalAboutTitle {font-size: 24px; font-family: 'Alegreya Sans SC', sans-serif;}
+
+.modal-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.modal-content table td {
+  padding: 5px;
+  border-bottom: 1px solid #999;
+}
+
+.modal-content table tr:last-child td {
+  border-bottom: none;
+}
 
 .modal-display-flex {
   display: flex;

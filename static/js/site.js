@@ -87,8 +87,8 @@ function extractDateFromUrl() {
 
       let date = new Date(year, month - 1, day);
       let formattedDate = date.getFullYear() + '-' +
-                          ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
-                          ('0' + date.getDate()).slice(-2);
+          ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
+          ('0' + date.getDate()).slice(-2);
 
       console.log('Traveling in time to ' + formattedDate);
       currentDate = new Date(date.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
@@ -99,7 +99,6 @@ function extractDateFromUrl() {
 
 function toggleModal(forceShow) {
   var modal = document.getElementById("promptModal");
-  var modalContainer = document.querySelector('.modal-container');
   if (forceShow === undefined) {
     if (modal.classList.contains('modal-show')) {
       modal.classList.remove('modal-show');
@@ -127,7 +126,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.addEventListener('keydown', function(event) {
     const image = document.querySelector('.bg-image');
-    if (event.key === 'k') {
+    var aboutModal = document.getElementById("aboutModal");
+    if (event.key === 'p') {
+      toggleModal();
+    } else if (event.key === '?') {
+      if (aboutModal.classList.contains('modal-show')) {
+        aboutModal.classList.remove('modal-show');
+        aboutModal.classList.add('modal-hide');
+      } else {
+        aboutModal.classList.add('modal-show');
+        aboutModal.classList.remove('modal-hide');
+      }
+    } else if (event.key === 'k') {
       if (image.style.animationPlayState === 'paused') {
         image.style.animationPlayState = 'running';
         console.log('Secret Ken Burns mode!')
@@ -146,9 +156,20 @@ document.addEventListener('DOMContentLoaded', function() {
       changeDate(-1);
     } else if (event.key === 'ArrowRight') {
       changeDate(1);
-    } else if (event.key === '?') {
-      toggleModal();
     }
+
+    var promptModalClose = document.querySelector('#promptModal .close');
+    promptModalClose.onclick = function() {
+      promptModal.classList.remove('modal-show');
+      promptModal.classList.add('modal-hide');
+    };
+
+    var aboutModalClose = document.querySelector('#aboutModal .close');
+    aboutModalClose.onclick = function() {
+      aboutModal.classList.remove('modal-show');
+      aboutModal.classList.add('modal-hide');
+    };
+
   });
 
   function handleSwipeGesture() {
@@ -193,19 +214,4 @@ document.addEventListener('DOMContentLoaded', function() {
   window.addEventListener("resize", updateImageTitleAndBackground);
   window.onload = updateImageTitleAndBackground;
 
-  var closeButton = document.querySelector(".close");
-  if (closeButton) {
-    closeButton.onclick = function() {
-      toggleModal();
-    }
-  } else {
-    console.error("Close button not found.")
-  }
-
-  window.onclick = function(event) {
-    var modal = document.getElementById("promptModal");
-    if (event.target === modal) {
-      toggleModal();
-    }
-  }
 });

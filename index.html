@@ -18,10 +18,47 @@
   <link rel="preconnect" href="https://us.umami.is">
   <script src="./static/js/site.js" defer></script>
   <script async src="https://us.umami.is/script.js" data-website-id="c7689907-ea33-4b68-9459-a6084b59cc39"></script>
-  <script src="https://cdn.counter.dev/script.js" data-id="66936b19-0bac-4910-ad40-7b646dc15df7" data-utcoffset="-6"></script>
 </head>
 
 <body>
+
+  <div class="modal-container">
+    <div id="aboutModal" class="modal">
+      <div class="modal-content">
+        <span class="close"></span>
+        <p id="modalAboutTitle" class="modal-text-common">
+          Keyboard Shortcuts
+        </p>
+        <table class="modal-text-common keyboard-shortcuts">
+          <tr>
+            <td>?</td>
+            <td>Show/hide this message</td>
+          </tr>
+          <tr>
+            <td>p</td>
+            <td>Show/hide the day's prompt</td>
+          </tr>
+          <tr>
+            <td>&larr;</td>
+            <td>Go back one day</td>
+          </tr>
+          <tr>
+            <td>&rarr;</td>
+            <td>Go forward one day</td>
+          </tr>
+          <tr>
+            <td>k</td>
+            <td>Start/pause Ken Burns-ish effect</td>
+          </tr>
+          <tr>
+            <td>q</td>
+            <td>Quit Ken Burns-ish effect</td>
+          </tr>
+        </table>
+
+      </div>
+    </div>
+  </div>
 
   <div class="modal-container">
     <div id="promptModal" class="modal">
@@ -33,6 +70,7 @@
       </div>
     </div>
   </div>
+
   <div class="bg-image"></div>
 
 
