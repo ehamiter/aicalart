@@ -52,7 +52,26 @@ async function updateImageTitleAndBackground() {
 }
 
 function changeDate(days) {
-  currentDate.setDate(currentDate.getDate() + days);
+  let newDate = new Date(currentDate.valueOf());
+  newDate.setDate(newDate.getDate() + days);
+
+  // Get today's date in the viewer's local timezone
+  let today = new Date();
+  today.setHours(23, 59, 59, 999); // Set to the end of today in local timezone
+
+  let firstDate = new Date('2023-11-25T00:00:00-06:00'); // CST timezone offset for the first date
+
+  if (newDate > today) {
+    console.error('Cannot navigate to a future date.');
+    return;
+  }
+
+  if (newDate < firstDate) {
+    console.error('Cannot navigate before November 25, 2023.');
+    return;
+  }
+
+  currentDate = newDate;
   updateImageTitleAndBackground();
 }
 
