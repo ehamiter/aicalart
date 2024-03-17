@@ -34,6 +34,9 @@ from PIL import Image, ImageDraw
 from promote import main as promote_file
 from randomish import randomish
 
+import socket
+socket.setdefaulttimeout(150)
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
