@@ -86,6 +86,7 @@ def main(date):
     # Upload the files to S3
     upload_file_to_s3(landscape_file, AWS_S3_BUCKET, f"images/{date_part}-landscape.webp")
     upload_file_to_s3(portrait_file, AWS_S3_BUCKET, f"images/{date_part}-portrait.webp")
+    upload_file_to_s3(portrait_file, AWS_S3_BUCKET, "images/portrait.webp")  # for iPhone wallpaper shortcut
     upload_file_to_s3(prompt_file, AWS_S3_BUCKET, f"prompts/{date_part}-prompt.json")
 
 
