@@ -1,5 +1,4 @@
 import argparse
-from datetime import datetime, timedelta
 import logging
 import boto3
 from botocore.exceptions import NoCredentialsError
@@ -9,7 +8,6 @@ from constants import (
     AWS_S3_BUCKET,
     AWS_SECRET_ACCESS_KEY,
 )
-
 
 class CustomFormatter(logging.Formatter):
     format_dict = {
@@ -25,16 +23,12 @@ class CustomFormatter(logging.Formatter):
         formatter = logging.Formatter(log_fmt, datefmt="%Y-%m-%d %H:%M:%S")
         return formatter.format(record)
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
-# console handler for logging
 ch = logging.StreamHandler()
 ch.setLevel(logging.INFO)
 ch.setFormatter(CustomFormatter())
 logger.addHandler(ch)
-
 
 def extract_datetime(filename):
     # Extract the part after "landscape-" or "portrait-" and keep 'Z' at the end
@@ -56,75 +50,47 @@ def adjust_to_cst(the_datetime):
     return cst_datetime_str
 
 def upload_file_to_s3(local_path, bucket, s3_key):
-    logger.info(f"Uploading file {local_path}...")
-
     try:
         s3 = boto3.client(
             "s3",
             aws_access_key_id=AWS_ACCESS_KEY_ID,
             aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
         )
-
-        # Set content-type so we're not downloading objects
+        extra_args = {}
         if local_path.endswith(".txt"):
             extra_args = {"ContentType": "text/plain"}
         elif local_path.endswith(".webp"):
             extra_args = {"ContentType": "image/webp"}
-        else:
-            extra_args = {}
+        elif local_path.endswith(".json"):
+            extra_args = {"ContentType": "application/json"}
 
-        # Upload the file with specified content type
+        print(local_path)
+
         s3.upload_file(local_path, bucket, s3_key, ExtraArgs=extra_args)
-
-        logger.info(f"File {local_path} uploaded to {bucket}/{s3_key}")
+        logger.info(f"Uploaded {local_path} to {bucket}/{s3_key}")
 
     except FileNotFoundError:
         logger.error("The file was not found")
     except NoCredentialsError:
         logger.error("Credentials not available")
 
-def main(file_tag, archive_only=False):
-    input_filename = file_tag
-    the_datetime = extract_datetime(input_filename)
-    cst_datetime = adjust_to_cst(the_datetime)
-    the_date = cst_datetime.split("T")[0]
+def main(date):
+    # Separate the date and time components for the image files
+    date_part, time_part = date.split("T")
 
-    # Local file paths using the full datetime so you can generate several per day
-    landscape_file = f"./staging/landscape-{the_datetime}.webp"
-    portrait_file = f"./staging/portrait-{the_datetime}.webp"
-    prompt_original_file = f"./staging/original-{the_datetime}.txt"
-    prompt_landscape_file = f"./staging/landscape-{the_datetime}.txt"
-    prompt_portrait_file = f"./staging/portrait-{the_datetime}.txt"
-    todays_holidays_file = f"./staging/holidays-{the_datetime}.txt"
+    # Construct the file paths
+    landscape_file = f"./staging/landscape-{date_part}T{time_part}.webp"
+    portrait_file = f"./staging/portrait-{date_part}T{time_part}.webp"
+    prompt_file = f"./staging/prompt-{date_part}.json"
 
-    replace_current_files = not archive_only  # Making a double negative not unclear
-    if replace_current_files:
-        # For immediate usage
-        upload_file_to_s3(landscape_file, AWS_S3_BUCKET, "images/landscape.webp")
-        upload_file_to_s3(portrait_file, AWS_S3_BUCKET, "images/portrait.webp")
-        upload_file_to_s3(prompt_original_file, AWS_S3_BUCKET, "prompts/original.txt")
-        upload_file_to_s3(prompt_landscape_file, AWS_S3_BUCKET, "prompts/landscape.txt")
-        upload_file_to_s3(prompt_portrait_file, AWS_S3_BUCKET, "prompts/portrait.txt")
-        upload_file_to_s3(todays_holidays_file, AWS_S3_BUCKET, "prompts/holidays.txt")
-
-    # Archival
-    # fmt: off
-    upload_file_to_s3(landscape_file, AWS_S3_BUCKET, f"images/{the_date}-landscape.webp")
-    upload_file_to_s3(portrait_file, AWS_S3_BUCKET, f"images/{the_date}-portrait.webp")
-    upload_file_to_s3(prompt_original_file, AWS_S3_BUCKET, f"prompts/{the_date}-original.txt")
-    upload_file_to_s3(prompt_landscape_file, AWS_S3_BUCKET, f"prompts/{the_date}-landscape.txt")
-    upload_file_to_s3(prompt_portrait_file, AWS_S3_BUCKET, f"prompts/{the_date}-portrait.txt")
-    upload_file_to_s3(todays_holidays_file, AWS_S3_BUCKET, f"prompts/{the_date}-holidays.txt")
-    # fmt: on
+    # Upload the files to S3
+    upload_file_to_s3(landscape_file, AWS_S3_BUCKET, f"images/{date_part}-landscape.webp")
+    upload_file_to_s3(portrait_file, AWS_S3_BUCKET, f"images/{date_part}-portrait.webp")
+    upload_file_to_s3(prompt_file, AWS_S3_BUCKET, f"prompts/{date_part}-prompt.json")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Upload files to S3 with optional replacement.")  # fmt: skip
-    parser.add_argument("file_tag", type=str, help="Tag of the file to upload")
-    parser.add_argument(
-        "--archive-only",
-        action="store_true",
-        help="Current images are replaced by default, so use this flag to only archive the images.",
-    )
+    parser = argparse.ArgumentParser(description="Upload daily files to S3.")
+    parser.add_argument("date", type=str, help="Date for the files to upload (format: YYYY-MM-DD)")
     args = parser.parse_args()
-    main(args.file_tag, args.archive_only)
+    main(args.date)

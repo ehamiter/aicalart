@@ -1,4 +1,7 @@
 let currentDate = new Date();
+const baseImageUrl = "https://aicalart.s3.amazonaws.com/images/";
+const basePromptUrl = "./prompts.json";
+
 let touchstartX = 0;
 let touchendX = 0;
 let touchstartY = 0;
@@ -6,72 +9,50 @@ let touchendY = 0;
 let swipeXThreshold = 100;
 let swipeYThreshold = 110;
 
+async function loadPrompts(dateString, orientation) {
+  const promptUrl = `https://aicalart.s3.amazonaws.com/prompts/${dateString}-prompt.json`;
+  const response = await fetch(promptUrl);
+  const promptData = await response.json();
+
+  return {
+    bgFile: `url('${baseImageUrl}${dateString}-${orientation}.webp')`,
+    text: promptData[orientation],
+    holidays: promptData["holidays"]
+  };
+}
+
+
 function formatDate(date) {
-  return date.getFullYear() + '-' +
-         ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
-         ('0' + date.getDate()).slice(-2);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
 function convertDateStringToLocaleDateString(dateString) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const date = new Date(dateString + 'T00:00');
-    return date.toLocaleDateString('en-US', options);
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-function updateImageTitleAndBackground() {
-  let dateString = formatDate(currentDate);
-  let localeDateString = convertDateStringToLocaleDateString(dateString);
-  let orientation = window.matchMedia("(orientation: portrait)").matches ? 'portrait' : 'landscape';
-  let basePromptUrl = `https://aicalart.s3.amazonaws.com/prompts/`;
-  let baseImageUrl = `https://aicalart.s3.amazonaws.com/images/`;
+async function updateImageTitleAndBackground() {
+  const dateString = formatDate(currentDate);
+  const localeDateString = convertDateStringToLocaleDateString(dateString);
+  const orientation = window.matchMedia("(orientation: portrait)").matches ? 'portrait' : 'landscape';
 
-  // Always use dated files
-  let bgFile = `url('${baseImageUrl}${dateString}-${orientation}.webp')`;
-  let textFile = `${basePromptUrl}${dateString}-${orientation}.txt`;
-  let holidayFile = `${basePromptUrl}${dateString}-holidays.txt`;
-
-  fetch(textFile)
-    .then(response => response.text())
-    .then(text => {
-      document.querySelector('.bg-image').style.backgroundImage = bgFile;
+  try {
+    const prompts = await loadPrompts(dateString, orientation);
+    if (prompts) {
+      document.querySelector('.bg-image').style.backgroundImage = prompts.bgFile;
       document.getElementById('modalDate').textContent = localeDateString;
-      document.getElementById('modalText').textContent = text;
-
-      // Fetch the holiday data
-      return fetch(holidayFile);
-    })
-    .then(response => response.text())
-    .then(holidays => {
-      document.getElementById('modalHolidays').textContent = holidays;
-    })
-    .catch(error => {
-      console.error('Fetch failed: ', error);
-    });
+      document.getElementById('modalText').textContent = prompts.text;
+      document.getElementById('modalHolidays').textContent = prompts.holidays;
+    } else {
+      // Handle the case where no prompts are found (e.g., clear the UI elements or display a default message)
+    }
+  } catch (error) {
+    console.error('Fetch failed: ', error);
+  }
 }
 
 function changeDate(days) {
-  let newDate = new Date(currentDate.valueOf());
-  newDate.setDate(newDate.getDate() + days);
-
-  let today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  let todayStripped = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  let newDateStripped = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
-
-  // Only prevent navigating to future dates
-  if (newDateStripped > todayStripped) {
-    console.log('Cannot navigate to a future date.');
-    return;
-  }
-
-  let minDate = new Date('2023-11-25');
-  if (newDateStripped < minDate) {
-    console.log('Cannot navigate before November 25, 2023.');
-    return;
-  }
-
-  currentDate = newDate;
+  currentDate.setDate(currentDate.getDate() + days);
   updateImageTitleAndBackground();
 }
 

@@ -46,19 +46,6 @@ now_utc = now = f"{datetime.datetime.utcnow().isoformat()}Z"
 openai_client = OpenAI(api_key=AICALART_OPENAI_KEY)
 
 
-def trim_string(text, char_limit=1023):
-    if len(text) <= char_limit:
-        return text
-    trimmed_text = text[: char_limit + 1]
-    last_period = trimmed_text.rfind(".")
-
-    # Add back the removed quote
-    if last_period != -1:
-        return f'{trimmed_text[: last_period + 1]}"'
-    else:
-        return f'{trimmed_text[:char_limit]}"'
-
-
 # `date` here is just a key of sorts in YYYY-MM-DD format
 def get_holiday(date):
     return HOLIDAYS.get(date, "")
@@ -264,6 +251,18 @@ def prompt_passes_moderation(prompt):
     return True
 
 
+def write_daily_prompt_json(date, landscape_prompt, portrait_prompt, holidays):
+    prompt_file_path = f"./staging/prompt-{date}.json"
+    prompt_data = {
+        "landscape": landscape_prompt,
+        "portrait": portrait_prompt,
+        "holidays": holidays
+    }
+
+    with open(prompt_file_path, "w") as file:
+        json.dump(prompt_data, file, indent=4)
+
+
 def generate_prompt(prompt, style, news, today):
     if prompt_passes_moderation(prompt):
         print(f"{Fore.YELLOW}Generating prompt...{Style.RESET_ALL}")
@@ -379,31 +378,15 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
     print(f"\nPortrait prompt: {portrait_prompt}")
     print(f"\nLandscape prompt: {landscape_prompt}\n")
 
-    # Anything over 1,023 chars gets chopped, so if it's used in an img title, use the shortened version
-    # portrait_prompt = trim_string(portrait_prompt)
-    # landscape_prompt = trim_string(landscape_prompt)
 
     todays_holidays = get_todays_holidays_display(the_date)
     print("TODAYS HOLIDAYS\n\n", todays_holidays)
     if not os.path.exists("./staging"):
         os.makedirs("./staging")
 
-    original_prompt_file_path = f"./staging/original-{now}.txt"
-    portrait_prompt_file_path = f"./staging/portrait-{now}.txt"
-    landscape_prompt_file_path = f"./staging/landscape-{now}.txt"
-    todays_holidays_file_path = f"./staging/holidays-{now}.txt"
-
-    with open(original_prompt_file_path, "w") as file:
-        file.write(dalle_prompt)
-
-    with open(portrait_prompt_file_path, "w") as file:
-        file.write(portrait_prompt)
-
-    with open(landscape_prompt_file_path, "w") as file:
-        file.write(landscape_prompt)
-
-    with open(todays_holidays_file_path, "w") as file:
-        file.write(todays_holidays)
+    # Update the JSON file with the new prompts and holidays
+    # update_prompts_json(the_date, landscape_prompt, portrait_prompt, todays_holidays)
+    write_daily_prompt_json(the_date, landscape_prompt, portrait_prompt, todays_holidays)
 
     # Image processing
     portrait_data = portrait_response.data[0].model_dump()["b64_json"]
@@ -503,15 +486,8 @@ def main(
         logger.info(f"{Fore.RED}Generation failed.{Style.RESET_ALL} [Total time: {t2 - t1:.2f} seconds]\n\n")  # fmt: skip
         exit(1)
 
-    if skip_upload:
-        print("To promote these images to production, run:\n")
-        print(f"python promote.py landscape-{now}\n\n")
-        print("To archive these images (for a past date), run:\n")
-        print(f"python promote.py landscape-{now} --archive-only\n")
-    else:
-        print(f"Promoting prompts and images for {now} to production...")
-        file_tag = f"landscape-{now}"
-        promote_file(file_tag)
+    if not skip_upload:
+        promote_file(now)
 
 
 if __name__ == "__main__":
