@@ -21,6 +21,7 @@ from constants import (
     SCOPES,
     SILLY_DAYS,
     STYLES,
+    generate_random_style,
 )
 from gnews import GNews
 from google.auth.exceptions import RefreshError
@@ -94,7 +95,7 @@ def get_news(country="US", period="1h"):
 
 
 def get_style():
-    style = randomish(STYLES)
+    style = generate_random_style()
     return style
 
 
