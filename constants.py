@@ -939,7 +939,7 @@ HOLIDAYS = {
     "2024-03-28": "Maundy Thursday",
     "2024-03-29": "National Vietnam War Veterans Day",
     "2024-03-30": "Doctors' Day",
-    "2024-03-31": "César Chávez Day",
+    "2024-03-31": "Easter",
     "2024-04-01": "April Fool's Day",
     "2024-04-02": "Pascua Florida Day",
     "2024-04-04": "United Nations' Mine Awareness Day",
