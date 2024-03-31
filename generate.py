@@ -20,7 +20,6 @@ from constants import (
     IMAGE_MODEL,
     SCOPES,
     SILLY_DAYS,
-    STYLES,
     generate_random_style,
 )
 from gnews import GNews
