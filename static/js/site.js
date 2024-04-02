@@ -26,21 +26,18 @@ function formatDate(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
-function convertDateStringToLocaleDateString(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-}
-
 async function updateImageTitleAndBackground() {
   const dateString = formatDate(currentDate);
-  const localeDateString = convertDateStringToLocaleDateString(dateString);
   const orientation = window.matchMedia("(orientation: portrait)").matches ? 'portrait' : 'landscape';
+
+  const utcDate = new Date(dateString + 'T00:00:00Z');
+  const localDate = new Date(utcDate.getTime() + (utcDate.getTimezoneOffset() * 60 * 1000));
 
   try {
     const prompts = await loadPrompts(dateString, orientation);
     if (prompts) {
       document.querySelector('.bg-image').style.backgroundImage = prompts.bgFile;
-      document.getElementById('modalDate').textContent = localeDateString;
+      document.getElementById('modalDate').textContent = localDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
       document.getElementById('modalText').textContent = prompts.text;
       document.getElementById('modalHolidays').textContent = prompts.holidays;
     } else {
