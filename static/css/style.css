@@ -204,3 +204,47 @@ body, html {
   color: black;
   text-decoration: none;
 }
+
+.date-input {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-family: 'Alegreya Sans', sans-serif; /* Consistency in font usage */
+  background-color: #f4f4c1; /* Matching the button color */
+  border: 1px solid #b3a580; /* Matching the button's border */
+  border-radius: 4px; /* Rounded corners like the button */
+  color: #5c5346; /* Consistent text color */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2); /* Subtle inner shadow for depth */
+  transition: all 0.3s ease; /* Smooth transition for focus styles */
+  margin-right: 10px; /* Ensures some spacing between the input and button */
+}
+
+.date-input:focus {
+  outline: none; /* Removes the default focus outline */
+  box-shadow: 0 0 0 2px #a99676; /* A focus style that stands out yet fits the theme */
+}
+
+.modal-button {
+  padding: 8px 16px;
+  background-color: #f4f4c1; /* Mimics the color of an aged post-it */
+  border: 1px solid #b3a580; /* Soft border color for a vintage look */
+  border-radius: 4px; /* Less pronounced for a subtle feel */
+  color: #5c5346; /* A deep, ink-like color for contrast and readability */
+  font-size: 0.9rem;
+  font-family: 'Alegreya Sans', sans-serif; /* Keeping in line with the literary theme */
+  font-weight: 600;
+  text-transform: none; /* Removing uppercase for a more traditional text appearance */
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Softer shadow for a gentler depth */
+  transition: all 0.3s ease;
+}
+
+.modal-button:hover {
+  background-color: #e6e6b8; /* Slightly lighter on hover for a subtle interaction cue */
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.25); /* Slightly deeper shadow on hover for depth */
+}
+
+.modal-button:active {
+  background-color: #dcdca3; /* Even lighter, mimicking the pressing of actual paper */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15); /* Less depth when 'pressed' */
+  transform: translateY(2px); /* Mimics the action of pressing a physical button */
+}

@@ -94,6 +94,36 @@ function extractDateFromUrl() {
     return currentDate;
 }
 
+// Function to handle "Go" button click or enter key press in date input
+function jumpToDate() {
+  var dateInputElement = document.getElementById("dateInput");
+  var datePattern = /^\d{4}-\d{2}-\d{2}$/;
+  if (datePattern.test(dateInputElement.value)) { // Use .value here to validate it
+    window.location.hash = dateInputElement.value; // Use .value to set the hash
+    currentDate = extractDateFromUrl(); // Reuse your existing function to extract and use the date
+    updateImageTitleAndBackground(); // Load the images for the new date
+    toggleJumpToDateModal(); // Hide the modal
+    dateInputElement.blur(); // Correctly remove focus from the input element itself
+  } else {
+    alert("Please enter a valid date in YYYY-MM-DD format.");
+  }
+}
+
+// Add event listener for the Go button
+document.getElementById("jumpToDateButton").addEventListener("click", jumpToDate);
+
+// Optional: Close the modal when the user clicks on <span> (x)
+document.getElementById("jumpToDateClose").onclick = function() {
+  toggleJumpToDateModal();
+};
+
+// Optional: Allow pressing Enter in the date input to submit
+document.getElementById("dateInput").addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    jumpToDate();
+  }
+});
+
 function toggleModal(forceShow) {
   var modal = document.getElementById("promptModal");
   if (forceShow === undefined) {
@@ -115,6 +145,18 @@ function toggleModal(forceShow) {
   }
 }
 
+function toggleJumpToDateModal() {
+  var jumpToDateModal = document.getElementById("jumpToDateModal");
+
+  if (jumpToDateModal.classList.contains('modal-show')) {
+    jumpToDateModal.classList.remove('modal-show');
+    jumpToDateModal.classList.add('modal-hide');
+  } else {
+    jumpToDateModal.classList.add('modal-show');
+    jumpToDateModal.classList.remove('modal-hide');
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   currentDate = extractDateFromUrl();
   updateImageTitleAndBackground();
@@ -124,7 +166,9 @@ document.addEventListener('DOMContentLoaded', function() {
   document.addEventListener('keydown', function(event) {
     const image = document.querySelector('.bg-image');
     var aboutModal = document.getElementById("aboutModal");
-    if (event.key === 'p') {
+    if (event.key === 'j') {
+      toggleJumpToDateModal();
+    } else if (event.key === 'p') {
       toggleModal();
     } else if (event.key === '?') {
       if (aboutModal.classList.contains('modal-show')) {

@@ -39,6 +39,11 @@
             <td>Show/hide the day's prompt</td>
           </tr>
           <tr>
+            <td>j</td>
+            <td>Jump to a specific date</td>
+          </tr>
+          <tr>
+          <tr>
             <td>&larr;</td>
             <td>Go back one day</td>
           </tr>
@@ -67,6 +72,17 @@
         <p id="modalDate" class="modal-text-common"></p>
         <p id="modalHolidays" class="modal-text-common"></p>
         <p id="modalText" class="modal-text-common"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-container">
+    <div id="jumpToDateModal" class="modal modal-display-flex">
+      <div class="modal-content modal-text-common">
+        <span class="close" id="jumpToDateClose">&times;</span>
+        <p class="modal-text-common keyboard-shortcuts">Jump to Date:</p>
+        <input type="text" id="dateInput" class="date-input" placeholder="YYYY-MM-DD">
+        <button id="jumpToDateButton" class="modal-button">Jump</button>
       </div>
     </div>
   </div>

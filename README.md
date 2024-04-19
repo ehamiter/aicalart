@@ -14,7 +14,6 @@ This repo hosts the scripts and template that powers [aical.art](https://aical.a
     </ul>
     <p>Sources</p>
     <ul>
-      <li>Breaking News Headlines</li>
       <li>Personal Google Calendars</li>
       <li>National Holidays</li>
       <li>Silly Days According To Some Website</li>
@@ -22,13 +21,17 @@ This repo hosts the scripts and template that powers [aical.art](https://aical.a
     </ul>
     <p>Mobile Phone Navigation</p>
     <ul>
-      <li><strong>(double tap image)</strong> Toggle prompt display</li>
-      <li><strong>(swipe) ← →</strong> Go back / forward in time</li>
+      <li><strong>(swipe up/down)</strong> Toggle prompt display</li>
+      <li><strong>(swipe left/right)</strong> Go back / forward in time</li>
     </ul>
     <p>Desktop / Laptop Navigation</p>
     <ul>
-      <li><strong>?</strong> Toggle prompt display</li>
+      <li><strong>?</strong> Toggle keyboard shortcuts menu</li>
+      <li><strong>p</strong> Toggle prompt display</li>
+      <li><strong>j</strong> Jump to a specific date</li>
       <li><strong>(keys) ← →</strong> Go back / forward in time</li>
+      <li><strong>k</strong> Start "Ken Burns-ish" effect</li>
+      <li><strong>q</strong> Quit "Ken Burns-ish" effect</li>
     </ul>
   </figcaption>
 </figure>
