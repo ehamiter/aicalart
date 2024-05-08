@@ -98,50 +98,53 @@ function extractDateFromUrl() {
 function jumpToDate() {
   var dateInputElement = document.getElementById("dateInput");
   var datePattern = /^\d{4}-\d{2}-\d{2}$/;
-  if (datePattern.test(dateInputElement.value)) { // Use .value here to validate it
-    window.location.hash = dateInputElement.value; // Use .value to set the hash
-    currentDate = extractDateFromUrl(); // Reuse your existing function to extract and use the date
-    updateImageTitleAndBackground(); // Load the images for the new date
-    toggleJumpToDateModal(); // Hide the modal
-    dateInputElement.blur(); // Correctly remove focus from the input element itself
+  if (datePattern.test(dateInputElement.value)) {
+    window.location.hash = dateInputElement.value;
+    currentDate = extractDateFromUrl();
+    updateImageTitleAndBackground();
+    toggleJumpToDateModal();
+    dateInputElement.blur(); // remove focus from the input element itself
   } else {
     alert("Please enter a valid date in YYYY-MM-DD format.");
   }
 }
 
-// Add event listener for the Go button
 document.getElementById("jumpToDateButton").addEventListener("click", jumpToDate);
-
-// Optional: Close the modal when the user clicks on <span> (x)
 document.getElementById("jumpToDateClose").onclick = function() {
   toggleJumpToDateModal();
 };
 
-// Optional: Allow pressing Enter in the date input to submit
 document.getElementById("dateInput").addEventListener("keypress", function(event) {
   if (event.key === "Enter") {
     jumpToDate();
   }
 });
 
-function toggleModal(forceShow) {
-  var modal = document.getElementById("promptModal");
+function toggleModal(modalId, forceShow) {
+  var modal = document.getElementById(modalId);
+  console.log('Toggling modal:', modalId, 'Force show:', forceShow);
+
+  // Clear all animations before applying new ones
+  modal.classList.remove('modal-show');
+  modal.classList.remove('modal-hide');
+
   if (forceShow === undefined) {
-    if (modal.classList.contains('modal-show')) {
-      modal.classList.remove('modal-show');
+    // Check current visibility to toggle appropriately
+    if (modal.classList.contains('modal-visible')) {
       modal.classList.add('modal-hide');
+      modal.classList.remove('modal-visible');
     } else {
       modal.classList.add('modal-show');
-      modal.classList.remove('modal-hide');
+      modal.classList.add('modal-visible');
       modal.scrollTop = 0;
     }
   } else if (forceShow) {
     modal.classList.add('modal-show');
-    modal.classList.remove('modal-hide');
+    modal.classList.add('modal-visible');
     modal.scrollTop = 0;
   } else {
-    modal.classList.remove('modal-show');
     modal.classList.add('modal-hide');
+    modal.classList.remove('modal-visible');
   }
 }
 
@@ -165,77 +168,62 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.addEventListener('keydown', function(event) {
     const image = document.querySelector('.bg-image');
-    var aboutModal = document.getElementById("aboutModal");
     if (event.key === 'j') {
-      toggleJumpToDateModal();
+      toggleModal('jumpToDateModal');
     } else if (event.key === 'p') {
-      toggleModal();
+      toggleModal('promptModal');
     } else if (event.key === '?') {
-      if (aboutModal.classList.contains('modal-show')) {
-        aboutModal.classList.remove('modal-show');
-        aboutModal.classList.add('modal-hide');
-      } else {
-        aboutModal.classList.add('modal-show');
-        aboutModal.classList.remove('modal-hide');
+      toggleModal('aboutModal');
+    } else if (event.key === 'k' || event.key === 'q') {
+      // Handle Ken Burns effect, no modal toggling required here
+      handleKenBurnsEffect(event.key);
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      // Navigate dates, no modal toggling required directly here
+      changeDate(event.key === 'ArrowRight' ? 1 : -1);
       }
-    } else if (event.key === 'k') {
+    });
+
+  function handleKenBurnsEffect(key) {
+    if (key === 'k') {
       if (image.style.animationPlayState === 'paused') {
         image.style.animationPlayState = 'running';
-        console.log('Secret Ken Burns mode!')
+        console.log('Ken Burns mode activated!');
       } else {
         image.style.animationPlayState = 'paused';
       }
-    } else if (event.key === 'q') {
+    } else if (key === 'q') {
       image.style.animation = 'none';
       image.offsetHeight;
       image.style.transform = 'scale(1)';
       image.style.backgroundPosition = '50% 50%';
       image.style.animation = 'kenburns 88s linear infinite';
       image.style.animationPlayState = 'paused';
-      console.log('Ken Burns has left the building.')
-    } else if (event.key === 'ArrowLeft') {
-      changeDate(-1);
-    } else if (event.key === 'ArrowRight') {
-      changeDate(1);
-    }
-
-    var promptModalClose = document.querySelector('#promptModal .close');
-    promptModalClose.onclick = function() {
-      promptModal.classList.remove('modal-show');
-      promptModal.classList.add('modal-hide');
-    };
-
-    var aboutModalClose = document.querySelector('#aboutModal .close');
-    aboutModalClose.onclick = function() {
-      aboutModal.classList.remove('modal-show');
-      aboutModal.classList.add('modal-hide');
-    };
-
-  });
-
-  function handleSwipeGesture() {
-    if (event.touches.length > 1) {
-      // Ignore pinch/zoom gestures
-      return;
-    }
-
-    let swipeXDistance = Math.abs(touchendX - touchstartX);
-    if (swipeXDistance > swipeXThreshold) {
-      if (touchendX < touchstartX) {
-        changeDate(1);
-      } else if (touchendX > touchstartX) {
-        changeDate(-1);
-      }
-    }
-    let swipeYDistance = Math.abs(touchendY - touchstartY);
-    if (swipeYDistance > swipeYThreshold) {
-      if (touchendY < touchstartY) {
-        toggleModal(true);
-      } else if (touchendY > touchstartY) {
-        toggleModal(false);
-      }
+      console.log('Ken Burns mode deactivated.');
     }
   }
+// });
+
+
+  function handleSwipeGesture() {
+      let swipeXDistance = Math.abs(touchendX - touchstartX);
+      if (swipeXDistance > swipeXThreshold) {
+        if (touchendX < touchstartX) {
+          changeDate(1);
+        } else if (touchendX > touchstartX) {
+          changeDate(-1);
+        }
+      }
+
+      let swipeYDistance = Math.abs(touchendY - touchstartY);
+      if (swipeYDistance > swipeYThreshold) {
+        if (touchendY < touchstartY) {
+          toggleModal('promptModal', true);
+        } else if (touchendY > touchstartY) {
+          toggleModal('promptModal', false);
+        }
+      }
+    }
+
 
   document.addEventListener('touchstart', function(event) {
     if (event.touches.length === 1) {
