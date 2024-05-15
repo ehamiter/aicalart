@@ -127,16 +127,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('touchstart', handleTouchStart);
   document.addEventListener('touchend', handleSwipeGesture);
   window.addEventListener("resize", updateImageTitleAndBackground);
-
-  ['jumpToDateButton', 'jumpToDateClose', 'dateInput'].forEach(id => {
-    document.getElementById(id).addEventListener(id === 'dateInput' ? 'keypress' : 'click', handleInputEvents);
-  });
 });
 
 function handleKeyPress(event) {
   const modalMap = { 'p': 'promptModal', '?' : 'aboutModal' };
-  // jump to date modal currently disabled. still works in the url
-  // const modalMap = { 'j': 'jumpToDateModal', 'p': 'promptModal', '?' : 'aboutModal' };
   if (modalMap[event.key]) {
     // Toggle the modal based on its current visibility
     const modal = document.getElementById(modalMap[event.key]);
@@ -150,7 +144,7 @@ function handleKeyPress(event) {
 }
 
 function handleModalAndDateChange(key) {
-  const modalMap = { 'j': 'jumpToDateModal', 'p': 'promptModal', '?' : 'aboutModal' };
+  const modalMap = { 'p': 'promptModal', '?' : 'aboutModal' };
   if (modalMap[key]) toggleModal(modalMap[key]);
   else if (['k', 'q'].includes(key)) handleKenBurnsEffect(key);
   else if (['ArrowLeft', 'ArrowRight'].includes(key)) changeDate(key === 'ArrowRight' ? 1 : -1);
@@ -192,9 +186,3 @@ function handleSwipeGesture(event) {
     changeDate(touchendX < touchstartX ? 1 : -1);
   }
 }
-
-function handleInputEvents(event) {
-  if (event.target.id === 'dateInput' && event.key !== "Enter") return;
-  jumpToDate();
-}
-
