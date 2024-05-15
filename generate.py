@@ -314,7 +314,7 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
         logger.info(f"{Fore.YELLOW}Generating portrait image...{Style.RESET_ALL}")
         portrait_response = openai_client.images.generate(
             model=IMAGE_MODEL,
-            prompt=f"{dalle_prompt}. Ensure this image is in a vertical orientation.",
+            prompt=f"Orientation: portrait. {dalle_prompt}",
             size="1024x1792",
             quality="hd",
             n=1,
@@ -323,7 +323,7 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
         logger.info(f"{Fore.YELLOW}Generating landscape image...{Style.RESET_ALL}")
         landscape_response = openai_client.images.generate(
             model=IMAGE_MODEL,
-            prompt=f"{dalle_prompt}. Ensure this image is in a horizontal orientation.",
+            prompt=dalle_prompt,
             size="1792x1024",
             quality="hd",
             n=1,
