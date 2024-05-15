@@ -973,7 +973,6 @@ HOLIDAYS = {
     "2024-05-11": "World Migratory Bird Day",
     "2024-05-12": "Mother's Day",
     "2024-05-14": "Primary Election Day",
-    "2024-05-15": "Peace Officers Memorial Day",
     "2024-05-16": "International Day of Light",
     "2024-05-17": "Endangered Species Day",
     "2024-05-18": "Preakness Stakes",
