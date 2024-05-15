@@ -254,12 +254,13 @@ def prompt_passes_moderation(prompt):
     return True
 
 
-def write_daily_prompt_json(date, landscape_prompt, portrait_prompt, holidays):
+def write_daily_prompt_json(date, landscape_prompt, portrait_prompt, holidays, style):
     prompt_file_path = f"./staging/prompt-{date}.json"
     prompt_data = {
         "landscape": landscape_prompt,
         "portrait": portrait_prompt,
-        "holidays": holidays
+        "holidays": holidays,
+        "style": style
     }
 
     with open(prompt_file_path, "w") as file:
@@ -388,8 +389,7 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
         os.makedirs("./staging")
 
     # Update the JSON file with the new prompts and holidays
-    # update_prompts_json(the_date, landscape_prompt, portrait_prompt, todays_holidays)
-    write_daily_prompt_json(the_date, landscape_prompt, portrait_prompt, todays_holidays)
+    write_daily_prompt_json(the_date, landscape_prompt, portrait_prompt, todays_holidays, style)
 
     # Image processing
     portrait_data = portrait_response.data[0].model_dump()["b64_json"]
