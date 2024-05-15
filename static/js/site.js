@@ -48,9 +48,13 @@ async function updateImageTitleAndBackground() {
     if (!prompts) return;
 
     document.querySelector('.bg-image').style.backgroundImage = prompts.bgFile;
-    ['modalDate', 'modalText', 'modalHolidays'].forEach(id => {
-      document.getElementById(id).textContent = prompts[id.replace('modal', '').toLowerCase()];
+    document.getElementById('modalDate').textContent = new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
+    document.getElementById('modalText').textContent = prompts.text;
+    document.getElementById('modalHolidays').textContent = prompts.holidays;
   } catch (error) {
     console.error('Fetch failed: ', error);
   }
@@ -130,7 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function handleKeyPress(event) {
-  const modalMap = { 'j': 'jumpToDateModal', 'p': 'promptModal', '?' : 'aboutModal' };
+  const modalMap = { 'p': 'promptModal', '?' : 'aboutModal' };
+  // jump to date modal currently disabled. still works in the url
+  // const modalMap = { 'j': 'jumpToDateModal', 'p': 'promptModal', '?' : 'aboutModal' };
   if (modalMap[event.key]) {
     // Toggle the modal based on its current visibility
     const modal = document.getElementById(modalMap[event.key]);
