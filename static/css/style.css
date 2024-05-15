@@ -30,10 +30,7 @@ body, html {
   position: relative;
   height: 100%;
   width: 100%;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-duration: 88s;
-  animation-name: kenburns;
+  animation: kenburns 88s linear infinite;
 }
 
 /* Ken Burns effect - hit K for start/pause, and Q to quit */
@@ -79,46 +76,20 @@ body, html {
   }
 }
 
-/* Slides up into view and reverses when closing  */
-@keyframes modalOpen {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes modalClose {
-  from {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-}
-
+/* Modal Styles */
 .modal-container {
   display: flex;
   justify-content: center;
   align-items: center;
   position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
+  left: 0; top: 0; right: 0; bottom: 0;
   z-index: 1000;
-  cursor: default;
   overflow: auto;
 }
 
 .modal {
+  display: none;
   opacity: 0;
-  transition: opacity 0.5s ease;
   max-width: 600px;
   min-width: 300px;
   width: auto;
@@ -131,15 +102,28 @@ body, html {
   max-height: 80vh;
   position: relative;
   user-select: none;
+  will-change: transform, opacity;
 }
 
 .modal-show {
-  animation: modalOpen 0.5s forwards;
-  user-select: text;
+  display: block;
+  opacity: 1;
+  animation: modalOpen 0.5s forwards ease-in-out;
 }
 
 .modal-hide {
-  animation: modalClose 0.5s forwards;
+  opacity: 0;
+  animation: modalClose 0.5s forwards ease-in-out;
+}
+
+@keyframes modalOpen {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes modalClose {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(100%); opacity: 0; }
 }
 
 .modal-visible {

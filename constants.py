@@ -11,9 +11,7 @@ AWS_S3_BUCKET = "aicalart"
 
 ### OpenAI
 AICALART_OPENAI_KEY = os.getenv("AICALART_OPENAI_KEY")  # named thusly because it collided with another OPENAI_KEY
-# gpt-4-turbo will be coming out soon and is 3x cheaper than gpt-4.
-# in the meantime the preview model will be used.
-GPT_MODEL = "gpt-4-turbo-preview"
+GPT_MODEL = "gpt-4o"
 IMAGE_MODEL = "dall-e-3"
 
 ### Google Calendar
