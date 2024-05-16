@@ -154,6 +154,7 @@ body, html {
 
 #modalDate {font-size: 24px; font-family: 'Alegreya Sans SC', sans-serif;}
 #modalHolidays {font-size: 20px; font-family: 'Alegreya Sans SC', sans-serif;}
+#modalStyle {font-size: 14px; font-weight: normal; font-style: italic; font-family: 'Alegreya Sans SC', sans-serif;}
 #modalText {font-size: 18px; font-family: 'Alegreya Sans', sans-serif;}
 #modalAboutTitle {font-size: 24px; font-family: 'Alegreya Sans SC', sans-serif;}
 

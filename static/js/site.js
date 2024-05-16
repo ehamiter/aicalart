@@ -19,9 +19,8 @@ function extractDateFromUrl() {
   currentDate = new Date(year, month - 1, day);
 }
 
-// API and DOM update functions
 async function loadPrompts(dateString, orientation) {
-  const promptUrl = `https://aicalart.s3.amazonaws.com/prompts/${dateString}-prompt.json`; // Corrected URL path
+  const promptUrl = `https://aicalart.s3.amazonaws.com/prompts/${dateString}-prompt.json`;
   try {
     const response = await fetch(promptUrl);
     if (!response.ok) {
@@ -31,11 +30,12 @@ async function loadPrompts(dateString, orientation) {
     return {
       bgFile: `url('${baseImageUrl}${dateString}-${orientation}.webp')`,
       text: promptData[orientation],
-      holidays: promptData["holidays"]
+      holidays: promptData["holidays"],
+      style: promptData["style"] || ''
     };
   } catch (error) {
     console.error("Error fetching or parsing data:", error);
-    return null; // Handle null in callers
+    return null;
   }
 }
 
@@ -55,6 +55,7 @@ async function updateImageTitleAndBackground() {
     });
     document.getElementById('modalText').textContent = prompts.text;
     document.getElementById('modalHolidays').textContent = prompts.holidays;
+    document.getElementById('modalStyle').textContent = prompts.style || '';
   } catch (error) {
     console.error('Fetch failed: ', error);
   }
