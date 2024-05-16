@@ -846,7 +846,7 @@ STYLE_PHRASES = [
 
 def generate_random_style():
     base = secrets.choice(STYLE_BASES)
-    phrases = ", ".join(secrets.choice(STYLE_PHRASES) for _ in range(secrets.randbelow(3) + 3))
+    phrases = ", ".join(secrets.choice(STYLE_PHRASES) for _ in range(secrets.randbelow(3) + 1))
     return f"{base}, {phrases}"
 
 

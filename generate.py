@@ -314,7 +314,7 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
         logger.info(f"{Fore.YELLOW}Generating portrait image...{Style.RESET_ALL}")
         portrait_response = openai_client.images.generate(
             model=IMAGE_MODEL,
-            prompt=f"Orientation: portrait. {dalle_prompt}",
+            prompt=dalle_prompt,
             size="1024x1792",
             quality="hd",
             n=1,
