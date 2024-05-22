@@ -118,6 +118,15 @@ function toggleModal(modalId, forceShow) {
   modal.style.animation = '';
 }
 
+// Clipboard function
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    console.log('Copied URL to clipboard: ', text);
+  }).catch(err => {
+    console.error('Failed to copy text: ', err);
+  });
+}
+
 // Initialization and event bindings
 document.addEventListener('DOMContentLoaded', () => {
   extractDateFromUrl();
@@ -141,14 +150,12 @@ function handleKeyPress(event) {
     handleKenBurnsEffect(event.key);
   } else if (['ArrowLeft', 'ArrowRight'].includes(event.key)) {
     changeDate(event.key === 'ArrowRight' ? 1 : -1);
+  } else if (event.key === 'c') {
+    const dateString = formatDate(currentDate);
+    const orientation = window.matchMedia("(orientation: portrait)").matches ? 'portrait' : 'landscape';
+    const imageUrl = `${baseImageUrl}${dateString}-${orientation}.webp`;
+    copyToClipboard(imageUrl);
   }
-}
-
-function handleModalAndDateChange(key) {
-  const modalMap = { 'p': 'promptModal', '?' : 'aboutModal' };
-  if (modalMap[key]) toggleModal(modalMap[key]);
-  else if (['k', 'q'].includes(key)) handleKenBurnsEffect(key);
-  else if (['ArrowLeft', 'ArrowRight'].includes(key)) changeDate(key === 'ArrowRight' ? 1 : -1);
 }
 
 function handleKenBurnsEffect(key) {

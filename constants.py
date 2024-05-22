@@ -329,7 +329,7 @@ STYLE_PHRASES = [
     "classical virtuality",
     "clean lines",
     "clockwork da Vincis",
-    "clockwork locomotivesr-era transit",
+    "clockwork locomotives-era transit",
     "cloud-touching creations",
     "collage",
     "color-shifting art",
