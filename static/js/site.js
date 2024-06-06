@@ -9,6 +9,11 @@ function formatDate(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
+function formatToLongDate(date) {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return date.toLocaleDateString('en-US', options);
+}
+
 function extractDateFromUrl() {
   const hash = window.location.hash;
   const datePattern = /^#(\d{4}-\d{2}-\d{2})$/;
@@ -48,11 +53,7 @@ async function updateImageTitleAndBackground() {
     if (!prompts) return;
 
     document.querySelector('.bg-image').style.backgroundImage = prompts.bgFile;
-    document.getElementById('modalDate').textContent = new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    document.getElementById('modalDate').textContent = formatToLongDate(currentDate);;
     document.getElementById('modalText').textContent = prompts.text;
     document.getElementById('modalHolidays').textContent = prompts.holidays;
     document.getElementById('modalStyle').textContent = prompts.style || '';
