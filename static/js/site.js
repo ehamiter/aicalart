@@ -1,17 +1,24 @@
 // Constants
-let currentDate = new Date();
 const baseImageUrl = "https://aicalart.s3.amazonaws.com/images/";
 const swipeXThreshold = 100;
 const swipeYThreshold = 110;
 
 // Date and URL functions
+let currentDate = new Date();
+
+// Function to format date to YYYY-MM-DD
 function formatDate(date) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  // Ensure the date is in the user's local time zone
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return `${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, '0')}-${String(localDate.getDate()).padStart(2, '0')}`;
 }
 
+// Function to format date to a long date string (e.g., November 25, 2023)
 function formatToLongDate(date) {
+  // Ensure the date is in the user's local time zone
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return date.toLocaleDateString('en-US', options);
+  return localDate.toLocaleDateString('en-US', options);
 }
 
 function extractDateFromUrl() {
@@ -53,7 +60,7 @@ async function updateImageTitleAndBackground() {
     if (!prompts) return;
 
     document.querySelector('.bg-image').style.backgroundImage = prompts.bgFile;
-    document.getElementById('modalDate').textContent = formatToLongDate(currentDate);;
+    document.getElementById('modalDate').textContent = formatToLongDate(currentDate);
     document.getElementById('modalText').textContent = prompts.text;
     document.getElementById('modalHolidays').textContent = prompts.holidays;
     document.getElementById('modalStyle').textContent = prompts.style || '';
