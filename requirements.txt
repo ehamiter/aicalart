@@ -5,4 +5,4 @@ google-api-python-client==2.132.0
 google-auth-oauthlib==1.2.0
 openai==1.31.2
 Pillow
-requests==2.32.3
+requests
