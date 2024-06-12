@@ -2,22 +2,33 @@
 <html lang="en">
 
 <head>
+  <title>aical.art</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>aical.art</title>
   <meta name="description" content="News headlines, calendar events, holidays, random styles, and the ever-present orange tabby Hobbes turn into art via GPT + DALL-E.">
   <meta name="keywords" content="web, software, ai, Python, DALL-E, ChatGPT, art, calendar, cat, Hobbes, GPT-4, GPT-4-turbo, gpt-4-1106-preview, dall-e-3">
   <meta name="author" content="Chimera Tier">
+
+  <link rel="preload" href="./static/css/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="stylesheet" href="./static/css/style.css" media="print" onload="this.onload=null;this.media='all'">
+  <noscript><link rel="stylesheet" href="./static/css/style.css"></noscript>
+
+  <link rel="preconnect" href="https://us.umami.is">
+  <script src="./static/js/site.js" defer></script>
+  <script async src="https://us.umami.is/script.js" data-website-id="c7689907-ea33-4b68-9459-a6084b59cc39"></script>
+
   <link rel="apple-touch-icon" sizes="180x180" href="./static/images/icons/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="./static/images/icons/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="./static/images/icons/favicon-16x16.png">
   <link rel="shortcut icon" href="./static/images/icons/favicon.ico">
   <link rel="manifest" href="./static/site.webmanifest">
-  <link rel="stylesheet" href="./static/css/style.css"/>
-  <link rel="preconnect" href="https://us.umami.is">
-  <script src="./static/js/site.js" defer></script>
-  <script async src="https://us.umami.is/script.js" data-website-id="c7689907-ea33-4b68-9459-a6084b59cc39"></script>
+
+  <style>
+    body {
+      visibility: hidden;
+    }
+  </style>
 </head>
 
 <body>
@@ -78,6 +89,11 @@
 
   <div class="bg-image"></div>
 
+  <script>
+    document.fonts.ready.then(function () {
+      document.body.style.visibility = 'visible';
+    });
+  </script>
 </body>
 
 </html>

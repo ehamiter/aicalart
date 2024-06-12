@@ -1,6 +1,6 @@
 /* Fonts */
 @font-face {
-  font-display: block;
+  font-display: optional;
   font-family: 'Alegreya Sans SC';
   font-style: normal;
   font-weight: 500;
@@ -8,7 +8,7 @@
 }
 
 @font-face {
-  font-display: block;
+  font-display: optional;
   font-family: 'Alegreya Sans';
   font-style: normal;
   font-weight: 400;
