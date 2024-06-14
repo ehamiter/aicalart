@@ -1,6 +1,6 @@
 /* Fonts */
 @font-face {
-  font-display: optional;
+  font-display: swap;
   font-family: 'Alegreya Sans SC';
   font-style: normal;
   font-weight: 500;
@@ -8,7 +8,7 @@
 }
 
 @font-face {
-  font-display: optional;
+  font-display: swap;
   font-family: 'Alegreya Sans';
   font-style: normal;
   font-weight: 400;
@@ -154,8 +154,8 @@ body, html {
 
 #modalDate {font-size: 24px; font-family: 'Alegreya Sans SC', sans-serif;}
 #modalHolidays {font-size: 20px; font-family: 'Alegreya Sans SC', sans-serif;}
-#modalStyle {font-size: 14px; font-weight: normal; font-style: italic; font-family: 'Alegreya Sans SC', sans-serif;}
 #modalText {font-size: 18px; font-family: 'Alegreya Sans', sans-serif;}
+#modalStyle {font-size: 16px; font-weight: normal; font-style: italic; font-family: 'Alegreya Sans SC', sans-serif;}
 #modalAboutTitle {font-size: 24px; font-family: 'Alegreya Sans SC', sans-serif;}
 
 .modal-content table {
