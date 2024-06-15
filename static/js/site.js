@@ -8,17 +8,13 @@ let currentDate = new Date();
 
 // Function to format date to YYYY-MM-DD
 function formatDate(date) {
-  // Ensure the date is in the user's local time zone
-  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-  return `${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, '0')}-${String(localDate.getDate()).padStart(2, '0')}`;
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
 // Function to format date to a long date string (e.g., November 25, 2023)
 function formatToLongDate(date) {
-  // Ensure the date is in the user's local time zone
-  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return localDate.toLocaleDateString('en-US', options);
+  return date.toLocaleDateString('en-US', options);
 }
 
 function extractDateFromUrl() {
