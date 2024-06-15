@@ -4,7 +4,22 @@ const swipeXThreshold = 100;
 const swipeYThreshold = 110;
 
 // Date and URL functions
-let currentDate = new Date();
+// Function to check if Daylight Saving Time (DST) is in effect
+function isDST(date = new Date()) {
+  const january = new Date(date.getFullYear(), 0, 1).getTimezoneOffset();
+  const july = new Date(date.getFullYear(), 6, 1).getTimezoneOffset();
+  return Math.min(january, july) !== date.getTimezoneOffset();
+}
+
+// Function to get the current date with a buffer to account for cron job timing
+function getCurrentDateWithBuffer(bufferHours = 2) {
+  let currentDate = new Date();
+  if (isDST(currentDate)) {
+    bufferHours += 1; // Add extra hour during DST
+  }
+  currentDate.setHours(currentDate.getHours() - bufferHours);
+  return currentDate;
+}
 
 // Function to format date to YYYY-MM-DD
 function formatDate(date) {
@@ -16,6 +31,16 @@ function formatToLongDate(date) {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return date.toLocaleDateString('en-US', options);
 }
+
+// Get the current date with the buffer
+let currentDate = getCurrentDateWithBuffer();
+
+// Format and log the date (you can use these functions wherever needed in your code)
+let formattedDate = formatDate(currentDate); // Outputs: YYYY-MM-DD
+let longFormattedDate = formatToLongDate(currentDate); // Outputs: Month Day, Year
+
+// console.log(formattedDate);
+// console.log(longFormattedDate);
 
 function extractDateFromUrl() {
   const hash = window.location.hash;
