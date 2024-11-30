@@ -1,5 +1,6 @@
 import argparse
 import base64
+from datetime import timezone
 import datetime
 import json
 import logging
@@ -44,7 +45,7 @@ logger = logging.getLogger(__name__)
 now_cst = datetime.datetime.now().date().strftime("%Y-%m-%d")
 
 # for Google calendar event fetching -- "2023-11-25T00:43:27.521185+00:00Z"
-now_utc = now = f"{datetime.datetime.utcnow().isoformat()}Z"
+now_utc = now = f"{datetime.datetime.now(timezone.utc).isoformat()}Z"
 
 openai_client = OpenAI(api_key=AICALART_OPENAI_KEY)
 
@@ -210,7 +211,7 @@ def process_calendars(creds, prompt, the_date):
             .execute()
         )
         events += events_result.get("items", [])
-
+        # print(f'Events: {[e for e in events]}')
 
         if not events:
             logger.info(f"No upcoming events found for calendar.")
@@ -218,6 +219,10 @@ def process_calendars(creds, prompt, the_date):
             prompt += "Today also has some key events: "
             logger.info(f"Upcoming events found for calendar:")
             for event in events:
+
+                if event.get("recurringEventId", "") == "fbakiorghcmpbacoi7n9o7ft8k":
+                    continue
+
                 prompt += str(event["summary"]) + "; "
                 print(f"\n→ {event['summary']}\n")
             prompt += calendar_prompt
@@ -536,9 +541,9 @@ if __name__ == "__main__":
     main(
         the_date=args.date,  # the_date because date contextually means an object
         style=args.style,
-        skip_calendar=args.skip_calendar,
+        skip_calendar=True,  # args.skip_calendar,
         skip_holidays=args.skip_holidays,
         skip_silly_days=args.skip_silly_days,
-        skip_news=True,  #args.skip_news,
+        skip_news=True,  # args.skip_news,
         skip_upload=args.skip_upload,
     )
