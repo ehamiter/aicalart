@@ -261,9 +261,13 @@ def prompt_passes_moderation(prompt):
 
 def write_daily_prompt_json(date, landscape_prompt, portrait_prompt, holidays, style):
     prompt_file_path = f"./staging/prompt-{date}.json"
+    # Clean up the prompts by removing quotes, markers, and unescaping newlines
+    clean_landscape = landscape_prompt.strip('"').replace('\\n', '\n').replace('**Image Prompt:**\n\n', '')
+    clean_portrait = portrait_prompt.strip('"').replace('\\n', '\n').replace('**Image Prompt:**\n\n', '')
+
     prompt_data = {
-        "landscape": landscape_prompt,
-        "portrait": portrait_prompt,
+        "landscape": clean_landscape,
+        "portrait": clean_portrait,
         "holidays": holidays,
         "style": style
     }
@@ -273,7 +277,6 @@ def write_daily_prompt_json(date, landscape_prompt, portrait_prompt, holidays, s
 
 
 def generate_prompt(prompt, style, news, today):
-    # if prompt_passes_moderation(prompt):
     print(f"{Fore.YELLOW}Generating prompt...{Style.RESET_ALL}")
     completion = openai_client.chat.completions.create(
         model=GPT_MODEL,
@@ -300,7 +303,7 @@ def generate_prompt(prompt, style, news, today):
     # print(f"Prompt '{prompt}' failed moderation. Try with another prompt.")
     # exit()
 
-def generate_images(dalle_prompt, image_args, failed_attempts=0):
+def generate_images(dalle_prompt, style, image_args, failed_attempts=0):
     # Let's try to make these things. It could be rejected because god only knows
     # what the hell it's going to come up with. If it rejects it, just regenerate
     # and see. Some keywords it will have a problem with... for example, "genocide".
@@ -317,29 +320,29 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
 
     try:
         logger.info(f"{Fore.YELLOW}Generating portrait image...{Style.RESET_ALL}")
+        logger.info(f"Request parameters: model={IMAGE_MODEL}, size=1024x1536, quality=high")
         portrait_response = openai_client.images.generate(
             model=IMAGE_MODEL,
-            prompt=dalle_prompt,
-            size="1024x1792",
-            quality="hd",
+            prompt=f"{style}, no margins, full screen. {dalle_prompt}",
+            size="1024x1536",
+            quality="high",
             n=1,
-            response_format="b64_json",
         )
+        logger.info(f"Portrait response received successfully")
         logger.info(f"{Fore.YELLOW}Generating landscape image...{Style.RESET_ALL}")
+        logger.info(f"Request parameters: model={IMAGE_MODEL}, size=1536x1024, quality=high")
         landscape_response = openai_client.images.generate(
             model=IMAGE_MODEL,
-            prompt=dalle_prompt,
-            size="1792x1024",
-            quality="hd",
+            prompt=f"{style}, no margins, full screen. {dalle_prompt}",
+            size="1536x1024",
+            quality="high",
             n=1,
-            response_format="b64_json",
         )
-    except BadRequestError:
+        logger.info(f"Landscape response received successfully")
+    except BadRequestError as e:
+        logger.error(f"Bad Request Error: {str(e)}")
+        logger.error(f"Request parameters: model={IMAGE_MODEL}, prompt={dalle_prompt[:100]}...")
         failed_attempts += 1
-        logger.error(
-            "OpenAI's safety system rejected this due to its interpretation of the prompt. "
-            f"Attempting to regenerate... [#{failed_attempts} of 5]"
-        )
 
         if failed_attempts <= 5:
             # Define a dictionary mapping the attempt number to the changes
@@ -381,12 +384,18 @@ def generate_images(dalle_prompt, image_args, failed_attempts=0):
             exit(1)
 
     # Extract revised prompts directly from the response objects
-    portrait_prompt = portrait_response.data[0].revised_prompt
-    landscape_prompt = landscape_response.data[0].revised_prompt
+    # Find the actual prompt content after the marker
+    prompt_marker = "**Prompt for DALL-E:**"
+    if prompt_marker in dalle_prompt:
+        actual_prompt = dalle_prompt.split(prompt_marker)[1].strip()
+    else:
+        actual_prompt = dalle_prompt
+
+    portrait_prompt = actual_prompt
+    landscape_prompt = actual_prompt
 
     print(f"\nPortrait prompt: {portrait_prompt}")
     print(f"\nLandscape prompt: {landscape_prompt}\n")
-
 
     todays_holidays = get_todays_holidays_display(the_date)
     print("TODAYS HOLIDAYS\n\n", todays_holidays)
@@ -454,23 +463,17 @@ def main(
     today, newslist = get_today_and_newslist(the_date, holiday, silly_day, news)
 
     prompt = f"""
-    Imagine you are a master prompt maker for DALL-E. You specialize in creating
-    images based on current {newslist}.
+    You are an expert prompt creator for DALL-E. You specialize in creating images based on current {newslist}.
 
     You are creative and very clever by hiding allegories in details.
-    {ALWAYS_INCLUDE_IN_PROMPT} A user could look at one of your creations several times
-    and discover something new, insightful, or hilarious on each repeated viewing.
+    {ALWAYS_INCLUDE_IN_PROMPT} A user could look at one of your creations several times and discover something new, insightful, or hilarious on each repeated viewing.
     Today is {today}.
+
+    Create a detailed scene in the style of: {style}
     """
 
     if not skip_calendar:
         prompt = fetch_calendar_entries(prompt, style, the_date)
-
-    # Put a bow on the prompt
-    prompt += f"""
-        Use these words in the beginning of the prompt for the specific style:
-        {style}, no margins, full screen. Respond with the prompt only.
-    """
 
     dalle_prompt = generate_prompt(prompt, style, news, today)
 
@@ -484,7 +487,7 @@ def main(
         skip_upload,
     )
 
-    successful_result = generate_images(dalle_prompt, image_args, failed_attempts)
+    successful_result = generate_images(dalle_prompt, style, image_args, failed_attempts)
 
     t2 = time.perf_counter()
 

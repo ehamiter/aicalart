@@ -11,8 +11,8 @@ AWS_S3_BUCKET = "aicalart"
 
 ### OpenAI
 AICALART_OPENAI_KEY = os.getenv("AICALART_OPENAI_KEY")  # named thusly because it collided with another OPENAI_KEY
-GPT_MODEL = "gpt-4o"
-IMAGE_MODEL = "dall-e-3"
+GPT_MODEL = "gpt-4o-mini"
+IMAGE_MODEL = "gpt-image-1"
 
 ### Google Calendar
 GOOGLE_CALENDAR_ID = os.getenv("GOOGLE_CALENDAR_ID")
@@ -277,7 +277,7 @@ STYLE_PHRASES = [
     "anti-religious imagery",
     "aquatic divination",
     "arcane knowledge",
-    "architectural focusrdimensional Dreamscape",
+    "architectural dimensional Dreamscape",
     "aristocratic leisure",
     "art brut",
     "art in harmony with nature",
