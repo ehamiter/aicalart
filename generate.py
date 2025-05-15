@@ -277,7 +277,7 @@ def write_daily_prompt_json(date, landscape_prompt, portrait_prompt, holidays, s
     }
 
     with open(prompt_file_path, "w") as file:
-        json.dump(prompt_data, file, indent=4)
+        json.dump(prompt_data, file, indent=4, ensure_ascii=False)
 
 
 def generate_prompt(prompt, style, news, today):
@@ -395,8 +395,13 @@ def generate_images(dalle_prompt, style, image_args, failed_attempts=0):
     else:
         actual_prompt = dalle_prompt
 
-    portrait_prompt = actual_prompt
-    landscape_prompt = actual_prompt
+    # Clean up the prompts
+    clean_prompt = actual_prompt.replace('\\n', '\n').replace('\\"', '"')
+    for marker in ['**Image Prompt:**\n\n', '**Prompt:** ']:
+        clean_prompt = clean_prompt.replace(marker, '')
+
+    portrait_prompt = clean_prompt
+    landscape_prompt = clean_prompt
 
     print(f"\nPortrait prompt: {portrait_prompt}")
     print(f"\nLandscape prompt: {landscape_prompt}\n")
