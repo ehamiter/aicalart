@@ -261,9 +261,13 @@ def prompt_passes_moderation(prompt):
 
 def write_daily_prompt_json(date, landscape_prompt, portrait_prompt, holidays, style):
     prompt_file_path = f"./staging/prompt-{date}.json"
-    # Clean up the prompts by removing quotes, markers, and unescaping newlines
-    clean_landscape = landscape_prompt.strip('"').replace('\\n', '\n').replace('**Image Prompt:**\n\n', '')
-    clean_portrait = portrait_prompt.strip('"').replace('\\n', '\n').replace('**Image Prompt:**\n\n', '')
+    clean_landscape = landscape_prompt.strip('"').replace('\\n', '\n')
+    clean_portrait = portrait_prompt.strip('"').replace('\\n', '\n')
+
+    # Remove both types of markers
+    for marker in ['**Image Prompt:**\n\n', '**Prompt:** ']:
+        clean_landscape = clean_landscape.replace(marker, '')
+        clean_portrait = clean_portrait.replace(marker, '')
 
     prompt_data = {
         "landscape": clean_landscape,

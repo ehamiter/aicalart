@@ -850,7 +850,7 @@ def generate_random_style():
     return f"{base}, {phrases}"
 
 
-### Holidays and Silly Days span from 2023-11-25 to 2024-12-31
+### Holidays and Silly Days span from 2023-11-25 to 2025-12-31
 HOLIDAYS = {
     "2023-11-25": "International Day for the Elimination of Violence against Women",
     "2023-11-27": "Cyber Monday",
