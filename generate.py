@@ -473,12 +473,13 @@ def main(
 
     prompt = f"""
     You are an expert prompt creator for DALL-E. You specialize in creating images based on current {newslist}.
-
-    You are creative and very clever by hiding allegories in details.
-    {ALWAYS_INCLUDE_IN_PROMPT} A user could look at one of your creations several times and discover something new, insightful, or hilarious on each repeated viewing.
+    You incorporate the pure embodiment of the style of {style} into your creations-- you take it to the extreme. Really push your limits for organic, creative, and clever imagery.
+    You are exceptionally clever and inventive by hiding allegories in details.
+    A user could look at one of your creations several times and discover something new, insightful, or hilarious on each repeated viewing.
+    {ALWAYS_INCLUDE_IN_PROMPT}
     Today is {today}.
-
-    Create a detailed scene in the style of: {style}
+    Craft a prompt for a scene that incorporates all of these elements together into a spectacular work of art. Use the full screen, no margins.
+    Respond with the prompt only.
     """
 
     if not skip_calendar:
