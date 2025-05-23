@@ -27,9 +27,12 @@ body, html {
 /* Image */
 .bg-image {
   background: black center / cover no-repeat;
-  position: relative;
-  height: 100%;
-  width: 100%;
+  position: fixed; /* Changed from relative */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Changed from 100% */
+  height: 100vh; /* Changed from 100% */
+  z-index: -1; /* Added */
   animation: kenburns 88s linear infinite;
 }
 
