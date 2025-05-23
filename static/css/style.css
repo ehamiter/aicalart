@@ -24,12 +24,24 @@ body, html {
   background-color: black;
 }
 
+#fixed-background-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* To contain the animated child */
+  z-index: 0; /* Or a low positive value like 1 */
+}
+
 /* Image */
 .bg-image {
   background: black center / cover no-repeat;
-  position: relative;
-  height: 100%;
-  width: 100%;
+  position: absolute; /* Changed from fixed */
+  top: 0;
+  left: 0;
+  width: 100%; /* Changed from 100vw */
+  height: 100%; /* Changed from 100vh */
   animation: kenburns 88s linear infinite;
 }
 
