@@ -166,6 +166,25 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('touchstart', handleTouchStart);
   document.addEventListener('touchend', handleSwipeGesture);
   window.addEventListener("resize", updateImageTitleAndBackground);
+
+  // Event listener for the prompt toggle button
+  const promptToggleButton = document.getElementById('promptToggleButton');
+  if (promptToggleButton) {
+    promptToggleButton.addEventListener('click', function() {
+      toggleModal('promptModal');
+    });
+  }
+
+  // Event listeners for navigation arrows
+  const prevDayButton = document.getElementById('prevDayButton');
+  if (prevDayButton) {
+    prevDayButton.addEventListener('click', () => changeDate(-1));
+  }
+
+  const nextDayButton = document.getElementById('nextDayButton');
+  if (nextDayButton) {
+    nextDayButton.addEventListener('click', () => changeDate(1));
+  }
 });
 
 function handleKeyPress(event) {
@@ -217,9 +236,7 @@ function handleSwipeGesture(event) {
   const swipeXDistance = Math.abs(touchendX - touchstartX);
   const swipeYDistance = Math.abs(touchendY - touchstartY);
 
-  if (swipeYDistance > swipeXDistance && swipeYDistance > swipeYThreshold) {
-    toggleModal('promptModal', touchendY < touchstartY);
-  } else if (swipeXDistance > swipeYDistance && swipeXDistance > swipeXThreshold) {
+  if (swipeXDistance > swipeYDistance && swipeXDistance > swipeXThreshold) {
     changeDate(touchendX < touchstartX ? 1 : -1);
   }
 }

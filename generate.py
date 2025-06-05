@@ -19,6 +19,9 @@ from constants import (
     GPT_MODEL,
     HOLIDAYS,
     IMAGE_MODEL,
+    LANDSCAPE_IMAGE_SIZE,
+    PORTRAIT_IMAGE_SIZE,
+    QUALITY,
     SCOPES,
     SILLY_DAYS,
     generate_random_style,
@@ -323,26 +326,26 @@ def generate_images(dalle_prompt, style, image_args, failed_attempts=0):
     ) = image_args
 
     try:
-        logger.info(f"{Fore.YELLOW}Generating portrait image...{Style.RESET_ALL}")
-        logger.info(f"Request parameters: model={IMAGE_MODEL}, size=1024x1536, quality=high")
+        logger.info(f"{Fore.YELLOW}🖼️ Generating portrait image...{Style.RESET_ALL}")
+        logger.info(f"Request parameters: model={IMAGE_MODEL}, size={PORTRAIT_IMAGE_SIZE}, quality={QUALITY}")
         portrait_response = openai_client.images.generate(
             model=IMAGE_MODEL,
             prompt=f"{style}, no margins, full screen. {dalle_prompt}",
-            size="1024x1536",
-            quality="high",
+            size=PORTRAIT_IMAGE_SIZE,
+            quality=QUALITY,
             n=1,
         )
-        logger.info(f"Portrait response received successfully")
-        logger.info(f"{Fore.YELLOW}Generating landscape image...{Style.RESET_ALL}")
-        logger.info(f"Request parameters: model={IMAGE_MODEL}, size=1536x1024, quality=high")
+        logger.info(f"✅ Portrait response received successfully!")
+        logger.info(f"{Fore.YELLOW}🖼️ Generating landscape image...{Style.RESET_ALL}")
+        logger.info(f"Request parameters: model={IMAGE_MODEL}, size={LANDSCAPE_IMAGE_SIZE}, quality={QUALITY}")
         landscape_response = openai_client.images.generate(
             model=IMAGE_MODEL,
             prompt=f"{style}, no margins, full screen. {dalle_prompt}",
-            size="1536x1024",
-            quality="high",
+            size=LANDSCAPE_IMAGE_SIZE,
+            quality=QUALITY,
             n=1,
         )
-        logger.info(f"Landscape response received successfully")
+        logger.info(f"✅ Landscape response received successfully!")
     except BadRequestError as e:
         logger.error(f"Bad Request Error: {str(e)}")
         logger.error(f"Request parameters: model={IMAGE_MODEL}, prompt={dalle_prompt[:100]}...")

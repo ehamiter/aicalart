@@ -1,4 +1,5 @@
 import os
+import random
 import secrets
 from dotenv import load_dotenv
 
@@ -12,7 +13,10 @@ AWS_S3_BUCKET = "aicalart"
 ### OpenAI
 AICALART_OPENAI_KEY = os.getenv("AICALART_OPENAI_KEY")  # named thusly because it collided with another OPENAI_KEY
 GPT_MODEL = "gpt-4o-mini"
-IMAGE_MODEL = "gpt-image-1"
+IMAGE_MODEL = random.choice(['gpt-image-1','dall-e-3'])  # let's roll the dice baby
+PORTRAIT_IMAGE_SIZE  = '1024x1536' if IMAGE_MODEL == 'gpt-image-1' else '1024x1792'
+LANDSCAPE_IMAGE_SIZE = '1536x1024' if IMAGE_MODEL == 'gpt-image-1' else '1792x1024'
+QUALITY              = 'high'      if IMAGE_MODEL == 'gpt-image-1' else 'hd'
 
 ### Google Calendar
 GOOGLE_CALENDAR_ID = os.getenv("GOOGLE_CALENDAR_ID")
