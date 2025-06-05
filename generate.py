@@ -318,6 +318,7 @@ def generate_images(dalle_prompt, style, image_args, failed_attempts=0):
     (
         the_date,
         style,
+        image_model,
         skip_calendar,
         skip_holidays,
         skip_silly_days,
@@ -325,30 +326,37 @@ def generate_images(dalle_prompt, style, image_args, failed_attempts=0):
         skip_upload,
     ) = image_args
 
+    # Set image sizes and quality based on the model
+    portrait_size = '1024x1536' if image_model == 'gpt-image-1' else '1024x1792'
+    landscape_size = '1536x1024' if image_model == 'gpt-image-1' else '1792x1024'
+    quality = 'high' if image_model == 'gpt-image-1' else 'hd'
+
     try:
         logger.info(f"{Fore.YELLOW}🖼️ Generating portrait image...{Style.RESET_ALL}")
-        logger.info(f"Request parameters: model={IMAGE_MODEL}, size={PORTRAIT_IMAGE_SIZE}, quality={QUALITY}")
+        logger.info(f"Request parameters: model={image_model}, size={portrait_size}, quality={quality}")
         portrait_response = openai_client.images.generate(
-            model=IMAGE_MODEL,
+            model=image_model,
             prompt=f"{style}, no margins, full screen. {dalle_prompt}",
-            size=PORTRAIT_IMAGE_SIZE,
-            quality=QUALITY,
+            size=portrait_size,
+            quality=quality,
             n=1,
+            **({"response_format": "b64_json"} if image_model == "dall-e-3" else {})
         )
         logger.info(f"✅ Portrait response received successfully!")
         logger.info(f"{Fore.YELLOW}🖼️ Generating landscape image...{Style.RESET_ALL}")
-        logger.info(f"Request parameters: model={IMAGE_MODEL}, size={LANDSCAPE_IMAGE_SIZE}, quality={QUALITY}")
+        logger.info(f"Request parameters: model={image_model}, size={landscape_size}, quality={quality}")
         landscape_response = openai_client.images.generate(
-            model=IMAGE_MODEL,
+            model=image_model,
             prompt=f"{style}, no margins, full screen. {dalle_prompt}",
-            size=LANDSCAPE_IMAGE_SIZE,
-            quality=QUALITY,
+            size=landscape_size,
+            quality=quality,
             n=1,
+            **({"response_format": "b64_json"} if image_model == "dall-e-3" else {})
         )
         logger.info(f"✅ Landscape response received successfully!")
     except BadRequestError as e:
         logger.error(f"Bad Request Error: {str(e)}")
-        logger.error(f"Request parameters: model={IMAGE_MODEL}, prompt={dalle_prompt[:100]}...")
+        logger.error(f"Request parameters: model={image_model}, prompt={dalle_prompt[:100]}...")
         failed_attempts += 1
 
         if failed_attempts <= 5:
@@ -379,6 +387,7 @@ def generate_images(dalle_prompt, style, image_args, failed_attempts=0):
             main(
                 the_date=the_date,
                 style=changes.get("style", style),
+                model=image_model,
                 skip_calendar=changes.get("skip_calendar", skip_calendar),
                 skip_holidays=changes.get("skip_holidays", skip_holidays),
                 skip_silly_days=changes.get("skip_silly_days", skip_silly_days),
@@ -442,6 +451,7 @@ def generate_images(dalle_prompt, style, image_args, failed_attempts=0):
 def main(
     the_date=None,
     style=None,
+    model=None,
     skip_calendar=False,
     skip_holidays=False,
     skip_silly_days=False,
@@ -468,6 +478,12 @@ def main(
     the_day = ""  # placeholder for any named days, e.g. "Cyber Monday and National Fritters Day"
     style = style or get_style()
 
+    # Use passed model or default to the random selection from constants
+    # image_model = model or IMAGE_MODEL
+
+    # For now, dall-e-3 id more fun and zany than gpt-image-1, so we'll use that one unless passing in another
+    image_model = model or 'dall-e-3'
+
     holiday = None if skip_holidays else get_holiday(the_date)
     silly_day = None if skip_silly_days else get_silly_day(the_date)
     news = None if skip_news else get_news()
@@ -493,6 +509,7 @@ def main(
     image_args = (
         the_date,
         style,
+        image_model,
         skip_calendar,
         skip_holidays,
         skip_silly_days,
@@ -529,6 +546,11 @@ if __name__ == "__main__":
         help='Style for the calendar prompt (e.g., "1970s Miami funkadelic neon color vibe, ocean pastels, stucco mansions, seafood party").',
     )
     parser.add_argument(
+        "--model",
+        default=None,
+        help='Model for the calendar prompt (e.g., "dall-e-3").',
+    )
+    parser.add_argument(
         "--skip-calendar",
         action="store_true",
         help="Include this flag to skip fetching Google calendar entries. Helpful if all you have are dentist appointments and trash reminders.",
@@ -557,6 +579,7 @@ if __name__ == "__main__":
     main(
         the_date=args.date,  # the_date because date contextually means an object
         style=args.style,
+        model=args.model,
         skip_calendar=True,  # args.skip_calendar,
         skip_holidays=args.skip_holidays,
         skip_silly_days=args.skip_silly_days,
