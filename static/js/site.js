@@ -94,16 +94,27 @@ async function updateImageTitleAndBackground() {
 function changeDate(days) {
   const newDate = new Date(currentDate.getTime());
   newDate.setDate(newDate.getDate() + days);
-  const today = new Date();
-  today.setHours(23, 59, 59, 999);
 
-  if (newDate > today || newDate < new Date('2023-11-25T00:00:00-06:00')) {
-    console.error('Date navigation out of bounds.');
-    return;
+  // Determine the valid date range
+  const maxDate = getCurrentDateWithBuffer(); // Latest accessible date based on buffer
+  maxDate.setHours(23, 59, 59, 999); // Compare against the end of that day
+
+  const minDate = new Date('2023-11-25T00:00:00-06:00');
+  minDate.setHours(0, 0, 0, 0); // Compare against the start of that day
+
+  // Update currentDate only if newDate is within the valid range
+  if (newDate >= minDate && newDate <= maxDate) {
+    currentDate = newDate;
+    updateImageTitleAndBackground();
+  } else {
+    // If newDate is outside the range, currentDate does not change.
+    // Log if we are trying to go out of bounds.
+    // This can happen if a user rapidly clicks, or if there's a logic flaw elsewhere.
+    // We don't return, so updateNavigationArrowStates is still called.
+    console.error('Attempted to navigate out of bounds. Date not changed. newDate:', newDate, 'minDate:', minDate, 'maxDate:', maxDate);
   }
 
-  currentDate = newDate;
-  updateImageTitleAndBackground();
+  updateNavigationArrowStates(); // Always update arrow states
 }
 
 // Modal handling functions
@@ -160,6 +171,7 @@ function copyToClipboard(text) {
 document.addEventListener('DOMContentLoaded', () => {
   extractDateFromUrl();
   updateImageTitleAndBackground();
+  updateNavigationArrowStates(); // Initial call to set arrow states
   document.querySelector('.bg-image').style.animationPlayState = 'paused';
 
   document.addEventListener('keydown', handleKeyPress);
@@ -170,8 +182,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // Event listener for the prompt toggle button
   const promptToggleButton = document.getElementById('promptToggleButton');
   if (promptToggleButton) {
-    promptToggleButton.addEventListener('click', function() {
-      toggleModal('promptModal');
+    promptToggleButton.addEventListener('click', () => {
+      const modal = document.getElementById('promptModal');
+      const button = document.getElementById('promptToggleButton'); // or simply use promptToggleButton
+      const isVisible = modal.classList.contains('modal-visible');
+
+      toggleModal('promptModal', !isVisible); // Explicitly tell toggleModal to show or hide
+
+      // Update text based on the new state
+      if (!isVisible) { // If it WASN'T visible, it is NOW visible
+        button.textContent = 'Hide Prompt';
+      } else { // If it WAS visible, it is NOW hidden
+        button.textContent = 'View Prompt';
+      }
     });
   }
 
@@ -186,6 +209,37 @@ document.addEventListener('DOMContentLoaded', () => {
     nextDayButton.addEventListener('click', () => changeDate(1));
   }
 });
+
+function updateNavigationArrowStates() {
+  const prevButton = document.getElementById('prevDayButton');
+  const nextButton = document.getElementById('nextDayButton');
+  if (!prevButton || !nextButton) return; // Safety check
+
+  // Normalize currentDate for comparison (ignore time part)
+  const currentNormalizedDate = new Date(currentDate.getTime());
+  currentNormalizedDate.setHours(0, 0, 0, 0);
+
+  const earliestDate = new Date('2023-11-25T00:00:00-06:00');
+  earliestDate.setHours(0,0,0,0); // Normalize earliest date
+
+  // Previous button state
+  if (currentNormalizedDate <= earliestDate) {
+    prevButton.classList.add('disabled');
+  } else {
+    prevButton.classList.remove('disabled');
+  }
+
+  // Next button state
+  // getCurrentDateWithBuffer() gives today - buffer, which is the latest accessible date.
+  let comparisonDateForNext = getCurrentDateWithBuffer();
+  comparisonDateForNext.setHours(0,0,0,0); // Normalize it
+
+  if (currentNormalizedDate >= comparisonDateForNext) {
+    nextButton.classList.add('disabled');
+  } else {
+    nextButton.classList.remove('disabled');
+  }
+}
 
 function handleKeyPress(event) {
   const modalMap = { 'p': 'promptModal', '?' : 'aboutModal' };

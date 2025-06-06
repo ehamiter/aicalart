@@ -320,3 +320,9 @@ body, html {
 .next-arrow {
   right: 20px;
 }
+
+.nav-arrow.disabled {
+  opacity: 0.3; /* Or any other value that indicates a dimmed state */
+  pointer-events: none; /* Makes the button unclickable */
+  cursor: default; /* Changes cursor to default */
+}
