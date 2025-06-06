@@ -326,3 +326,108 @@ body, html {
   pointer-events: none; /* Makes the button unclickable */
   cursor: default; /* Changes cursor to default */
 }
+
+/* Jump to Date Modal / Calendar Styles */
+#jumpToDateModal .modal-content {
+  /* The default .modal max-width might be too wide for a compact calendar.
+     Let's try a slightly smaller max-width for this specific modal if needed.
+     For now, relying on .modal styles. If calendar looks too spread out, adjust here.
+     max-width: 400px; /* Example: Adjust if necessary */
+}
+
+#jumpToDateTitle {
+  /* Using .modal-text-common, specific styling can be added here if needed */
+  margin-bottom: 15px; /* Add some space below the title */
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px; /* Increased margin for better separation */
+}
+
+.current-month-year {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #333; /* Darker text for better readability on light modal background */
+}
+
+.calendar-nav-btn {
+  background: none;
+  border: 1px solid #ccc;
+  padding: 6px 12px; /* Slightly more padding */
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1em; /* Ensure text size is appropriate */
+  color: #333; /* Consistent text color */
+}
+
+.calendar-nav-btn:hover {
+  background-color: #f0f0f0;
+  border-color: #bbb; /* Slightly darken border on hover */
+}
+
+.calendar-nav-btn:active {
+  background-color: #e0e0e0; /* Feedback for click */
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px; /* Spacing between cells */
+}
+
+.calendar-weekday {
+  font-weight: bold;
+  text-align: center;
+  padding: 8px 5px; /* Adjusted padding */
+  background-color: #e9ecef; /* Light grey for weekday headers */
+  border-radius: 3px;
+  color: #495057; /* Darker text for weekdays */
+  font-size: 0.9em;
+}
+
+.calendar-day {
+  padding: 10px 5px; /* Adjusted padding for smaller cells if needed */
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #e0e0e0;
+  border-radius: 3px;
+  font-size: 0.9em;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  color: #333; /* Default text color for days */
+}
+
+.calendar-day:hover {
+  background-color: #e9e9e9;
+  border-color: #d0d0d0;
+}
+
+.calendar-day.disabled {
+  color: #adb5bd; /* Lighter grey for disabled text */
+  background-color: #f8f9fa; /* Very light background for disabled days */
+  pointer-events: none;
+  cursor: default;
+  border-color: #f0f0f0; /* Lighter border for disabled */
+}
+
+.calendar-day.selected {
+  background-color: #007bff; /* Bootstrap primary blue for selected */
+  color: white;
+  border-color: #0056b3; /* Darker blue border for selected */
+  font-weight: bold;
+}
+
+.calendar-day.current-view-date {
+  background-color: #d4edda; /* Light green to highlight current viewed date */
+  color: #155724; /* Dark green text */
+  border-color: #c3e6cb; /* Greenish border */
+  font-weight: bold;
+}
+
+.calendar-day.empty {
+  background-color: transparent;
+  border: 1px solid transparent; /* Keep layout consistent, but invisible */
+  pointer-events: none;
+}

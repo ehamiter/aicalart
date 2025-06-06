@@ -3,6 +3,10 @@ const baseImageUrl = "https://aicalart.s3.amazonaws.com/images/";
 const swipeXThreshold = 100;
 const swipeYThreshold = 110;
 
+// Calendar state variables
+let calendarDisplayMonth;
+let calendarDisplayYear;
+
 // Date and URL functions
 // Function to check if Daylight Saving Time (DST) is in effect
 function isDST(date = new Date()) {
@@ -69,6 +73,115 @@ async function loadPrompts(dateString, orientation) {
   } catch (error) {
     console.error("Error fetching or parsing data:", error);
     return null;
+  }
+}
+
+function generateCalendar(year, month) {
+  const calendarGrid = document.querySelector('#jumpToDateModal .calendar-grid');
+  const monthYearDisplay = document.getElementById('currentMonthYear');
+  if (!calendarGrid || !monthYearDisplay) return;
+
+  // Update month/year display
+  const displayDate = new Date(year, month);
+  monthYearDisplay.textContent = displayDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+  // Store weekday headers and then clear grid
+  const weekdayHeaders = calendarGrid.querySelectorAll('.calendar-weekday');
+  const weekdayHeaderHTML = Array.from(weekdayHeaders)
+                                 .map(node => node.outerHTML).join('');
+  calendarGrid.innerHTML = ''; // Clear all content
+  calendarGrid.innerHTML = weekdayHeaderHTML; // Re-add headers first
+
+  const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0 (Sun) - 6 (Sat)
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const earliestAllowedDate = new Date('2023-11-25T00:00:00-06:00');
+  earliestAllowedDate.setHours(0, 0, 0, 0);
+  const latestAllowedDate = getCurrentDateWithBuffer();
+  latestAllowedDate.setHours(0, 0, 0, 0);
+
+  const currentViewDateNormalized = new Date(currentDate.getTime());
+  currentViewDateNormalized.setHours(0, 0, 0, 0);
+
+  // Add empty cells for days before the 1st of the month
+  for (let i = 0; i < firstDayOfMonth; i++) {
+    const emptyCell = document.createElement('div');
+    emptyCell.classList.add('calendar-day', 'empty');
+    calendarGrid.appendChild(emptyCell);
+  }
+
+  // Add day cells
+  for (let day = 1; day <= daysInMonth; day++) {
+    const cell = document.createElement('div');
+    cell.classList.add('calendar-day');
+    cell.textContent = day;
+    const cellDate = new Date(year, month, day);
+    cellDate.setHours(0,0,0,0); // Normalize cell date for comparison
+
+    cell.dataset.date = formatDate(cellDate); // YYYY-MM-DD
+
+    if (cellDate < earliestAllowedDate || cellDate > latestAllowedDate) {
+      cell.classList.add('disabled');
+    }
+
+    if (cellDate.getTime() === currentViewDateNormalized.getTime()) {
+      cell.classList.add('current-view-date');
+    }
+
+    if (!cell.classList.contains('disabled')) {
+      cell.addEventListener('click', () => {
+        const [y, m, d] = cell.dataset.date.split('-').map(Number);
+        currentDate = new Date(y, m - 1, d);
+
+        updateImageTitleAndBackground();
+        updateNavigationArrowStates();
+        updatePromptButtonText(); // Ensure prompt button text is correct
+        toggleModal('jumpToDateModal', false);
+        // window.location.hash = formatDate(currentDate); // Optional: update URL hash
+      });
+    }
+    calendarGrid.appendChild(cell);
+  }
+
+  // Add empty cells to fill the grid (total cells = weekdays + days + empty_before)
+  const totalCells = weekdayHeaders.length + firstDayOfMonth + daysInMonth;
+  const remainingCells = (Math.ceil(totalCells / 7) * 7) - totalCells;
+  for (let i = 0; i < remainingCells; i++) {
+     const emptyCell = document.createElement('div');
+     emptyCell.classList.add('calendar-day', 'empty');
+     calendarGrid.appendChild(emptyCell);
+  }
+
+  // Update month navigation button states
+  const prevMonthBtn = document.getElementById('prevMonthBtn');
+  const nextMonthBtn = document.getElementById('nextMonthBtn');
+  if (!prevMonthBtn || !nextMonthBtn) return;
+
+  // Disable prev if current month/year is at or before earliest allowed month/year
+  if (year < earliestAllowedDate.getFullYear() || (year === earliestAllowedDate.getFullYear() && month <= earliestAllowedDate.getMonth())) {
+    prevMonthBtn.disabled = true;
+  } else {
+    prevMonthBtn.disabled = false;
+  }
+
+  // Disable next if current month/year is at or after latest allowed month/year
+  if (year > latestAllowedDate.getFullYear() || (year === latestAllowedDate.getFullYear() && month >= latestAllowedDate.getMonth())) {
+    nextMonthBtn.disabled = true;
+  } else {
+    nextMonthBtn.disabled = false;
+  }
+}
+
+// Function to update the text of the prompt toggle button
+function updatePromptButtonText() {
+  const promptModal = document.getElementById('promptModal');
+  const promptButton = document.getElementById('promptToggleButton');
+  if (!promptButton || !promptModal) return; // Safety check
+
+  if (promptModal.classList.contains('modal-visible')) {
+    promptButton.textContent = 'Hide Prompt';
+  } else {
+    promptButton.textContent = 'View Prompt';
   }
 }
 
@@ -172,6 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
   extractDateFromUrl();
   updateImageTitleAndBackground();
   updateNavigationArrowStates(); // Initial call to set arrow states
+  updatePromptButtonText(); // Initial call for prompt button text
   document.querySelector('.bg-image').style.animationPlayState = 'paused';
 
   document.addEventListener('keydown', handleKeyPress);
@@ -184,12 +298,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (promptToggleButton) {
     promptToggleButton.addEventListener('click', () => {
       const modal = document.getElementById('promptModal');
-      const button = document.getElementById('promptToggleButton'); // or simply use promptToggleButton
+      const button = document.getElementById('promptToggleButton');
       const isVisible = modal.classList.contains('modal-visible');
-
-      toggleModal('promptModal', !isVisible); // Explicitly tell toggleModal to show or hide
-
-      // Update text based on the new state
+      toggleModal('promptModal', !isVisible);
+      // Text update is now part of the listener itself.
       if (!isVisible) { // If it WASN'T visible, it is NOW visible
         button.textContent = 'Hide Prompt';
       } else { // If it WAS visible, it is NOW hidden
@@ -207,6 +319,39 @@ document.addEventListener('DOMContentLoaded', () => {
   const nextDayButton = document.getElementById('nextDayButton');
   if (nextDayButton) {
     nextDayButton.addEventListener('click', () => changeDate(1));
+  }
+
+  // Event listeners for Jump To Date Modal
+  const prevMonthBtn = document.getElementById('prevMonthBtn');
+  if (prevMonthBtn) {
+    prevMonthBtn.addEventListener('click', () => {
+      calendarDisplayMonth--;
+      if (calendarDisplayMonth < 0) {
+        calendarDisplayMonth = 11;
+        calendarDisplayYear--;
+      }
+      generateCalendar(calendarDisplayYear, calendarDisplayMonth);
+    });
+  }
+  const nextMonthBtn = document.getElementById('nextMonthBtn');
+  if (nextMonthBtn) {
+    nextMonthBtn.addEventListener('click', () => {
+      calendarDisplayMonth++;
+      if (calendarDisplayMonth > 11) {
+        calendarDisplayMonth = 0;
+        calendarDisplayYear++;
+      }
+      generateCalendar(calendarDisplayYear, calendarDisplayMonth);
+    });
+  }
+  const jumpToDateModal = document.getElementById('jumpToDateModal');
+  if (jumpToDateModal) {
+    const closeJumpModalButton = jumpToDateModal.querySelector('.close');
+    if (closeJumpModalButton) {
+      closeJumpModalButton.onclick = function() {
+        toggleModal('jumpToDateModal', false); // Explicitly hide
+      }
+    }
   }
 });
 
@@ -243,9 +388,24 @@ function updateNavigationArrowStates() {
 
 function handleKeyPress(event) {
   const modalMap = { 'p': 'promptModal', '?' : 'aboutModal' };
-  if (modalMap[event.key]) {
-    // Toggle the modal based on its current visibility
+
+  if (event.key === 'j') {
+    const jumpModal = document.getElementById('jumpToDateModal');
+    // Check if jumpModal exists to prevent errors if HTML is somehow missing
+    if (!jumpModal) return;
+
+    if (jumpModal.classList.contains('modal-visible')) {
+      toggleModal('jumpToDateModal', false); // Hide if already visible
+    } else {
+      calendarDisplayYear = currentDate.getFullYear();
+      calendarDisplayMonth = currentDate.getMonth();
+      generateCalendar(calendarDisplayYear, calendarDisplayMonth);
+      toggleModal('jumpToDateModal', true); // Show
+    }
+  } else if (modalMap[event.key]) {
     const modal = document.getElementById(modalMap[event.key]);
+    // Check if modal exists before trying to access its classList
+    if (!modal) return;
     const isModalVisible = modal.classList.contains('modal-visible');
     toggleModal(modalMap[event.key], !isModalVisible);
   } else if (['k', 'q'].includes(event.key)) {
