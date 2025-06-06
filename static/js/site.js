@@ -389,7 +389,23 @@ function updateNavigationArrowStates() {
 function handleKeyPress(event) {
   const modalMap = { 'p': 'promptModal', '?' : 'aboutModal' };
 
-  if (event.key === 'j') {
+  if (event.key === 'Escape') {
+    // Master dismissal for all modals
+    const allModals = ['aboutModal', 'promptModal', 'jumpToDateModal'];
+    for (const modalId of allModals) {
+      const modal = document.getElementById(modalId);
+      if (modal && modal.classList.contains('modal-visible')) {
+        toggleModal(modalId, false);
+        // Update prompt button text if we're closing the prompt modal
+        if (modalId === 'promptModal') {
+          const promptButton = document.getElementById('promptToggleButton');
+          if (promptButton) {
+            promptButton.textContent = 'View Prompt';
+          }
+        }
+      }
+    }
+  } else if (event.key === 'j') {
     const jumpModal = document.getElementById('jumpToDateModal');
     // Check if jumpModal exists to prevent errors if HTML is somehow missing
     if (!jumpModal) return;

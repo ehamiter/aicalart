@@ -329,15 +329,11 @@ body, html {
 
 /* Jump to Date Modal / Calendar Styles */
 #jumpToDateModal .modal-content {
-  /* The default .modal max-width might be too wide for a compact calendar.
-     Let's try a slightly smaller max-width for this specific modal if needed.
-     For now, relying on .modal styles. If calendar looks too spread out, adjust here.
-     max-width: 400px; /* Example: Adjust if necessary */
-}
-
-#jumpToDateTitle {
-  /* Using .modal-text-common, specific styling can be added here if needed */
-  margin-bottom: 15px; /* Add some space below the title */
+  /* Fixed width for consistent modal sizing */
+  width: 420px;
+  max-width: 420px;
+  min-height: 420px;
+  font-family: 'Alegreya Sans', sans-serif;
 }
 
 .calendar-header {
@@ -372,62 +368,106 @@ body, html {
   background-color: #e0e0e0; /* Feedback for click */
 }
 
+.calendar-nav-btn:disabled {
+  opacity: 0.3; /* Dimmed appearance like the day navigation arrows */
+  pointer-events: none; /* Makes the button unclickable */
+  cursor: default; /* Changes cursor to default */
+  background-color: #e0e0e0; /* Match calendar-day:disabled */
+  color: #a0a0a0; /* Match calendar-day:disabled */
+  border-color: #d0d0d0; /* Match calendar-day:disabled */
+}
+
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: auto repeat(6, 1fr); /* Fixed 6 rows for consistent height */
   gap: 5px; /* Spacing between cells */
+  height: 280px; /* Fixed height to prevent modal size changes */
 }
 
 .calendar-weekday {
+  font-family: 'Alegreya Sans SC', sans-serif;
   font-weight: bold;
   text-align: center;
-  padding: 8px 5px; /* Adjusted padding */
-  background-color: #e9ecef; /* Light grey for weekday headers */
-  border-radius: 3px;
-  color: #495057; /* Darker text for weekdays */
+  padding: 10px 5px;
+  background-color: #8b7355d1;
+  color: #f0f0f0;
   font-size: 0.9em;
+  border-bottom: 2px solid #65432196;
+  border-radius: 2px;
 }
 
 .calendar-day {
-  padding: 10px 5px; /* Adjusted padding for smaller cells if needed */
+  font-family: 'Alegreya Sans', sans-serif;
+  padding: 8px 5px;
   text-align: center;
-  cursor: pointer;
-  border: 1px solid #e0e0e0;
-  border-radius: 3px;
+  border-radius: 6px;
   font-size: 0.9em;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-  color: #333; /* Default text color for days */
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  
+  /* Default clickable styling - warm, inviting colors */
+  background: linear-gradient(135deg, #f4f4c1 0%, #e8e8a8 100%);
+  color: #5c5346;
+  border: 1px solid #b3a580;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .calendar-day:hover {
-  background-color: #e9e9e9;
-  border-color: #d0d0d0;
+  background: linear-gradient(135deg, #e6e6b8 0%, #d9d999 100%);
+  border-color: #a99676;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.calendar-day:active {
+  background: linear-gradient(135deg, #dcdca3 0%, #cccc88 100%);
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .calendar-day.disabled {
-  color: #adb5bd; /* Lighter grey for disabled text */
-  background-color: #f8f9fa; /* Very light background for disabled days */
-  pointer-events: none;
-  cursor: default;
-  border-color: #f0f0f0; /* Lighter border for disabled */
+  /* Grey background for disabled dates */
+  background: #e0e0e0;
+  color: #a0a0a0;
+  border: 1px solid #d0d0d0;
+  cursor: not-allowed;
+  box-shadow: none;
+  font-weight: 300;
+  /* Remove pointer-events: none to allow cursor display */
 }
 
-.calendar-day.selected {
-  background-color: #007bff; /* Bootstrap primary blue for selected */
-  color: white;
-  border-color: #0056b3; /* Darker blue border for selected */
-  font-weight: bold;
+.calendar-day.disabled:hover {
+  /* Override hover effects for disabled days */
+  background: #e0e0e0;
+  border-color: #d0d0d0;
+  transform: none;
+  box-shadow: none;
+  cursor: not-allowed;
 }
 
 .calendar-day.current-view-date {
-  background-color: #d4edda; /* Light green to highlight current viewed date */
-  color: #155724; /* Dark green text */
-  border-color: #c3e6cb; /* Greenish border */
+  /* Highlighted current date - rich golden styling */
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.5) 0%, rgba(218, 165, 32, 0.5) 100%);
+  color: #4a3505;
+  border: 2px solid #654321;
   font-weight: bold;
+  box-shadow: 0 2px 8px rgba(101, 67, 33, 0.3);
+}
+
+.calendar-day.current-view-date:hover {
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.5) 0%, rgba(184, 134, 11, 0.5) 100%);
+  box-shadow: 0 3px 10px rgba(101, 67, 33, 0.4);
 }
 
 .calendar-day.empty {
-  background-color: transparent;
-  border: 1px solid transparent; /* Keep layout consistent, but invisible */
+  background: transparent;
+  border: 1px solid transparent;
   pointer-events: none;
+  box-shadow: none;
 }
