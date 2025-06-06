@@ -6,3 +6,4 @@ staging/
 credentials.json
 randomish_queue.json
 token.json
+.cursor/
