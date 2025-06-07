@@ -198,6 +198,12 @@ async function updateImageTitleAndBackground() {
     document.getElementById('modalText').textContent = prompts.text;
     document.getElementById('modalHolidays').textContent = prompts.holidays;
     document.getElementById('modalStyle').textContent = prompts.style || '';
+    
+    // Reset prompt modal scroll position to top when content changes
+    const promptModal = document.getElementById('promptModal');
+    if (promptModal) {
+      promptModal.scrollTop = 0;
+    }
   } catch (error) {
     console.error('Fetch failed: ', error);
   }
