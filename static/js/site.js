@@ -238,6 +238,9 @@ function toggleModal(modalId, forceShow) {
     return;
   }
 
+  // Get the modal container
+  const modalContainer = modal.closest('.modal-container');
+
   // Remove any existing event listeners to prevent duplicates
   modal.removeEventListener('animationend', onAnimationEnd);
 
@@ -253,6 +256,7 @@ function toggleModal(modalId, forceShow) {
     // Only update visibility when hiding
     if (!forceShow) {
       modal.classList.remove('modal-visible');
+      modalContainer.classList.remove('active'); // Remove active class from container
     }
     modal.removeEventListener('animationend', onAnimationEnd);
   }
@@ -260,6 +264,7 @@ function toggleModal(modalId, forceShow) {
   if (forceShow) {
     modal.classList.add('modal-show', 'modal-visible');
     modal.classList.remove('modal-hide');
+    modalContainer.classList.add('active'); // Add active class to container
   } else {
     modal.classList.add('modal-hide');
     modal.classList.remove('modal-show');

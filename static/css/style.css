@@ -97,6 +97,17 @@ body, html {
   left: 0; top: 0; right: 0; bottom: 0;
   z-index: 1000;
   overflow: auto;
+  pointer-events: none; /* Don't block mouse events when modal is hidden */
+}
+
+/* Only allow pointer events when modal is visible */
+.modal-container:has(.modal-visible) {
+  pointer-events: auto;
+}
+
+/* Fallback for browsers that don't support :has() */
+.modal-container.active {
+  pointer-events: auto;
 }
 
 .modal {
@@ -169,6 +180,34 @@ body, html {
 #modalText {font-size: 18px; font-family: 'Alegreya Sans', sans-serif;}
 #modalStyle {font-size: 16px; font-weight: normal; font-style: italic; font-family: 'Alegreya Sans SC', sans-serif;}
 #modalAboutTitle {font-size: 24px; font-family: 'Alegreya Sans SC', sans-serif;}
+
+/* Prompt Modal Specific Styles for Better Scrolling */
+#promptModal {
+  max-height: 85vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+}
+
+#promptModal .modal-content {
+  max-height: none; /* Remove height restriction from content */
+  overflow: visible; /* Let the modal handle the overflow */
+}
+
+/* Ensure modal text elements can wrap properly and have proper spacing */
+#promptModal .modal-text-common {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  margin-bottom: 16px;
+}
+
+#promptModal .modal-text-common:last-child {
+  margin-bottom: 0;
+}
 
 .modal-content table {
   width: 100%;
