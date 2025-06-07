@@ -183,11 +183,11 @@ body, html {
 
 /* Prompt Modal Specific Styles for Better Scrolling */
 #promptModal {
-  max-height: 85vh;
+  max-height: 80vh;
   overflow-y: auto;
   overflow-x: hidden;
   position: absolute;
-  top: 50%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   margin: 0;
