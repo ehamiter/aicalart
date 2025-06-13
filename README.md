@@ -28,6 +28,8 @@ This repo hosts the scripts and template that powers [aical.art](https://aical.a
     <ul>
       <li><strong>?</strong> Toggle keyboard shortcuts menu</li>
       <li><strong>p</strong> Toggle prompt display</li>
+      <li><strong>t</strong> Toggle portrait/landscape mode</li>
+      <li><strong>c</strong> Copy image URL to clipboard</li>
       <li><strong>j</strong> Jump to a specific date</li>
       <li><strong>(keys) ← →</strong> Go back / forward in time</li>
       <li><strong>k</strong> Start "Ken Burns-ish" effect</li>

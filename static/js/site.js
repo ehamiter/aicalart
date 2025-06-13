@@ -7,6 +7,34 @@ const swipeYThreshold = 110;
 let calendarDisplayMonth;
 let calendarDisplayYear;
 
+// Orientation override state variable
+let manualOrientationOverride = null; // null = use device orientation, 'portrait' or 'landscape' = forced
+
+// Function to get current orientation (considering manual override)
+function getCurrentOrientation() {
+  if (manualOrientationOverride) {
+    return manualOrientationOverride;
+  }
+  return window.matchMedia("(orientation: portrait)").matches ? 'portrait' : 'landscape';
+}
+
+// Function to toggle orientation override
+function toggleOrientation() {
+  if (manualOrientationOverride === null) {
+    // First toggle: set to opposite of current device orientation
+    const currentDeviceOrientation = window.matchMedia("(orientation: portrait)").matches ? 'portrait' : 'landscape';
+    manualOrientationOverride = currentDeviceOrientation === 'portrait' ? 'landscape' : 'portrait';
+  } else if (manualOrientationOverride === 'portrait') {
+    manualOrientationOverride = 'landscape';
+  } else {
+    manualOrientationOverride = 'portrait';
+  }
+  
+  // Update the image immediately
+  updateImageTitleAndBackground();
+  console.log('Orientation toggled to:', manualOrientationOverride);
+}
+
 // Date and URL functions
 // Function to check if Daylight Saving Time (DST) is in effect
 function isDST(date = new Date()) {
@@ -187,7 +215,7 @@ function updatePromptButtonText() {
 
 async function updateImageTitleAndBackground() {
   const dateString = formatDate(currentDate);
-  const orientation = window.matchMedia("(orientation: portrait)").matches ? 'portrait' : 'landscape';
+  const orientation = getCurrentOrientation();
 
   try {
     const prompts = await loadPrompts(dateString, orientation);
@@ -441,9 +469,11 @@ function handleKeyPress(event) {
     changeDate(event.key === 'ArrowRight' ? 1 : -1);
   } else if (event.key === 'c') {
     const dateString = formatDate(currentDate);
-    const orientation = window.matchMedia("(orientation: portrait)").matches ? 'portrait' : 'landscape';
+    const orientation = getCurrentOrientation();
     const imageUrl = `${baseImageUrl}${dateString}-${orientation}.webp`;
     copyToClipboard(imageUrl);
+  } else if (event.key === 't' || event.key === 'T') {
+    toggleOrientation();
   }
 }
 
