@@ -26,7 +26,7 @@ SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 # You can change this to what you want in .env via `ALWAYS_INCLUDE_IN_PROMPT`, but you should know Hobbes would not approve of that.
 ALWAYS_INCLUDE_IN_PROMPT = os.getenv(
     "ALWAYS_INCLUDE_IN_PROMPT",
-    "You always place your beloved orange tabby domestic shorthair cat, Hobbes, in every piece you create.",
+    "You always place your two beloved domestic shorthair cats in every piece you create: Hobbes the orange tabby, and Mortimer the black and white tuxedo.",
 )
 
 STYLE_BASES = [
