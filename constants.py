@@ -1933,7 +1933,7 @@ SILLY_DAYS_LIST = [
     ("2025-10-11", "It's My Party Day"),
     ("2025-10-12", "Old Farmers Day"),
     ("2025-10-13", "Train Your Brain Day"),
-    ("2025-10-14", "Be Bald and Be Free Day"),
+    ("2025-10-14", "Ada Lovelace Day"),
     ("2025-10-15", "I Love Lucy Day"),
     ("2025-10-16", "Dictionary Day"),
     ("2025-10-17", "Wear Something Gaudy Day"),
