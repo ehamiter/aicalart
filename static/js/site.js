@@ -1,5 +1,5 @@
 // Constants
-const baseImageUrl = "https://aicalart.s3.amazonaws.com/images/";
+const baseImageUrl = "https://geryon.feralhosting.com/eddielomax/aicalart/images/";
 const swipeXThreshold = 100;
 const swipeYThreshold = 110;
 
@@ -85,7 +85,7 @@ function extractDateFromUrl() {
 }
 
 async function loadPrompts(dateString, orientation) {
-  const promptUrl = `https://aicalart.s3.amazonaws.com/prompts/${dateString}-prompt.json`;
+  const promptUrl = `https://geryon.feralhosting.com/eddielomax/aicalart/prompts/${dateString}-prompt.json`;
   try {
     const response = await fetch(promptUrl);
     if (!response.ok) {

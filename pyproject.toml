@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "boto3==1.34.120",
+    "asyncssh>=2.18.0",
     "colorama==0.4.6",
     "python-dotenv==1.0.1",
     "gnews==0.3.7",

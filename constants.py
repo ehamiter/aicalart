@@ -5,10 +5,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-### AWS
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_S3_BUCKET = "aicalart"
+### Web hosting (SFTP) configuration
+AICALART_SFTP_SERVER = os.getenv("AICALART_SERVER")
+AICALART_SFTP_USERNAME = os.getenv("AICALART_USERNAME")
+AICALART_SFTP_PASSWORD = os.getenv("AICALART_PASSWORD")
+AICALART_BASE_URL = os.getenv("AICALART_BASE_URL")
+AICALART_IMAGES_PATH = os.getenv("AICALART_IMAGES_PATH")
+AICALART_PROMPTS_PATH = os.getenv("AICALART_PROMPTS_PATH")
 
 ### OpenAI
 AICALART_OPENAI_KEY = os.getenv("AICALART_OPENAI_KEY")  # named thusly because it collided with another OPENAI_KEY

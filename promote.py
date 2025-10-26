@@ -1,12 +1,14 @@
 import argparse
 import logging
-import boto3
-from botocore.exceptions import NoCredentialsError
+import asyncio
+import asyncssh
 from colorama import Fore, Style
 from constants import (
-    AWS_ACCESS_KEY_ID,
-    AWS_S3_BUCKET,
-    AWS_SECRET_ACCESS_KEY,
+    AICALART_SFTP_SERVER,
+    AICALART_SFTP_USERNAME,
+    AICALART_SFTP_PASSWORD,
+    AICALART_IMAGES_PATH,
+    AICALART_PROMPTS_PATH,
 )
 
 class CustomFormatter(logging.Formatter):
@@ -49,32 +51,28 @@ def adjust_to_cst(the_datetime):
 
     return cst_datetime_str
 
-def upload_file_to_s3(local_path, bucket, s3_key):
+async def upload_file_via_sftp(local_path, remote_path):
+    """Upload a file to web hosting via SFTP."""
+    if not all([AICALART_SFTP_SERVER, AICALART_SFTP_USERNAME, AICALART_SFTP_PASSWORD]):
+        logger.error("Web hosting credentials not configured")
+        return
+    
     try:
-        s3 = boto3.client(
-            "s3",
-            aws_access_key_id=AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-        )
-        extra_args = {}
-        if local_path.endswith(".txt"):
-            extra_args = {"ContentType": "text/plain"}
-        elif local_path.endswith(".webp"):
-            extra_args = {"ContentType": "image/webp"}
-        elif local_path.endswith(".json"):
-            extra_args = {"ContentType": "application/json"}
-
-        print(local_path)
-
-        s3.upload_file(local_path, bucket, s3_key, ExtraArgs=extra_args)
-        logger.info(f"Uploaded {local_path} to {bucket}/{s3_key}")
-
+        async with asyncssh.connect(
+            AICALART_SFTP_SERVER,
+            username=AICALART_SFTP_USERNAME,
+            password=AICALART_SFTP_PASSWORD,
+            known_hosts=None
+        ) as conn:
+            async with conn.start_sftp_client() as sftp:
+                await sftp.put(local_path, remote_path)
+                logger.info(f"Uploaded {local_path} to {remote_path}")
     except FileNotFoundError:
-        logger.error("The file was not found")
-    except NoCredentialsError:
-        logger.error("Credentials not available")
+        logger.error(f"The file was not found: {local_path}")
+    except Exception as e:
+        logger.error(f"Error uploading {local_path} via SFTP: {e}")
 
-def main(date):
+async def main(date):
     # Separate the date and time components for the image files
     date_part, time_part = date.split("T")
 
@@ -83,15 +81,15 @@ def main(date):
     portrait_file = f"./staging/portrait-{date_part}T{time_part}.webp"
     prompt_file = f"./staging/prompt-{date_part}.json"
 
-    # Upload the files to S3
-    upload_file_to_s3(landscape_file, AWS_S3_BUCKET, f"images/{date_part}-landscape.webp")
-    upload_file_to_s3(portrait_file, AWS_S3_BUCKET, f"images/{date_part}-portrait.webp")
-    upload_file_to_s3(portrait_file, AWS_S3_BUCKET, "images/portrait.webp")  # for iPhone wallpaper shortcut
-    upload_file_to_s3(prompt_file, AWS_S3_BUCKET, f"prompts/{date_part}-prompt.json")
+    # Upload the files to hosting
+    await upload_file_via_sftp(landscape_file, f"{AICALART_IMAGES_PATH}/{date_part}-landscape.webp")
+    await upload_file_via_sftp(portrait_file, f"{AICALART_IMAGES_PATH}/{date_part}-portrait.webp")
+    await upload_file_via_sftp(portrait_file, f"{AICALART_IMAGES_PATH}/portrait.webp")  # for iPhone wallpaper shortcut
+    await upload_file_via_sftp(prompt_file, f"{AICALART_PROMPTS_PATH}/{date_part}-prompt.json")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Upload daily files to S3.")
+    parser = argparse.ArgumentParser(description="Upload daily files to web hosting.")
     parser.add_argument("date", type=str, help="Date for the files to upload (format: YYYY-MM-DD)")
     args = parser.parse_args()
-    main(args.date)
+    asyncio.run(main(args.date))

@@ -45,16 +45,7 @@ Follow the directions for each respective link:
 
   * [Google API / OAuth token credentials](https://developers.google.com/calendar/api/quickstart/python)
   * [OpenaAI API key](https://platform.openai.com/docs/quickstart?context=python)
-  * [An AWS S3 bucket](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html), `AWS_ACCESS_KEY_ID`, and `AWS_SECRET_ACCESS_KEY`<sup>1</sup>
-
-    * <sup>1</sup> If you have access to the AWS CLI, you can use the following command to check the access key and secret access key set for a user:
-
-      ```
-      aws configure get aws_access_key_id
-      aws configure get aws_secret_access_key
-      ```
-
-      Otherwise search AWS for `IAM` and access your user's information; this is where this information is kept.
+  * A web host with SFTP access for storing generated images and prompts
 
 ### Setup
 
@@ -73,7 +64,7 @@ pip install -r aical-reqs.txt  # Intentionally not named `requirements.txt` to s
 python generate.py [--date --style --skip-news --skip-calendar --skip-holidays --skip-silly-days --skip-upload]
 ```
 
-All parameters are optional-- `generate.py` run by itself will randomize elements and pull data from all available sources, then upload two images and three text prompts to AWS S3.
+All parameters are optional-- `generate.py` run by itself will randomize elements and pull data from all available sources, then upload two images and three text prompts to your web host.
 
 You can pass in a string value for `date` ("YYYY-MM-DD") or `style`.
 
@@ -91,7 +82,7 @@ python generate.py --date="2024-02-05" --skip-calendar
 python generate.py --skip-news --skip-holidays
 ```
 
-Skip uploading to S3, so the generated images will be created and saved in `staging/`, but not uploaded. Useful for experimentation:
+Skip uploading, so the generated images will be created and saved in `staging/`, but not uploaded. Useful for experimentation:
 
 ```
 python generate.py --skip-upload
@@ -203,65 +194,13 @@ python promote.py portrait-2023-12-03T05/04/58.791456Z
 ```
 (At the conclusion of a prompt generation, this line is printed out at the end by itself, so if you use iTerm and have "Copy to pasteboard on selection" enabled, you can double-click the line and it auto-selects and copies it for ease of pasting into the command line. Boy howdy!)
 
-After entering this line, it will upload the images and prompts to S3, and the site will reflect the new sources immediately. Whatever YYYY-MM-DD format is in that string will be applied for that day for both images and all three prompts.
+After entering this line, it will upload the images and prompts to your web host via SFTP, and the site will reflect the new sources immediately. Whatever YYYY-MM-DD format is in that string will be applied for that day for both images and all three prompts.
 
 
-### AWS S3
+### Web Host Setup
 
-#### Granting public viewing permissions:
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "PublicReadGetObject",
-            "Effect": "Allow",
-            "Principal": "*",
-            "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::aicalart/*"
-        }
-    ]
-}
-```
+Make sure your web host has the necessary directories created and publicly accessible. The files will be uploaded via SFTP to the configured paths.
 
-#### CORS settings so fetching the prompts will work:
-```json
-[
-    {
-        "AllowedHeaders": ["*"],
-        "AllowedMethods": ["GET"],
-        "AllowedOrigins": ["https://aical.art"],
-        "ExposeHeaders": [],
-        "MaxAgeSeconds": 3000
-    }
-]
-```
-
-To make every object publicly available, you can edit the access control list (ACL) and check "List" and "Read" for "Everyone (public access)".
-
-### webp image orientation paths
-```
-# Current images
-https://aicalart.s3.amazonaws.com/images/landscape.webp
-https://aicalart.s3.amazonaws.com/images/portrait.webp
-
-# Archived images
-https://aicalart.s3.amazonaws.com/images/YYYY-MM-DD-landscape.webp
-https://aicalart.s3.amazonaws.com/images/YYYY-MM-DD-portrait.webp
-```
-
-### original prompt from Chat GPT; finalized orientation prompts from DALL-E
-```
-# Current prompts
-https://aicalart.s3.amazonaws.com/prompts/original.txt
-https://aicalart.s3.amazonaws.com/prompts/landscape.txt
-https://aicalart.s3.amazonaws.com/prompts/portrait.txt
-
-# Archived prompts
-https://aicalart.s3.amazonaws.com/prompts/YYYY-MM-DD-original.txt
-https://aicalart.s3.amazonaws.com/prompts/YYYY-MM-DD-landscape.txt
-https://aicalart.s3.amazonaws.com/prompts/YYYY-MM-DD-portrait.txt
-```
 
 ### Cron
 
@@ -271,7 +210,7 @@ I have this set up on an Ubuntu home server with a cron schedule of:
 00 00 * * * cd /home/eric/projects/aicalart && ./env/bin/python3 ./generate.py >> ../logs/aicalart.log 2>&1
 ```
 
-So if there's an error I can ssh into the machine and read the error log file it generated. Otherwise it should be ready to generate a pair of images and submit them to S3 at midnight CST every day. Since this updates the image asset that the website is already pointing to, this pseudo-deployment during promotion is near-instantaneous.
+So if there's an error I can ssh into the machine and read the error log file it generated. Otherwise it should be ready to generate a pair of images and submit them to the web host at midnight CST every day. Since this updates the image asset that the website is already pointing to, this pseudo-deployment during promotion is near-instantaneous.
 
 
 ### Stability / Pull Requests

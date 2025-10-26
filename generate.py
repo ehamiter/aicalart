@@ -1,4 +1,5 @@
 import argparse
+import asyncio
 import base64
 from datetime import timezone
 import datetime
@@ -528,7 +529,7 @@ def main(
         exit(1)
 
     if not skip_upload:
-        promote_file(now)
+        asyncio.run(promote_file(now))
 
 
 if __name__ == "__main__":
@@ -573,7 +574,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--skip-upload",
         action="store_true",
-        help="Skip uploading generated images to S3. Useful for experimenting with styles or prompts. Will store generated images in the staging/ folder.",
+        help="Skip uploading generated images. Useful for experimenting with styles or prompts. Will store generated images in the staging/ folder.",
     )
     args = parser.parse_args()
     main(
