@@ -18,15 +18,16 @@ from constants import (
     ALWAYS_INCLUDE_IN_PROMPT,
     GOOGLE_CALENDAR_ID,
     GPT_MODEL,
-    HOLIDAYS,
     IMAGE_MODEL,
     LANDSCAPE_IMAGE_SIZE,
     PORTRAIT_IMAGE_SIZE,
     QUALITY,
     SCOPES,
-    SILLY_DAYS,
-    generate_random_style,
+    STYLE_BASES,
+    STYLE_PHRASES,
 )
+from holidays_helper import get_holiday, get_silly_day, get_todays_holidays_display
+from randomish import get_random_style
 from gnews import GNews
 from google.auth.exceptions import RefreshError
 from google.auth.transport.requests import Request
@@ -37,7 +38,6 @@ from googleapiclient.errors import HttpError
 from openai import BadRequestError, OpenAI
 from PIL import Image, ImageDraw
 from promote import main as promote_file
-from randomish import randomish
 
 import socket
 socket.setdefaulttimeout(150)
@@ -54,37 +54,6 @@ now_utc = now = f"{datetime.datetime.now(timezone.utc).isoformat()}Z"
 openai_client = OpenAI(api_key=AICALART_OPENAI_KEY)
 
 
-# `date` here is just a key of sorts in YYYY-MM-DD format
-def get_holiday(date):
-    return HOLIDAYS.get(date, "")
-
-
-def get_silly_day(date):
-    events = SILLY_DAYS.get(date, [])
-
-    if not events:
-        return ""
-
-    # Use Oxford comma when there are more than two events, otherwise just join with ", "
-    if len(events) > 2:
-        return ", ".join(events[:-1]) + ", and " + events[-1]
-    else:
-        # Join with " and " if there are exactly two events, else return single event
-        return " and ".join(events)
-
-
-def get_todays_holidays_display(the_date):
-    holiday = get_holiday(the_date)
-    silly_day = get_silly_day(the_date)
-
-    # Concatenate holiday and silly day, if both exist
-    if holiday and silly_day:
-        return f"{holiday}, {silly_day}"
-    else:
-        # Return either holiday or silly day, or an empty string if neither exists
-        return holiday or silly_day
-
-
 def get_news(country="US", period="1h"):
     title = ''
     gn = GNews(language="en", country=country, period=period)
@@ -99,8 +68,7 @@ def get_news(country="US", period="1h"):
 
 
 def get_style():
-    style = generate_random_style()
-    return style
+    return get_random_style(STYLE_BASES, STYLE_PHRASES)
 
 
 def get_today_and_newslist(the_date, holiday, silly_day, news):

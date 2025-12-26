@@ -4,6 +4,7 @@ gnews==0.3.6
 google-api-python-client==2.107.0
 google-auth-httplib2==0.1.1
 google-auth-oauthlib==1.1.0
+holidays>=0.40
 openai==1.2.3
 Pillow==9.5.0
 python-dotenv==0.19.0
