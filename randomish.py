@@ -66,8 +66,13 @@ def get_random_style(style_bases: list, style_phrases: list) -> str:
     base = queue.popleft()
     _save_queue(queue)
     
-    num_phrases = secrets.randbelow(3) + 1  # 1-3 phrases
-    phrases = ", ".join(secrets.choice(style_phrases) for _ in range(num_phrases))
+    num_phrases = secrets.randbelow(2) + 2  # 2-3 phrases
+    chosen = []
+    while len(chosen) < num_phrases:
+        phrase = secrets.choice(style_phrases)
+        if phrase not in chosen:
+            chosen.append(phrase)
+    phrases = ", ".join(chosen)
     
     return f"{base}, {phrases}"
 
