@@ -65,6 +65,13 @@ async def upload_file_via_sftp(local_path, remote_path):
             known_hosts=None
         ) as conn:
             async with conn.start_sftp_client() as sftp:
+                # Ensure remote directory exists
+                remote_dir = "/".join(remote_path.rsplit("/", 1)[:-1])
+                try:
+                    await sftp.makedirs(remote_dir)
+                except:
+                    pass  # Directory might already exist
+                
                 await sftp.put(local_path, remote_path)
                 logger.info(f"Uploaded {local_path} to {remote_path}")
     except FileNotFoundError:
