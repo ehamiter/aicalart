@@ -6,6 +6,7 @@ import datetime
 import json
 import logging
 import os
+import requests
 import time
 from base64 import b64decode
 from io import BytesIO
@@ -14,14 +15,15 @@ from textwrap import dedent
 
 from colorama import Fore, Style
 from constants import (
-    AICALART_OPENAI_KEY,
+    OPENROUTER_AICALART_API_KEY,
+    OPENROUTER_BASE_URL,
     ALWAYS_INCLUDE_IN_PROMPT,
     GOOGLE_CALENDAR_ID,
     GPT_MODEL,
     IMAGE_MODEL,
-    LANDSCAPE_IMAGE_SIZE,
-    PORTRAIT_IMAGE_SIZE,
-    QUALITY,
+    IMAGE_SIZE,
+    LANDSCAPE_ASPECT_RATIO,
+    PORTRAIT_ASPECT_RATIO,
     SCOPES,
     STYLE_BASES,
     STYLE_PHRASES,
@@ -35,7 +37,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from openai import BadRequestError, OpenAI
+from openai import OpenAI
 from PIL import Image, ImageDraw
 from promote import main as promote_file
 
@@ -51,7 +53,7 @@ now_cst = datetime.datetime.now().date().strftime("%Y-%m-%d")
 # for Google calendar event fetching -- "2023-11-25T00:43:27.521185+00:00Z"
 now_utc = now = f"{datetime.datetime.now(timezone.utc).isoformat()}Z"
 
-openai_client = OpenAI(api_key=AICALART_OPENAI_KEY)
+openai_client = OpenAI(api_key=OPENROUTER_AICALART_API_KEY, base_url=OPENROUTER_BASE_URL)
 
 
 def get_news(country="US", period="1h"):
@@ -221,13 +223,9 @@ def decode_b64_json(b64_data):
 
 
 def prompt_passes_moderation(prompt):
-    print(f"{Fore.YELLOW}Moderating prompt...{Style.RESET_ALL}")
-    mod_obj = openai_client.moderations.create(input=prompt)
-    results = mod_obj.results[0]
-    if results.flagged == True:
-        print(f"{Fore.RED}Prompt failed moderation.{Style.RESET_ALL}")
-        return False
-    print(f"{Fore.GREEN}Prompt passed moderation.{Style.RESET_ALL}")
+    # Moderation endpoint not available via OpenRouter; the image model
+    # (Nano Banana Pro) applies its own content filters.
+    print(f"{Fore.GREEN}Skipping moderation (handled by image model).{Style.RESET_ALL}")
     return True
 
 
@@ -271,13 +269,48 @@ def generate_prompt(prompt, style, news, today):
     Style: {style}\n
     News: {news}\n
     Today: {today.split(';')[0]}\n
-    DALL-E prompt: {dalle_prompt}
+    Image prompt: {dalle_prompt}
     """
     print(dedent(prompt_info))
     return dalle_prompt
 
     # print(f"Prompt '{prompt}' failed moderation. Try with another prompt.")
     # exit()
+
+def generate_image_via_openrouter(prompt, aspect_ratio):
+    """Generate a single image via OpenRouter using Nano Banana Pro."""
+    response = requests.post(
+        url=f"{OPENROUTER_BASE_URL}/chat/completions",
+        headers={
+            "Authorization": f"Bearer {OPENROUTER_AICALART_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "model": IMAGE_MODEL,
+            "messages": [
+                {"role": "user", "content": prompt}
+            ],
+            "modalities": ["image", "text"],
+            "image_config": {
+                "aspect_ratio": aspect_ratio,
+                "image_size": IMAGE_SIZE,
+            },
+        },
+        timeout=150,
+    )
+    response.raise_for_status()
+    result = response.json()
+
+    message = result["choices"][0]["message"]
+    images = message.get("images", [])
+    if not images:
+        raise ValueError("No images returned in response")
+
+    # Extract base64 data from data URL (format: data:image/png;base64,...)
+    data_url = images[0]["image_url"]["url"]
+    base64_data = data_url.split(",", 1)[1]
+    return base64_data
+
 
 def generate_images(dalle_prompt, style, image_args, failed_attempts=0):
     # Let's try to make these things. It could be rejected because god only knows
@@ -295,37 +328,20 @@ def generate_images(dalle_prompt, style, image_args, failed_attempts=0):
         skip_upload,
     ) = image_args
 
-    # Set image sizes and quality based on the model
-    portrait_size = '1024x1536' if image_model == 'gpt-image-1' else '1024x1792'
-    landscape_size = '1536x1024' if image_model == 'gpt-image-1' else '1792x1024'
-    quality = 'high' if image_model == 'gpt-image-1' else 'hd'
+    full_prompt = f"{style}, no margins, full screen. {dalle_prompt}"
 
     try:
-        logger.info(f"{Fore.YELLOW}🖼️ Generating portrait image...{Style.RESET_ALL}")
-        logger.info(f"Request parameters: model={image_model}, size={portrait_size}, quality={quality}")
-        portrait_response = openai_client.images.generate(
-            model=image_model,
-            prompt=f"{style}, no margins, full screen. {dalle_prompt}",
-            size=portrait_size,
-            quality=quality,
-            n=1,
-            **({"response_format": "b64_json"} if image_model == "dall-e-3" else {})
-        )
-        logger.info(f"✅ Portrait response received successfully!")
-        logger.info(f"{Fore.YELLOW}🖼️ Generating landscape image...{Style.RESET_ALL}")
-        logger.info(f"Request parameters: model={image_model}, size={landscape_size}, quality={quality}")
-        landscape_response = openai_client.images.generate(
-            model=image_model,
-            prompt=f"{style}, no margins, full screen. {dalle_prompt}",
-            size=landscape_size,
-            quality=quality,
-            n=1,
-            **({"response_format": "b64_json"} if image_model == "dall-e-3" else {})
-        )
-        logger.info(f"✅ Landscape response received successfully!")
-    except BadRequestError as e:
-        logger.error(f"Bad Request Error: {str(e)}")
-        logger.error(f"Request parameters: model={image_model}, prompt={dalle_prompt[:100]}...")
+        logger.info(f"{Fore.YELLOW}Generating portrait image...{Style.RESET_ALL}")
+        logger.info(f"Request parameters: model={image_model}, aspect_ratio={PORTRAIT_ASPECT_RATIO}, image_size={IMAGE_SIZE}")
+        portrait_data = generate_image_via_openrouter(full_prompt, PORTRAIT_ASPECT_RATIO)
+        logger.info(f"Portrait response received successfully!")
+
+        logger.info(f"{Fore.YELLOW}Generating landscape image...{Style.RESET_ALL}")
+        logger.info(f"Request parameters: model={image_model}, aspect_ratio={LANDSCAPE_ASPECT_RATIO}, image_size={IMAGE_SIZE}")
+        landscape_data = generate_image_via_openrouter(full_prompt, LANDSCAPE_ASPECT_RATIO)
+        logger.info(f"Landscape response received successfully!")
+    except (requests.exceptions.HTTPError, ValueError, KeyError) as e:
+        logger.error(f"Image generation error: {str(e)}")
         failed_attempts += 1
 
         if failed_attempts <= 5:
@@ -364,20 +380,13 @@ def generate_images(dalle_prompt, style, image_args, failed_attempts=0):
                 skip_upload=skip_upload,
                 failed_attempts=failed_attempts,
             )
+            return True
         else:
             logger.info(f"{Fore.RED}Error: could not process images.{Style.RESET_ALL}")
             exit(1)
 
-    # Extract revised prompts directly from the response objects
-    # Find the actual prompt content after the marker
-    prompt_marker = "**Prompt for DALL-E:**"
-    if prompt_marker in dalle_prompt:
-        actual_prompt = dalle_prompt.split(prompt_marker)[1].strip()
-    else:
-        actual_prompt = dalle_prompt
-
-    # Clean up the prompts
-    clean_prompt = actual_prompt.replace('\\n', '\n').replace('\\"', '"')
+    # Clean up the prompt for metadata
+    clean_prompt = dalle_prompt.replace('\\n', '\n').replace('\\"', '"')
     for marker in ['**Image Prompt:**\n\n', '**Prompt:** ']:
         clean_prompt = clean_prompt.replace(marker, '')
 
@@ -395,10 +404,7 @@ def generate_images(dalle_prompt, style, image_args, failed_attempts=0):
     # Update the JSON file with the new prompts and holidays
     write_daily_prompt_json(the_date, landscape_prompt, portrait_prompt, todays_holidays, style)
 
-    # Image processing
-    portrait_data = portrait_response.data[0].model_dump()["b64_json"]
-    landscape_data = landscape_response.data[0].model_dump()["b64_json"]
-
+    # Image processing - decode base64 to PIL Image
     portrait_image = Image.open(BytesIO(b64decode(portrait_data)))
     landscape_image = Image.open(BytesIO(b64decode(landscape_data)))
 
@@ -447,11 +453,7 @@ def main(
     the_day = ""  # placeholder for any named days, e.g. "Cyber Monday and National Fritters Day"
     style = style or get_style()
 
-    # Use passed model or default to the random selection from constants
-    # image_model = model or IMAGE_MODEL
-
-    # For now, dall-e-3 id more fun and zany than gpt-image-1, so we'll use that one unless passing in another
-    image_model = model or 'dall-e-3'
+    image_model = model or IMAGE_MODEL
 
     holiday = None if skip_holidays else get_holiday(the_date)
     silly_day = None if skip_silly_days else get_silly_day(the_date)
@@ -460,14 +462,15 @@ def main(
     today, newslist = get_today_and_newslist(the_date, holiday, silly_day, news)
 
     prompt = f"""
-    You are an expert prompt creator for DALL-E. You specialize in creating images based on current {newslist}.
+    You are an expert prompt creator for AI image generation. You specialize in creating images based on current {newslist}.
     You incorporate the pure embodiment of the style of {style} into your creations-- you take it to the extreme. Really push your limits for organic, creative, and clever imagery.
     You are exceptionally clever and inventive by hiding allegories in details.
     A user could look at one of your creations several times and discover something new, insightful, or hilarious on each repeated viewing.
     {ALWAYS_INCLUDE_IN_PROMPT}
     Today is {today}.
-    Craft a prompt for a scene that incorporates all of these elements together into a spectacular work of art. Use the full screen, no margins.
-    Respond with the prompt only.
+    Craft a prompt for a scene that incorporates all of these elements together into a spectacular work of art.
+    Use the full screen, no margins.
+    IMPORTANT: Respond with the prompt only.
     """
 
     if not skip_calendar:
@@ -517,7 +520,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model",
         default=None,
-        help='Model for the calendar prompt (e.g., "dall-e-3").',
+        help='Model for image generation (e.g., "google/gemini-3-pro-image-preview").',
     )
     parser.add_argument(
         "--skip-calendar",

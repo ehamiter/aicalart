@@ -1,5 +1,4 @@
 import os
-import random
 import secrets
 from dotenv import load_dotenv
 
@@ -13,13 +12,14 @@ AICALART_BASE_URL = os.getenv("AICALART_BASE_URL")
 AICALART_IMAGES_PATH = os.getenv("AICALART_IMAGES_PATH")
 AICALART_PROMPTS_PATH = os.getenv("AICALART_PROMPTS_PATH")
 
-### OpenAI
-AICALART_OPENAI_KEY = os.getenv("AICALART_OPENAI_KEY")  # named thusly because it collided with another OPENAI_KEY
-GPT_MODEL = "gpt-4o-mini"
-IMAGE_MODEL = random.choice(['gpt-image-1','dall-e-3'])  # let's roll the dice baby
-PORTRAIT_IMAGE_SIZE  = '1024x1536' if IMAGE_MODEL == 'gpt-image-1' else '1024x1792'
-LANDSCAPE_IMAGE_SIZE = '1536x1024' if IMAGE_MODEL == 'gpt-image-1' else '1792x1024'
-QUALITY              = 'high'      if IMAGE_MODEL == 'gpt-image-1' else 'hd'
+### Image settings
+OPENROUTER_AICALART_API_KEY = os.getenv("OPENROUTER_AICALART_API_KEY")
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+GPT_MODEL = "google/gemini-2.5-flash"
+IMAGE_MODEL = 'google/gemini-3-pro-image-preview'  # Nano Banana Pro
+PORTRAIT_ASPECT_RATIO = '9:16'
+LANDSCAPE_ASPECT_RATIO = '16:9'
+IMAGE_SIZE = '2K'
 
 ### Google Calendar
 GOOGLE_CALENDAR_ID = os.getenv("GOOGLE_CALENDAR_ID")
