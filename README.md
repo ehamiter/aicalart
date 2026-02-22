@@ -17,7 +17,7 @@ This repo hosts the scripts and template that powers [aical.art](https://aical.a
       <li>Personal Google Calendars</li>
       <li>National Holidays</li>
       <li>Silly Days According To Some Website</li>
-      <li>Custom Prompt Influencers (in this case, Hobbes, my cat)</li>
+      <li>Custom Prompt Influencers</li>
     </ul>
     <p>Mobile Phone Navigation</p>
     <ul>
@@ -153,11 +153,6 @@ All of the examples below additionally have `--skip-upload` passed in, as explai
   </figcaption>
 </figure>
 </details>
-
-
-### Why Is There A Cat In Every Image?
-
-That's Hobbes, [and he instructed me to do so](https://github.com/ehamiter/aicalart/blob/main/example.env#L10).
 
 
 ### File Structure
