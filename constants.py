@@ -29,7 +29,7 @@ SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 # You can change this to what you want in .env via `ALWAYS_INCLUDE_IN_PROMPT`
 ALWAYS_INCLUDE_IN_PROMPT = os.getenv(
     "ALWAYS_INCLUDE_IN_PROMPT",
-    "You always place your two beloved domestic shorthair cats in every piece you create: Morty the black and white tuxedo, and Maisie the Abyssian Tabby mix.",
+    "You always place your two beloved domestic shorthair cats in every piece you create: Morty the black and white tuxedo, and Maisie the Abyssinian Tabby mix.",
 )
 
 STYLE_BASES = [
