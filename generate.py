@@ -469,6 +469,7 @@ def main(
     {ALWAYS_INCLUDE_IN_PROMPT}
     Today is {today}.
     Craft a prompt for a scene that incorporates all of these elements together into a spectacular work of art.
+    Don't take the easy way out to put the date or the special day's message in text in the image, instead... show me what today is through art. Make it interpretive.
     Use the full screen, no margins.
     IMPORTANT: Respond with the prompt only.
     """
