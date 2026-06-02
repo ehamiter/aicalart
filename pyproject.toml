@@ -12,7 +12,7 @@ dependencies = [
     "google-api-python-client==2.132.0",
     "google-auth-oauthlib==1.2.0",
     "openai==1.31.2",
-    "pillow==12.1.1",
+    "pillow==12.2.0",
     "requests==2.33.0",
     "holidays>=0.87",
 ]
