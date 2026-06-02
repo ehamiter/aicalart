@@ -13,6 +13,7 @@ source = { editable = "." }
 dependencies = [
     { name = "asyncssh" },
     { name = "colorama" },
+    { name = "dnspython" },
     { name = "gnews" },
     { name = "google-api-python-client" },
     { name = "google-auth-oauthlib" },
@@ -27,7 +28,8 @@ dependencies = [
 requires-dist = [
     { name = "asyncssh", specifier = ">=2.18.0" },
     { name = "colorama", specifier = "==0.4.6" },
-    { name = "gnews", specifier = "==0.3.7" },
+    { name = "dnspython", specifier = ">=2.6.1" },
+    { name = "gnews", specifier = "==0.4.3" },
     { name = "google-api-python-client", specifier = "==2.132.0" },
     { name = "google-auth-oauthlib", specifier = "==1.2.0" },
     { name = "holidays", specifier = ">=0.87" },
@@ -256,11 +258,11 @@ wheels = [
 
 [[package]]
 name = "dnspython"
-version = "1.16.0"
+version = "2.8.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/ec/c5/14bcd63cb6d06092a004793399ec395405edf97c2301dfdc146dfbd5beed/dnspython-1.16.0.zip", hash = "sha256:36c5e8e38d4369a08b6780b7f27d790a292b2b08eea01607865bf0936c558e01", size = 266364, upload-time = "2018-12-08T19:54:12.883Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8c/8b/57666417c0f90f08bcafa776861060426765fdb422eb10212086fb811d26/dnspython-2.8.0.tar.gz", hash = "sha256:181d3c6996452cb1189c4046c61599b84a5a86e099562ffde77d26984ff26d0f", size = 368251, upload-time = "2025-09-07T18:58:00.022Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ec/d3/3aa0e7213ef72b8585747aa0e271a9523e713813b9a20177ebe1e939deb0/dnspython-1.16.0-py2.py3-none-any.whl", hash = "sha256:f69c21288a962f4da86e56c4905b49d11aba7938d3d740e80d9e366ee4f1632d", size = 188353, upload-time = "2018-12-08T19:52:32.154Z" },
+    { url = "https://files.pythonhosted.org/packages/ba/5a/18ad964b0086c6e62e2e7500f7edc89e3faa45033c71c1893d34eed2b2de/dnspython-2.8.0-py3-none-any.whl", hash = "sha256:01d9bbc4a2d76bf0db7c1f729812ded6d912bd318d3b1cf81d30c0f845dbf3af", size = 331094, upload-time = "2025-09-07T18:57:58.071Z" },
 ]
 
 [[package]]
@@ -277,7 +279,7 @@ wheels = [
 
 [[package]]
 name = "gnews"
-version = "0.3.7"
+version = "0.4.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "beautifulsoup4" },
@@ -285,9 +287,9 @@ dependencies = [
     { name = "feedparser" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4a/ad/62a0e16ca53ebf8eb7ee7f71344a2aec6fdf5a7ab33c9173b6cc629a091c/gnews-0.3.7.tar.gz", hash = "sha256:08c1d1452e9b294d3f0a4ee09775ea8452869ed6d25c2ec0e9f112786d3fedd4", size = 21052, upload-time = "2024-05-11T09:33:00.373Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5f/6a/039a816a50c20647d5addac050ac1b155640dc07ee2bfe718c36542246bd/gnews-0.4.3.tar.gz", hash = "sha256:977303839bcc6eea01cf1b53a2a643b375049b29480ce1bff7f837a59f3623c0", size = 25432, upload-time = "2026-01-16T12:39:30.858Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/79/1a/b53ef12ec52da4bba3d270d34ded74a476e2611b521396c096dbd075fdf1/gnews-0.3.7-py3-none-any.whl", hash = "sha256:570dc0fc3537b140bc33f423f202356fc4d8250e300201f1c8c7f1b8bdc7e69b", size = 15423, upload-time = "2024-05-11T09:32:58.472Z" },
+    { url = "https://files.pythonhosted.org/packages/6c/c1/ffc3a168c79879b8c348b24fc53cc5d8cd074c4b95c325e579dd6f5beaa3/gnews-0.4.3-py3-none-any.whl", hash = "sha256:29676b806cc736269651b9056d09b116b2f637d15edf20e78d287a83cd3e59d9", size = 18154, upload-time = "2026-01-16T12:39:28.623Z" },
 ]
 
 [[package]]
