@@ -7,13 +7,13 @@ requires-python = ">=3.12"
 dependencies = [
     "asyncssh>=2.18.0",
     "colorama==0.4.6",
-    "python-dotenv==1.0.1",
+    "python-dotenv==1.2.2",
     "gnews==0.3.7",
     "google-api-python-client==2.132.0",
     "google-auth-oauthlib==1.2.0",
     "openai==1.31.2",
-    "pillow==10.3.0",
-    "requests==2.32.4",
+    "pillow==12.1.1",
+    "requests==2.33.0",
     "holidays>=0.87",
 ]
 
