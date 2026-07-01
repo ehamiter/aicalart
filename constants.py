@@ -15,8 +15,10 @@ AICALART_PROMPTS_PATH = os.getenv("AICALART_PROMPTS_PATH")
 ### Image settings
 OPENROUTER_AICALART_API_KEY = os.getenv("OPENROUTER_AICALART_API_KEY")
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
-GPT_MODEL = "google/gemini-2.5-flash"
-IMAGE_MODEL = 'google/gemini-3-pro-image-preview'  # Nano Banana Pro
+# GPT_MODEL = "google/gemini-2.5-flash"
+# IMAGE_MODEL = 'google/gemini-3-pro-image-preview'  # Nano Banana Pro
+GPT_MODEL = "google/gemini-3.1-flash-lite"
+IMAGE_MODEL = 'google/gemini-3.1-flash-lite-image'  # Nano Banana 2 Lite
 PORTRAIT_ASPECT_RATIO = '9:16'
 LANDSCAPE_ASPECT_RATIO = '16:9'
 IMAGE_SIZE = '2K'
