@@ -298,7 +298,10 @@ def generate_image_via_openrouter(prompt, aspect_ratio):
         },
         timeout=150,
     )
-    response.raise_for_status()
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        raise requests.exceptions.HTTPError(f"{e} - {response.text}", response=response) from e
     result = response.json()
 
     message = result["choices"][0]["message"]

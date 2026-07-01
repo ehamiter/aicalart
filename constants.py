@@ -21,7 +21,7 @@ GPT_MODEL = "google/gemini-3.1-flash-lite"
 IMAGE_MODEL = 'google/gemini-3.1-flash-lite-image'  # Nano Banana 2 Lite
 PORTRAIT_ASPECT_RATIO = '9:16'
 LANDSCAPE_ASPECT_RATIO = '16:9'
-IMAGE_SIZE = '2K'
+IMAGE_SIZE = '1K'  # Nano Banana 2 Lite only supports 1K output
 
 ### Google Calendar
 GOOGLE_CALENDAR_ID = os.getenv("GOOGLE_CALENDAR_ID")
