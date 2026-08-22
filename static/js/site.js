@@ -36,21 +36,10 @@ function toggleOrientation() {
 }
 
 // Date and URL functions
-// Function to check if Daylight Saving Time (DST) is in effect
-function isDST(date = new Date()) {
-  const january = new Date(date.getFullYear(), 0, 1).getTimezoneOffset();
-  const july = new Date(date.getFullYear(), 6, 1).getTimezoneOffset();
-  return Math.min(january, july) !== date.getTimezoneOffset();
-}
-
-// Function to get the current date with a buffer to account for cron job timing
-function getCurrentDateWithBuffer(bufferHours = 2) {
-  let currentDate = new Date();
-  if (isDST(currentDate)) {
-    bufferHours += 1; // Add extra hour during DST
-  }
-  currentDate.setHours(currentDate.getHours() - bufferHours);
-  return currentDate;
+// The app is frozen on the last generated date (August 17, 2026); this
+// stands in for "today" everywhere so the site no longer advances.
+function getCurrentDateWithBuffer() {
+  return new Date(2026, 7, 17);
 }
 
 // Function to format date to YYYY-MM-DD
